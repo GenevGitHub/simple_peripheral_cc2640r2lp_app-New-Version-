@@ -1,0 +1,31 @@
+SCIF\scif.obj: C:/Users/HarryYeungYikSiu/Documents/Texas\\ Instruments/Sensor\\ Controller\\ Studio/projects/ADCSampling/scif.c
+SCIF\scif.obj: C:\Users\HarryYeungYikSiu\Documents\Texas\\ Instruments\Sensor\\ Controller\\ Studio\projects\ADCSampling\scif.h
+SCIF\scif.obj: C:/ti/ti-cgt-arm_18.12.5.LTS/include/stdint.h
+SCIF\scif.obj: C:/ti/ti-cgt-arm_18.12.5.LTS/include/_stdint40.h
+SCIF\scif.obj: C:/ti/ti-cgt-arm_18.12.5.LTS/include/sys/stdint.h
+SCIF\scif.obj: C:/ti/ti-cgt-arm_18.12.5.LTS/include/sys/cdefs.h
+SCIF\scif.obj: C:/ti/ti-cgt-arm_18.12.5.LTS/include/sys/_types.h
+SCIF\scif.obj: C:/ti/ti-cgt-arm_18.12.5.LTS/include/machine/_types.h
+SCIF\scif.obj: C:/ti/ti-cgt-arm_18.12.5.LTS/include/machine/_stdint.h
+SCIF\scif.obj: C:/ti/ti-cgt-arm_18.12.5.LTS/include/sys/_stdint.h
+SCIF\scif.obj: C:/ti/ti-cgt-arm_18.12.5.LTS/include/stdbool.h
+SCIF\scif.obj: C:\Users\HarryYeungYikSiu\Documents\Texas\\ Instruments\Sensor\\ Controller\\ Studio\projects\ADCSampling\scif_framework.h
+SCIF\scif.obj: C:\Users\HarryYeungYikSiu\Documents\Texas\\ Instruments\Sensor\\ Controller\\ Studio\projects\ADCSampling\scif_osal_tirtos.h
+SCIF\scif.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/devices/cc26x0r2/inc/hw_types.h
+SCIF\scif.obj: C:\ti\simplelink_cc2640r2_sdk_5_10_00_02\source\ti\devices\cc26x0r2\inc\../inc/hw_chip_def.h
+SCIF\scif.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/devices/cc26x0r2/inc/hw_memmap.h
+SCIF\scif.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/devices/cc26x0r2/inc/hw_aon_event.h
+SCIF\scif.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/devices/cc26x0r2/inc/hw_aon_rtc.h
+SCIF\scif.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/devices/cc26x0r2/inc/hw_aon_wuc.h
+SCIF\scif.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/devices/cc26x0r2/inc/hw_aux_sce.h
+SCIF\scif.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/devices/cc26x0r2/inc/hw_aux_smph.h
+SCIF\scif.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/devices/cc26x0r2/inc/hw_aux_evctl.h
+SCIF\scif.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/devices/cc26x0r2/inc/hw_aux_aiodio.h
+SCIF\scif.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/devices/cc26x0r2/inc/hw_aux_timer.h
+SCIF\scif.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/devices/cc26x0r2/inc/hw_aux_wuc.h
+SCIF\scif.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/devices/cc26x0r2/inc/hw_event.h
+SCIF\scif.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/devices/cc26x0r2/inc/hw_ints.h
+SCIF\scif.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/devices/cc26x0r2/inc/hw_ioc.h
+SCIF\scif.obj: C:/ti/ti-cgt-arm_18.12.5.LTS/include/string.h
+SCIF\scif.obj: C:/ti/ti-cgt-arm_18.12.5.LTS/include/_ti_config.h
+SCIF\scif.obj: C:/ti/ti-cgt-arm_18.12.5.LTS/include/linkage.h
