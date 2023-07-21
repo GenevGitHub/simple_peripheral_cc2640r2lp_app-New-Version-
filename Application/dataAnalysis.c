@@ -781,6 +781,7 @@ uint8_t determineBatteryStatus()
     else if (avgBatteryLevel <= LEVEL23PERCENT && avgBatteryLevel > LEVEL12PERCENT) {batteryStatus = ORANGE;}
     else if (avgBatteryLevel <= LEVEL12PERCENT && avgBatteryLevel > LEVEL01PERCENT) {batteryStatus = RED;}
     else {batteryStatus = FLASHING_RED;}
+    ledControl_setBatteryStatus(batteryStatus);
     return batteryStatus;
 }
 /***************************************************************************************************

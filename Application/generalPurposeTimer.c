@@ -77,7 +77,7 @@ void GPtimer_createTask(void)
 uint16_t    utime_Interval = PERIODIC_COMMUNICATION_HF_SAMPLING_TIME;
 uint16_t    GPT_taskCounter = 0;                               // ALS sampling counter
 uint32_t    powerOnTimeMS = 0;                          // power on time in milli-seconds
-
+uint8_t previous_unitChange;
 static void GPtimer_taskFxn(UArg a0, UArg a1)
 {
     gpTimer_init();
@@ -92,7 +92,15 @@ static void GPtimer_taskFxn(UArg a0, UArg a1)
         powerOnTime_cal(powerOnTimeMS);
 
         //led display commands
-
+        ledControl_changeLEDPower();
+        ledControl_changeLight();
+        ledControl_changeSpeedMode();
+        ledControl_changeUnit();
+        ledControl_changeBLE();
+        ledControl_changeBatteryStatus();
+        ledControl_changeDashSpeed();
+        ledControl_changeError();
+        ledControl_changeLightStatus();
         // Task delay
         Task_sleep(utime_Interval * 1000 / Clock_tickPeriod);
         GPT_taskCounter++;

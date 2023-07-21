@@ -479,7 +479,6 @@ static void motorcontrol_dashboardCB(uint8_t paramID)
 //uint8_t advertEnable = FALSE;
 uint8_t messageid;              // for debugging only
 uint8_t powerOn = 0;            // How does power on and power off work?
-
 static void motorcontrol_singleButtonCB(uint8_t messageID)
 {
     messageid = messageID;  // for debugging only
@@ -559,7 +558,6 @@ static void motorcontrol_singleButtonCB(uint8_t messageID)
 
             // send UnitSelectDash to ledControl.c
             ledControl_setUnitSelectDash(UnitSelectDash);
-
             break;
         }
     default:                                        // case 0x00 and all other cases

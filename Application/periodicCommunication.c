@@ -187,7 +187,7 @@ void periodicCommunication_hf_communication()
     STM32MCP_batteryCurrent = 3000; //rand()%13 * 1000;                                          // get battery current from MCU:  unit in mA
     //STM32MCP_getRegisterFrame(STM32MCP_MOTOR_1_ID,STM32MCP_SPEED_MEASURED_REG_ID);    // is speed in RPM
     // Sim RPM
-    STM32MCP_rpm = 350 * sin(M_PI * x_tt / 60) + 380;                                            // get RPM from MCU:  unit in rpm,  188 rpm @ r = 0.1016m => 200 cm/sec = 7 km/hr
+    STM32MCP_rpm = 350 * sin(M_PI * x_tt / 20) + 380;                                            // get RPM from MCU:  unit in rpm,  188 rpm @ r = 0.1016m => 200 cm/sec = 7 km/hr
     //STM32MCP_getRegisterFrame(STM32MCP_MOTOR_1_ID,STM32MCP_HEATSINK_TEMPERATURE_REG_ID);
     // Sim Heatsink Temp
     STM32MCP_heatSinkTemp = 20 *sin(M_PI * x_tt /180) + 15;                        // temperature is shifted by 20 degrees for taking care of - negative temperature

@@ -46,8 +46,8 @@ extern "C"
 #define ZERO_ZERO_CUSTOM            0x00
 
 //PWM Brightness control
-#define PWM_CUSTOM                  0x7E //255 STEPS
-#define PWM_BRIGHT                  0xFF
+#define PWM_CUSTOM                  0x8E //255 STEPS
+#define PWM_LOW                     0x20
 #define PWM_ZERO                    0x00
 
 
@@ -136,12 +136,6 @@ extern const uint8_t led_array[][2];
 #define IS31FL3236A_LED34_PWM_ADDR   0x23
 #define IS31FL3236A_LED35_PWM_ADDR   0x24
 
-//#define IS31FL3236A_ADDR            0x3C
-//#define IS31FL3236A_ON_REG          0x00
-//#define IS31FL3236A_RESET_REG       0x17
-//#define ZERO_ONE_CUSTOM             0x01
-
-
 /*********************************************************************
  * API FUNCTIONS
  */
@@ -150,164 +144,7 @@ extern const uint8_t led_array[][2];
  *  Global Function declaration
  *
 **********************************************************************/
-//Basic set up
-I2C_Handle setup_i2c(void);
-void i2c_write(I2C_Handle handle, uint8_t slave_addr, uint8_t *write_buf, size_t write_count);
-void i2c_init_buf(I2C_Handle handle, uint8_t slave_addr);
 
-//LED basic functions
-void reset_led_driver(I2C_Handle handle);
-void turn_on_led_driver(I2C_Handle handle);
-void turn_off_led_driver(I2C_Handle handle);//Software shutdown
-void enable_channels(I2C_Handle handle);//all channels enable
-void disable_channels(I2C_Handle handle);
-void update_bit(I2C_Handle handle);//update register
-void Brightness(I2C_Handle handle,uint8_t status_buf, uint8_t brightness_buf);//adjust brightness
-void Flashing (I2C_Handle handle,uint8_t status_buf, uint8_t brightness_buf, uint8_t index);//flash once
-void PWM_Frequency_22k(I2C_Handle handle);
-void PWM_Frequency_3k(I2C_Handle handle);
-void LED_Turn_OFF_ALL(I2C_Handle handle);//turn off all led (set PWM to 0)
-void LED_Turn_ON_ALL(I2C_Handle handle);//turn on all led (set PWM to 0)
-
-//LED control
-//void set_pwm_duty_cycle(I2C_Handle handle);
-//void set_led_register(I2C_Handle handle);
-//void IS31FL3236A_Set_Output_Frequency_22kHz();
-
-//Modes / Status
-void IS31FL3236A_Sports_Mode_pin(I2C_Handle handle,uint8_t status_buf, uint8_t brightness_buf);
-void IS31FL3236A_Leisure_Mode_pin( I2C_Handle handle,uint8_t status_buf, uint8_t brightness_buf);
-void IS31FL3236A_Amble_Mode_pin( I2C_Handle handle,uint8_t status_buf, uint8_t brightness_buf);
-void IS31FL3236A_Sports_Mode(I2C_Handle handle,uint8_t status_buf, uint8_t brightness_buf);
-void IS31FL3236A_Leisure_Mode( I2C_Handle handle,uint8_t status_buf, uint8_t brightness_buf);
-void IS31FL3236A_Amble_Mode( I2C_Handle handle,uint8_t status_buf, uint8_t brightness_buf);
-void IS31FL3236A_Bluetooth_LED(I2C_Handle handle,uint8_t status_buf, uint8_t brightness_buf);
-void IS31FL3236A_Light_On(I2C_Handle handle,uint8_t status_buf, uint8_t brightness_buf);
-void IS31FL3236A_Auto_Mode_pin( I2C_Handle handle,uint8_t status_buf, uint8_t brightness_buf);
-void IS31FL3236A_Auto_Mode( I2C_Handle handle,uint8_t status_buf, uint8_t brightness_buf);
-void IS31FL3236A_Attention( I2C_Handle handle,uint8_t status_buf, uint8_t brightness_buf);
-
-//Battery bar pins
-void IS31FL3236A_1_Bar( I2C_Handle handle,uint8_t status_buf, uint8_t brightness_buf);
-void IS31FL3236A_2_Bar( I2C_Handle handle,uint8_t status_buf, uint8_t brightness_buf);
-void IS31FL3236A_3_Bar( I2C_Handle handle,uint8_t status_buf, uint8_t brightness_buf);
-void IS31FL3236A_4_Bar( I2C_Handle handle,uint8_t status_buf, uint8_t brightness_buf);
-void IS31FL3236A_5_Bar( I2C_Handle handle,uint8_t status_buf, uint8_t brightness_buf);
-
-//Battery bar control
-void IS31FL3236A_All_Bars( I2C_Handle handle,uint8_t status_buf, uint8_t brightness_buf);
-void IS31FL3236A_4_Bars( I2C_Handle handle,uint8_t status_buf, uint8_t brightness_buf);
-void IS31FL3236A_3_Bars( I2C_Handle handle,uint8_t status_buf, uint8_t brightness_buf);
-void IS31FL3236A_2_Bars( I2C_Handle handle,uint8_t status_buf, uint8_t brightness_buf);
-void IS31FL3236A_1_Bars( I2C_Handle handle,uint8_t status_buf, uint8_t brightness_buf);
-void IS31FL3236A_0_Bars( I2C_Handle handle,uint8_t status_buf, uint8_t brightness_buf);
-
-// Speed indicator
-void IS31FL3236A_kmph_pin( I2C_Handle handle,uint8_t status_buf, uint8_t brightness_buf);
-void IS31FL3236A_mph_pin( I2C_Handle handle,uint8_t status_buf, uint8_t brightness_buf);
-void IS31FL3236A_kmph(I2C_Handle handle,uint8_t status_buf, uint8_t brightness_buf);
-void IS31FL3236A_mph(I2C_Handle handle,uint8_t status_buf, uint8_t brightness_buf);
-
-//Number LED sigle
-void IS31FL3236A_Digit_1_PIN_44( I2C_Handle handle,uint8_t status_buf, uint8_t brightness_buf);
-void IS31FL3236A_Digit_1_PIN_3( I2C_Handle handle,uint8_t status_buf, uint8_t brightness_buf);
-void IS31FL3236A_Digit_1_PIN_5( I2C_Handle handle,uint8_t status_buf, uint8_t brightness_buf);
-void IS31FL3236A_Digit_1_PIN_30( I2C_Handle handle,uint8_t status_buf, uint8_t brightness_buf);
-void IS31FL3236A_Digit_1_PIN_31( I2C_Handle handle,uint8_t status_buf, uint8_t brightness_buf);
-void IS31FL3236A_Digit_1_PIN_32( I2C_Handle handle,uint8_t status_buf, uint8_t brightness_buf);
-void IS31FL3236A_Digit_1_PIN_33( I2C_Handle handle,uint8_t status_buf, uint8_t brightness_buf);
-
-void IS31FL3236A_Digit_2_PIN_8( I2C_Handle handle,uint8_t status_buf, uint8_t brightness_buf);
-void IS31FL3236A_Digit_2_PIN_9( I2C_Handle handle,uint8_t status_buf, uint8_t brightness_buf);
-void IS31FL3236A_Digit_2_PIN_12( I2C_Handle handle,uint8_t status_buf, uint8_t brightness_buf);
-void IS31FL3236A_Digit_2_PIN_27( I2C_Handle handle,uint8_t status_buf, uint8_t brightness_buf);
-void IS31FL3236A_Digit_2_PIN_28( I2C_Handle handle,uint8_t status_buf, uint8_t brightness_buf);
-void IS31FL3236A_Digit_2_PIN_29( I2C_Handle handle,uint8_t status_buf, uint8_t brightness_buf);
-void IS31FL3236A_Digit_2_PIN_13( I2C_Handle handle,uint8_t status_buf, uint8_t brightness_buf);
-
-//Digits Numbers
-void IS31FL3236A_Digit_1_Number_0 (I2C_Handle handle,uint8_t status_buf, uint8_t brightness_buf);
-void IS31FL3236A_Digit_1_Number_1 (I2C_Handle handle,uint8_t status_buf, uint8_t brightness_buf);
-void IS31FL3236A_Digit_1_Number_2 (I2C_Handle handle,uint8_t status_buf, uint8_t brightness_buf);
-void IS31FL3236A_Digit_1_Number_3 (I2C_Handle handle,uint8_t status_buf, uint8_t brightness_buf);
-void IS31FL3236A_Digit_1_Number_4 (I2C_Handle handle,uint8_t status_buf, uint8_t brightness_buf);
-void IS31FL3236A_Digit_1_Number_5 (I2C_Handle handle,uint8_t status_buf, uint8_t brightness_buf);
-void IS31FL3236A_Digit_1_Number_6 (I2C_Handle handle,uint8_t status_buf, uint8_t brightness_buf);
-void IS31FL3236A_Digit_1_Number_7 (I2C_Handle handle,uint8_t status_buf, uint8_t brightness_buf);
-void IS31FL3236A_Digit_1_Number_8 (I2C_Handle handle,uint8_t status_buf, uint8_t brightness_buf);
-void IS31FL3236A_Digit_1_Number_9 (I2C_Handle handle,uint8_t status_buf, uint8_t brightness_buf);
-
-void IS31FL3236A_Digit_2_Number_0 (I2C_Handle handle,uint8_t status_buf, uint8_t brightness_buf);
-void IS31FL3236A_Digit_2_Number_1 (I2C_Handle handle,uint8_t status_buf, uint8_t brightness_buf);
-void IS31FL3236A_Digit_2_Number_2 (I2C_Handle handle,uint8_t status_buf, uint8_t brightness_buf);
-void IS31FL3236A_Digit_2_Number_3 (I2C_Handle handle,uint8_t status_buf, uint8_t brightness_buf);
-void IS31FL3236A_Digit_2_Number_4 (I2C_Handle handle,uint8_t status_buf, uint8_t brightness_buf);
-void IS31FL3236A_Digit_2_Number_5 (I2C_Handle handle,uint8_t status_buf, uint8_t brightness_buf);
-void IS31FL3236A_Digit_2_Number_6 (I2C_Handle handle,uint8_t status_buf, uint8_t brightness_buf);
-void IS31FL3236A_Digit_2_Number_7 (I2C_Handle handle,uint8_t status_buf, uint8_t brightness_buf);
-void IS31FL3236A_Digit_2_Number_8 (I2C_Handle handle,uint8_t status_buf, uint8_t brightness_buf);
-void IS31FL3236A_Digit_2_Number_9 (I2C_Handle handle,uint8_t status_buf, uint8_t brightness_buf);
-
-//Digits Alphabets
-void IS31FL3236A_Digit_1_Number_A (I2C_Handle handle,uint8_t status_buf, uint8_t brightness_buf);
-void IS31FL3236A_Digit_2_Number_A (I2C_Handle handle,uint8_t status_buf, uint8_t brightness_buf);
-void IS31FL3236A_Digit_1_Number_C (I2C_Handle handle,uint8_t status_buf, uint8_t brightness_buf);
-void IS31FL3236A_Digit_2_Number_C (I2C_Handle handle,uint8_t status_buf, uint8_t brightness_buf);
-void IS31FL3236A_Digit_1_Number_E (I2C_Handle handle,uint8_t status_buf, uint8_t brightness_buf);
-void IS31FL3236A_Digit_2_Number_E (I2C_Handle handle,uint8_t status_buf, uint8_t brightness_buf);
-void IS31FL3236A_Digit_1_Number_F (I2C_Handle handle,uint8_t status_buf, uint8_t brightness_buf);
-void IS31FL3236A_Digit_2_Number_F (I2C_Handle handle,uint8_t status_buf, uint8_t brightness_buf);
-void IS31FL3236A_Digit_1_Number_H (I2C_Handle handle,uint8_t status_buf, uint8_t brightness_buf);
-void IS31FL3236A_Digit_2_Number_H (I2C_Handle handle,uint8_t status_buf, uint8_t brightness_buf);
-void IS31FL3236A_Digit_1_Number_J (I2C_Handle handle,uint8_t status_buf, uint8_t brightness_buf);
-void IS31FL3236A_Digit_2_Number_J (I2C_Handle handle,uint8_t status_buf, uint8_t brightness_buf);
-void IS31FL3236A_Digit_1_Number_L (I2C_Handle handle,uint8_t status_buf, uint8_t brightness_buf);
-void IS31FL3236A_Digit_2_Number_L (I2C_Handle handle,uint8_t status_buf, uint8_t brightness_buf);
-void IS31FL3236A_Digit_1_Number_P (I2C_Handle handle,uint8_t status_buf, uint8_t brightness_buf);
-void IS31FL3236A_Digit_2_Number_P (I2C_Handle handle,uint8_t status_buf, uint8_t brightness_buf);
-void IS31FL3236A_Digit_1_Number_U (I2C_Handle handle,uint8_t status_buf, uint8_t brightness_buf);
-void IS31FL3236A_Digit_2_Number_U (I2C_Handle handle,uint8_t status_buf, uint8_t brightness_buf);
-void IS31FL3236A_Digit_1_Number_u (I2C_Handle handle,uint8_t status_buf, uint8_t brightness_buf);
-void IS31FL3236A_Digit_2_Number_u (I2C_Handle handle,uint8_t status_buf, uint8_t brightness_buf);
-void IS31FL3236A_Digit_1_Number_n (I2C_Handle handle,uint8_t status_buf, uint8_t brightness_buf);
-void IS31FL3236A_Digit_2_Number_n (I2C_Handle handle,uint8_t status_buf, uint8_t brightness_buf);
-void IS31FL3236A_Digit_1_Number_b (I2C_Handle handle,uint8_t status_buf, uint8_t brightness_buf);
-void IS31FL3236A_Digit_2_Number_b (I2C_Handle handle,uint8_t status_buf, uint8_t brightness_buf);
-void IS31FL3236A_Digit_1_Number_c (I2C_Handle handle,uint8_t status_buf, uint8_t brightness_buf);
-void IS31FL3236A_Digit_2_Number_c (I2C_Handle handle,uint8_t status_buf, uint8_t brightness_buf);
-void IS31FL3236A_Digit_1_Number_h (I2C_Handle handle,uint8_t status_buf, uint8_t brightness_buf);
-void IS31FL3236A_Digit_2_Number_h (I2C_Handle handle,uint8_t status_buf, uint8_t brightness_buf);
-void IS31FL3236A_Digit_1_Number_d (I2C_Handle handle,uint8_t status_buf, uint8_t brightness_buf);
-void IS31FL3236A_Digit_2_Number_d (I2C_Handle handle,uint8_t status_buf, uint8_t brightness_buf);
-void IS31FL3236A_Digit_1_Number_q (I2C_Handle handle,uint8_t status_buf, uint8_t brightness_buf);
-void IS31FL3236A_Digit_2_Number_q (I2C_Handle handle,uint8_t status_buf, uint8_t brightness_buf);
-void IS31FL3236A_Digit_1_Number_ (I2C_Handle handle,uint8_t status_buf, uint8_t brightness_buf);
-void IS31FL3236A_Digit_2_Number_ (I2C_Handle handle,uint8_t status_buf, uint8_t brightness_buf);
-
-
-//Function table
-typedef void (*IS31FL3236A_Function)(I2C_Handle handle, uint8_t status_buf, uint8_t brightness_buf);
-typedef enum {
-    BRIGHTNESS,
-    SPORTS_MODE, LEISURE_MODE, AMBLE_MODE, BLUETOOTH_LED, LIGHT_ON, AUTO_MODE, ATTENTION,
-    BAR_1, BAR_2, BAR_3, BAR_4, BAR_5, KMPH, MPH,
-    DIGIT_1_PIN_44, DIGIT_1_PIN_3, DIGIT_1_PIN_5, DIGIT_1_PIN_30, DIGIT_1_PIN_31, DIGIT_1_PIN_32, DIGIT_1_PIN_33,
-    DIGIT_2_PIN_8, DIGIT_2_PIN_9,DIGIT_2_PIN_12, DIGIT_2_PIN_27, DIGIT_2_PIN_28,  DIGIT_2_PIN_29,DIGIT_2_PIN_13,
-    ALL_BARS, BARS_4_ON, BARS_3_ON, BARS_2_ON, BARS_1_ON, BARS_0_ON,
-    DIGIT_1_NO_0, DIGIT_1_NO_1, DIGIT_1_NO_2, DIGIT_1_NO_3, DIGIT_1_NO_4,
-    DIGIT_1_NO_5, DIGIT_1_NO_6, DIGIT_1_NO_7, DIGIT_1_NO_8, DIGIT_1_NO_9,
-    DIGIT_2_NO_0, DIGIT_2_NO_1, DIGIT_2_NO_2, DIGIT_2_NO_3, DIGIT_2_NO_4,
-    DIGIT_2_NO_5, DIGIT_2_NO_6, DIGIT_2_NO_7, DIGIT_2_NO_8, DIGIT_2_NO_9,
-    DIGIT_1_A, DIGIT_2_A, DIGIT_1_C, DIGIT_2_C, DIGIT_1_E, DIGIT_2_E,
-    DIGIT_1_F, DIGIT_2_F, DIGIT_1_H, DIGIT_2_H, DIGIT_1_J, DIGIT_2_J,
-    DIGIT_1_L, DIGIT_2_L, DIGIT_1_P, DIGIT_2_P, DIGIT_1_U, DIGIT_2_U,
-    DIGIT_1_u, DIGIT_2_u, DIGIT_1_n, DIGIT_2_n, DIGIT_1_b, DIGIT_2_b,
-    DIGIT_1_c, DIGIT_2_c, DIGIT_1_h, DIGIT_2_h, DIGIT_1_d, DIGIT_2_d,
-    DIGIT_1_q, DIGIT_2_q, DIGIT_1_, DIGIT_2_,
-    FUNCTION_COUNT
-} IS31FL3236A_FunctionIndex;
-
-extern IS31FL3236A_Function functionTable[FUNCTION_COUNT];
 
 
 #ifdef _cplusplus
