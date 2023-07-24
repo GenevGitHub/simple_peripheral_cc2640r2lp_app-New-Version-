@@ -29,8 +29,6 @@
 /*********************************************************************
 * INCLUDES
 */
-//#include <math.h>
-
 #include "dataAnalysis.h"
 #include "buzzerControl.h"
 #include "ledControl.h"
@@ -167,9 +165,11 @@ extern void dataAnalysis_init()
     uint16_t batteryCurrentStartUp_mA;
     // At the instant of POWER ON, we need to obtain BATTERY status for LED display
     // dashboard will instruct motor controller to obtain a battery voltage and current measurement
-    batteryVoltageStartUp_mV = 30100;           // -> STM32MCP_getRegisterFrame(STM32MCP_MOTOR_1_ID,STM32MCP_BUS_VOLTAGE_REG_ID);
+    batteryVoltageStartUp_mV = 36000;           // -> STM32MCP_getRegisterFrame(STM32MCP_MOTOR_1_ID,STM32MCP_BUS_VOLTAGE_REG_ID);
     batteryCurrentStartUp_mA = 3000;            // -> STM32MCP_getRegisterFrame(STM32MCP_MOTOR_1_ID,STM32MCP_BUS_CURRENT_REG_ID);
     avgBatteryVoltage_mV = batteryVoltageStartUp_mV;
+    int8_t mTStartUp = 15;
+    int8_t hSTStartUp = 15;
 
     /***************************************************
      *      Read data stored in NVS Internal
@@ -184,16 +184,17 @@ extern void dataAnalysis_init()
     ADArray.accumPowerConsumption_mWh = totalPowerConsumedPrev_mWh;         // ADArray = App data strut
     ADArray.accumMileage_dm = totalMileagePrev_dm;                          // ADArray = App data strut
     ADArray.avgSpeed_kph = 0;                                               // ADArray = App data strut
-    ADArray.avgHeatSinkTemperature_C = 15;                                  // ADArray = App data strut
+    ADArray.avgHeatSinkTemperature_C = hSTStartUp;                                  // ADArray = App data strut
     ADArray.avgBatteryVoltage_mV = avgBatteryVoltage_mV;                    // ADArray = App data strut
     ADArray.errorCode = 0;                                                  // ADArray = App data strut
-    ADArray.batteryStatus = determineBatteryStatus();                       // ADArray = App data strut
+
     ADArray.batteryPercentage = computeBatteryPercentage();                 // ADArray = App data strut
+    ADArray.batteryStatus = determineBatteryStatus();                       // ADArray = App data strut
     ADArray.instantEconomy_100Whpk = computeInstantEconomy(0, 0);           // ADArray = App data strut
     ADArray.economy_100Whpk = computeEconomy();                             // ADArray = App data strut
     ADArray.range_m = computeRange();                                       // ADArray = App data strut
     ptrADArray->co2Saved_g = computeCO2Saved();                             // ADArray = App data strut
-    ADArray.motorTemperature_C = 15;                                        // ADArray = App data strut
+    ADArray.motorTemperature_C = mTStartUp;                                        // ADArray = App data strut
 
     dataAnalysis_changeUnitSelectDash(UnitSelectDash);      // Send Unit Select to LED display
 

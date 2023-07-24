@@ -16,6 +16,10 @@
 */
 #include "ledControl.h"
 #include "IS31FL3236A/IS31FL3236A.h"
+#include "Controller.h"
+#include "Dashboard.h"
+#include "Battery.h"
+#include "peripheral.h"
 
 /*********************************************************************
 * LOCAL VARIABLES
@@ -97,42 +101,6 @@ void PWM_Frequency_3k()
     uint8_t writeBuf_3k[2] = {IS31FL3236A_PWM_FREQUENCY, 0x00};
     ledControl_i2cTransferStatus = ledControl_ledDisplayManager -> ledControl_transfer(IS31FL3236A_ADDR, &writeBuf_3k, sizeof(writeBuf_3k), NULL, 0);
 }
-
-
-//void IS31FL3236A_Speed_Mode_pin(uint8_t speedMode, uint8_t status_buf, uint8_t brightness_buf)
-//{
-//      uint8_t speedMode_buf;
-
-//      switch(speedMode)
-//      {
-    //      case 0x00:       // case = 0x00 - Amble mode
-        //      {
-        //          speedMode_PWM_buf = IS31FL3236A_LED34_PWM_ADDR;
-        //          speedMode_buf = IS31FL3236A_LED34_ADDR;
-        //          break;
-        //      }
-    //      case 0x01:      // case = 0x01 - Leisure modes
-        //      {
-        //          speedMode_PWM_buf = IS31FL3236A_LED35_PWM_ADDR;
-        //          speedMode_buf = IS31FL3236A_LED35_ADDR;
-        //          break;
-        //      }
-    //      case 0x02:      // case = 0x02 - Sports modes
-        //      {
-        //          speedMode_PWM_buf = IS31FL3236A_LED43_PWM_ADDR;
-        //          speedMode_buf = IS31FL3236A_LED43_ADDR;
-        //          break;
-        //      }
-    //      default:                                        // case 0x00 and all other cases
-        //          break;
-        //      }
-//
-//      uint8_t writeBuf_pwm[2] = {speedMode_PWM_buf, brightness_buf};
-//      ledControl_i2cTransferStatus = ledControl_ledDisplayManager -> ledControl_transfer(IS31FL3236A_ADDR, &writeBuf_pwm, sizeof(writeBuf_pwm), NULL, 0);
-//      uint8_t writeBuf_led[2] = {speedMode_buf, status_buf};
-//      ledControl_i2cTransferStatus = ledControl_ledDisplayManager -> ledControl_transfer(IS31FL3236A_ADDR, &writeBuf_led, sizeof(writeBuf_led), NULL, 0);
-//
-//}
 
 void IS31FL3236A_Sports_Mode_pin(uint8_t status_buf, uint8_t brightness_buf)
 {
@@ -1432,6 +1400,16 @@ void ledControl_setDashSpeed(uint8_t dashSpeed){
     // I2C command to set Speed Indicator
     ledSpeed = dashSpeed;
 }
+
+/*********************************************************************
+ * @fn      ledControl_changeDashSpeed
+ *
+ * @brief   Updates the dashboard Speed on LED display
+ *
+ * @param   none
+ *
+ * @return  none
+ *********************************************************************/
 void ledControl_changeDashSpeed(){
     if(ledSpeed_old != ledSpeed || ledBrightness!=ledBrightness_old){
         int dashspeed_unit;
@@ -1452,11 +1430,21 @@ void ledControl_changeDashSpeed(){
  *
  * @return  none
  */
-void ledControl_setBatteryStatus(uint8_t batteryStatus){
+void ledControl_setBatteryStatus(uint8_t batteryStatus)
+{
     // I2C command to set Battery Status
     ledBatteryStatus = batteryStatus;
 }
 
+/*********************************************************************
+ * @fn      ledControl_changeBatteryStatus
+ *
+ * @brief   Updates the  battery status on LED display
+ *
+ * @param   none
+ *
+ * @return  none
+ *********************************************************************/
 void ledControl_changeBatteryStatus()
 {
     if(ledBattery_old != ledBatteryStatus || ledBrightness!=ledBrightness_old){
@@ -1497,6 +1485,16 @@ void ledControl_setSpeedMode(uint8_t speedMode)
     // I2C command to set Speed Mode Status
     ledSpeedMode = speedMode;
 }
+
+/*********************************************************************
+ * @fn      ledControl_changeSpeedMode
+ *
+ * @brief   Updates the Speed Mode status on LED display
+ *
+ * @param   none
+ *
+ * @return  none
+ *********************************************************************/
 void ledControl_changeSpeedMode()
 {
     if ( ledSMSelect_old != ledSpeedMode || ledBrightness!=ledBrightness_old )
@@ -1531,6 +1529,15 @@ void ledControl_setUnitSelectDash(uint8_t UnitSelectDash)
     ledUnitSelectDash = UnitSelectDash;
 }
 
+/*********************************************************************
+ * @fn      ledControl_changeUnit
+ *
+ * @brief   Updates the Unit selection on LED display
+ *
+ * @param   none
+ *
+ * @return  none
+ *********************************************************************/
 void ledControl_changeUnit()
 {
     if ( ledUnitSelect_old != ledUnitSelectDash || ledBrightness!=ledBrightness_old )
@@ -1560,14 +1567,38 @@ void ledControl_setBLEStatus(uint8_t BLEStatus){
     // I2C command to set BLE Light Status
     ledBLEStatus = BLEStatus;
 }
-void ledControl_changeBLE(){
+
+/*********************************************************************
+ * @fn      ledControl_changeBLE
+ *
+ * @brief   Updates the BLE status on LED display
+ *
+ * @param   none
+ *
+ * @return  none
+ *********************************************************************/
+void ledControl_changeBLE()
+{
+    gaprole_States_t get_gaproleState;
+    GAPRole_GetParameter(GAPROLE_STATE, &get_gaproleState);
+    if (get_gaproleState == GAPROLE_ADVERTISING  || ledBLEStatus == GAPROLE_CONNECTED || ledBLEStatus == GAPROLE_CONNECTED_ADV)
+    {
+        ledBLEStatus = 1;
+    }
+    else
+    {
+        ledBLEStatus = 0;
+    }
+
     if ( ledBLESelect_old != ledBLEStatus || ledBrightness!=ledBrightness_old )
     {
         // change BLE
-        if(ledBLEStatus==2 || ledBLEStatus==6 || ledBLEStatus==7){
+        if(ledBLEStatus == 1)
+        {
             functionTable[4](I_OUT,ledBrightness);
         }
-        else{
+        else
+        {
             functionTable[4](I_OUT,PWM_ZERO);
         }
 
@@ -1590,6 +1621,16 @@ void ledControl_setErrorCodeWarning(uint8_t errorCode)
     ledErrorCode = 1; //errorCode;
 
 }
+
+/*********************************************************************
+ * @fn      ledControl_changeError
+ *
+ * @brief   Updates the Error status on LED display
+ *
+ * @param   none
+ *
+ * @return  none
+ *********************************************************************/
 void ledControl_changeError(){
     if ( ledError_old != ledErrorCode || ledBrightness!=ledBrightness_old )
     {
@@ -1620,7 +1661,16 @@ void ledControl_setLightMode(uint8_t LED_light_mode)
     ledLightmode = LED_light_mode;
 }
 
-void ledControl_changeLight(){
+/*********************************************************************
+ * @fn      ledControl_changeLightMode
+ *
+ * @brief   Updates the light mode status on LED display
+ *
+ * @param   none
+ *
+ * @return  none
+ *********************************************************************/
+void ledControl_changeLightMode(){
     if ( ledLightSelect_old != ledLightmode || ledBrightness!=ledBrightness_old )
     {
         // change Light mode
@@ -1655,6 +1705,16 @@ void ledControl_setLightStatus(uint8_t light_status)
     // I2C command to set Light Status
     ledLightstatus = light_status;
 }
+
+/*********************************************************************
+ * @fn      ledControl_changeLightStatus
+ *
+ * @brief   Updates the light status on LED display
+ *
+ * @param   none
+ *
+ * @return  none
+ *********************************************************************/
 void ledControl_changeLightStatus(){
     if ( ledLightstatus_old != ledLightstatus  || ledBrightness!=ledBrightness_old)
     {
@@ -1671,9 +1731,16 @@ void ledControl_changeLightStatus(){
     }
 }
 
+/*********************************************************************
+ * @fn      ledControl_registerLedDisplay
+ *
+ * @brief   Register for LED display
+ *
+ * @param   none
+ *
+ * @return  none
+ *********************************************************************/
 void ledControl_registerLedDisplay( ledControl_ledDisplayManager_t *ledDisplayI2C )
 {
     ledControl_ledDisplayManager = ledDisplayI2C;
 }
-
-

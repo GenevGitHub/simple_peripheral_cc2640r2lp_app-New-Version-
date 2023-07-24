@@ -167,6 +167,15 @@ Application/ledControl.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/d
 Application/ledControl.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/utils/List.h
 Application/ledControl.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/dpl/SwiP.h
 Application/ledControl.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/dpl/SemaphoreP.h
+Application/ledControl.obj: C:/Users/Public/Documents/TI-workspace/simple_peripheral_cc2640r2lp_app/PROFILES/Controller.h
+Application/ledControl.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/inc/bcomdef.h
+Application/ledControl.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/osal/src/inc/comdef.h
+Application/ledControl.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/hal/src/target/_common/hal_types.h
+Application/ledControl.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/hal/src/target/_common/cc26xx/_hal_types.h
+Application/ledControl.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/hal/src/inc/hal_defs.h
+Application/ledControl.obj: C:/Users/Public/Documents/TI-workspace/simple_peripheral_cc2640r2lp_app/PROFILES/Dashboard.h
+Application/ledControl.obj: C:/Users/Public/Documents/TI-workspace/simple_peripheral_cc2640r2lp_app/PROFILES/Battery.h
+Application/ledControl.obj: C:/Users/Public/Documents/TI-workspace/simple_peripheral_cc2640r2lp_app/PROFILES/peripheral.h
 
 ../Application/ledControl.c:
 
@@ -501,4 +510,22 @@ C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/utils/List.h:
 C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/dpl/SwiP.h:
 
 C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/dpl/SemaphoreP.h:
+
+C:/Users/Public/Documents/TI-workspace/simple_peripheral_cc2640r2lp_app/PROFILES/Controller.h:
+
+C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/inc/bcomdef.h:
+
+C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/osal/src/inc/comdef.h:
+
+C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/hal/src/target/_common/hal_types.h:
+
+C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/hal/src/target/_common/cc26xx/_hal_types.h:
+
+C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/hal/src/inc/hal_defs.h:
+
+C:/Users/Public/Documents/TI-workspace/simple_peripheral_cc2640r2lp_app/PROFILES/Dashboard.h:
+
+C:/Users/Public/Documents/TI-workspace/simple_peripheral_cc2640r2lp_app/PROFILES/Battery.h:
+
+C:/Users/Public/Documents/TI-workspace/simple_peripheral_cc2640r2lp_app/PROFILES/peripheral.h:
 

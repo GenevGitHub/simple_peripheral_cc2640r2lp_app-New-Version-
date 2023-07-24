@@ -79,7 +79,7 @@ extern void ledControl_changeBLE();
 extern void ledControl_setErrorCodeWarning( uint8_t errorCode );        // Set Warning
 extern void ledControl_changeError();
 extern void ledControl_setLightMode( uint8_t light_mode );           // Set light mode
-extern void ledControl_changeLight();
+extern void ledControl_changeLightMode();
 extern void ledControl_setLightStatus( uint8_t light_status );          // Set Light Status
 extern void ledControl_changeLightStatus();
 extern void ledControl_setLEDPower( uint8_t ledPower );                 // Set LED Power Level / Brightness

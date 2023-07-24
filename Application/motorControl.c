@@ -532,7 +532,7 @@ static void motorcontrol_singleButtonCB(uint8_t messageID)
                         GAPRole_SetParameter(GAPROLE_ADVERT_ENABLED, sizeof(uint8_t), &advertising);
                     }
 
-                ledControl_setBLEStatus( get_gaproleState );
+                //ledControl_setBLEStatus( get_gaproleState );
             }
 
             break;
