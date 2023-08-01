@@ -146,6 +146,7 @@ static void dataAnalysis_taskFxn(UArg a0, UArg a1);
 //Battery status related Function declaration
 extern uint8_t computeBatteryPercentage( void );
 extern uint8_t determineBatteryStatus( void );
+
 extern uint8_t dataAnalysis_getBatteryPercentage( void );
 extern uint8_t dataAnalysis_getUnitSelectDash( void );
 extern void dataAnalysis_changeUnitSelectDash( uint8_t unit );
@@ -154,25 +155,23 @@ extern void dataAnalysis_changeUnitSelectDash( uint8_t unit );
 
 //Global Functions declaration
 extern void dataAnalysis_init( void );
-extern uint8_t coefficient_array_init( void );
+static uint8_t coefficient_array_init( void );
 extern void dataAnalysis_LEDSpeed(uint16_t xCounter);
 
-extern uint8_t dataAnalysis_getSpeedModeInit( void );
-extern uint8_t dataAnalysis_getDashUnitInit( void );
-extern uint8_t dataAnalysis_getLightModeInit( void );
+//static void dataSim();
+static  void dataAnalyt( void );
+static  void data2UDArray( void );
+static void re_Initialize( void );
+static void get_UDArrayData( void );
+static void dataAnalysis_Main( void );
+//extern void get_ADArrayData(uint8_t paramID);
+static void dataAnalysis_motorcontrol_setGatt(void);
 
-//extern void dataSim();
-extern void dataAnalyt( void );
-extern void data2UDArray( void );
-extern void re_Initialize( void );
-extern void get_UDArrayData( void );
-extern void dataAnalysis_Main( void );
-extern void get_ADArrayData(uint8_t paramID);
-void dataAnalysis_motorcontrol_setGatt(void);
+extern void dataAnalysis_setError( uint8_t errorCode, uint8_t errorStatus );
 
 extern void dataAnalysis_timerInterruptHandler( void );
 
-extern void dummyUDArray( void );
+static void dummyUDArray( void );
 extern void dataAnalysis_NVSRead( void );
 extern void dataAnalysis_NVSWrite( void );
 

@@ -601,7 +601,7 @@ void STM32MCP_setCurrentReferencesFrame(uint8_t motorID, int16_t torqueReference
 /*********************************************************************
  * @fn      STM32MCP_setSystemControlConfigFrame
  *
- * @brief   It is used for sending system control config frame
+ * @brief   It is used for sending system control config frame (Heartbeat Signal)
  *
  * @param   None
  *
@@ -627,6 +627,89 @@ void STM32MCP_setSystemControlConfigFrame(uint8_t sysCmdId)
        {
            STM32MCP_enqueueMsg(txFrame, 4);
        }
+}
+/*********************************************************************
+ * @fn      STM32MCP_setTorqueRampConfiguration
+ *
+ * @brief   It is used for configuring driving modes: Ambler, Leisure and Sport with different Speed and Torque limits
+ *          as well as acceleration and deceleration ramps.
+ *
+ * @param   torqueIQ :      maximum allowable torques (s16A)
+ *          allowableSpeed: maximum allowable speed  (RPM)
+ *          rampRate:       time durations for acceleration / deceleration in milliseconds
+ *
+ * @return  None
+ */
+void STM32MCP_setSpeedModeConfiguration(int32_t torqueIQ, int32_t allowableSpeed, uint16_t rampRate)
+{
+    if(communicationState == STM32MCP_COMMUNICATION_ACTIVE)
+    {
+       //Make a payload and insert into the packet
+        uint8_t *txFrame = (uint8_t*)malloc(sizeof(uint8_t)*(STM32MCP_SET_DRIVING_MODE_CONFIG_PAYLOAD_LENGTH + 3));
+        txFrame[0]   = STM32MCP_MOTOR_1_ID | STM32MCP_SET_DRIVE_MODE_CONFIG_FRAME_ID;
+        txFrame[1]   = STM32MCP_SET_DRIVING_MODE_CONFIG_PAYLOAD_LENGTH;
+        txFrame[2]   = torqueIQ               & 0xFF;
+        txFrame[3]   = (torqueIQ >> 8)        & 0xFF;
+        txFrame[4]   = (torqueIQ >> 16)       & 0xFF;
+        txFrame[5]   = (torqueIQ >> 24)       & 0xFF;
+        txFrame[6]   =  allowableSpeed        & 0xFF;
+        txFrame[7]   = (allowableSpeed >> 8)  & 0xFF;
+        txFrame[8]   = (allowableSpeed >> 16) & 0xFF;
+        txFrame[9]   = (allowableSpeed >> 24) & 0xFF;
+        txFrame[10]  =  rampRate              & 0xFF;
+        txFrame[11]  = (rampRate >> 8)        & 0xFF;
+        txFrame[12]  = STM32MCP_calChecksum(txFrame,12);
+        if(STM32MCP_queueIsEmpty())
+        {
+            STM32MCP_timerManager->timerStart();
+            STM32MCP_enqueueMsg(txFrame,STM32MCP_SET_DRIVING_MODE_CONFIG_PAYLOAD_LENGTH + 3);
+            STM32MCP_uartManager->uartWrite(STM32MCP_headPtr->txMsg,STM32MCP_headPtr->size);
+        }
+        else
+        {
+            STM32MCP_enqueueMsg(txFrame, STM32MCP_SET_DRIVING_MODE_CONFIG_PAYLOAD_LENGTH+3);
+        }
+    }
+}
+/*********************************************************************
+ * @fn      STM32MCP_setDynamicCurrent
+ *
+ * @brief   It is used for changing the IQ instantly in order to change the Motor's speed
+ *
+ * @param   allowableSpeed:      maximum allowable torques (RPM)
+ *          IQValue:             instant Current  (s16A)
+ *
+ * @return  None
+ */
+void STM32MCP_setDynamicCurrent(int32_t allowableSpeed, int32_t IQValue)
+{
+    if(communicationState == STM32MCP_COMMUNICATION_ACTIVE)
+    {
+       //Make a payload and insert into the packet
+        uint8_t *txFrame = (uint8_t*)malloc(sizeof(uint8_t)*(STM32MCP_SET_DYNAMIC_TORQUE_FRAME_PAYLOAD_LENGTH + 3));
+        txFrame[0]   = STM32MCP_MOTOR_1_ID | STM32MCP_SET_DYNAMIC_TORQUE_FRAME_ID;
+        txFrame[1]   = STM32MCP_SET_DYNAMIC_TORQUE_FRAME_PAYLOAD_LENGTH;
+        txFrame[2]  =  allowableSpeed         & 0xFF;
+        txFrame[3]  = (allowableSpeed >> 8)   & 0xFF;
+        txFrame[4]  = (allowableSpeed >> 16)  & 0xFF;
+        txFrame[5]  = (allowableSpeed >> 24)  & 0xFF;
+        txFrame[6]  =  IQValue        & 0xFF;
+        txFrame[7]  = (IQValue >> 8)  & 0xFF;
+        txFrame[8]  = (IQValue >> 16) & 0xFF;
+        txFrame[9]  = (IQValue >> 24) & 0xFF;
+        txFrame[10] = STM32MCP_calChecksum(txFrame,10);
+        if(STM32MCP_queueIsEmpty())
+        {
+            STM32MCP_timerManager -> timerStart();
+            STM32MCP_enqueueMsg(txFrame,STM32MCP_SET_DYNAMIC_TORQUE_FRAME_PAYLOAD_LENGTH + 3);
+            STM32MCP_uartManager->uartWrite(STM32MCP_headPtr->txMsg, STM32MCP_headPtr->size);
+        }
+        else
+        {
+            STM32MCP_enqueueMsg(txFrame,STM32MCP_SET_DYNAMIC_TORQUE_FRAME_PAYLOAD_LENGTH + 3);
+        }
+
+    }
 }
 /*********************************************************************
  * @fn      STM32MCP_setRegisterAttribute

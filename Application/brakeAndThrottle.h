@@ -66,7 +66,7 @@ extern "C"
 
 //Throttle error thresholds = values that should not be possible under nominal operation
 #define THROTTLE_ADC_THRESHOLD_H                                  2500
-#define THROTTLE_ADC_THRESHOLD_L                                  750
+#define THROTTLE_ADC_THRESHOLD_L                                  800
 
 //Brake calibration values = value range the Brake ADC is conditioned to be within
 #define BRAKE_ADC_CALIBRATE_H                                     2350
@@ -74,13 +74,13 @@ extern "C"
 
 //Brake error thresholds = values that should not be possible under nominal operation
 #define BRAKE_ADC_THRESHOLD_H                                     2500
-#define BRAKE_ADC_THRESHOLD_L                                     750
+#define BRAKE_ADC_THRESHOLD_L                                     800
 
 //Error message
 #define BRAKE_AND_THROTTLE_NORMAL                                 0x00
-#define BRAKE_ERROR                                               0x01
-#define THROTTLE_ERROR                                            0x02
-#define HARD_BRAKING_ERROR                                        0x04
+#define BRAKE_ERROR                                               0x0E
+#define THROTTLE_ERROR                                            0x0C
+#define HARD_BRAKING_ERROR                                        0x0F
 
 /*********************************************************************
  * MACROS
@@ -119,7 +119,7 @@ extern void brakeAndThrottle_init();
 extern void brakeAndThrottle_start();
 extern void brakeAndThrottle_stop();
 extern void brakeAndThrottle_toggle();
-extern void brakeAndThrottle_setSpeedMode(uint8_t speedMode);
+extern void brakeAndThrottle_setSpeedMode(uint8_t speed_Mode);
 extern uint8_t brakeAndThrottle_getSpeedMode();
 extern uint8_t brakeAndThrottle_toggleSpeedMode();
 extern void brakeAndThrottle_registerCBs(brakeAndThrottle_CBs_t *obj);

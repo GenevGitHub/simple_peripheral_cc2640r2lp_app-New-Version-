@@ -12,6 +12,7 @@
 #include "Dashboard.h"
 #include "motorControl.h"
 #include "ledControl.h"
+#include "dataAnalysis.h"
 #include <stdint.h>
 /*********************************************************************
  * CONSTANTS
@@ -19,27 +20,30 @@
 /*********************************************************************
  * GLOBAL VARIABLES
  */
-uint8_t speedMode;
-//uint16_t adc1Result;            // for debugging only. adc1 = brake signal
-uint16_t adc2Result;            // for debugging only. adc2 = throttle signal
-uint16_t throttlePercent;       // Actual throttle applied in percentage
-uint16_t throttlePercent0;
-uint16_t IQValue;               // Iq value command sent to STM32 / motor Controller
-uint16_t brakePercent;          // Actual brake applied in percentage
-uint16_t brakeStatus = 0;
-uint16_t brakeADCAvg;
-uint16_t throttleADCAvg;
+uint8_t     speedMode;
+uint16_t    adc2Result;             // adc2Result is a holder of the throttle ADC reading
+uint16_t    throttlePercent;        // Actual throttle applied in percentage
+uint16_t    throttlePercent0;
+uint16_t    IQValue;                // Iq value command sent to STM32 / motor Controller
+uint16_t    brakePercent;           // Actual brake applied in percentage
+uint16_t    brakeStatus = 0;
+uint16_t    brakeADCAvg;            // declared as global variable for debugging only
+uint16_t    throttleADCAvg;         // declared as global variable for debugging only
 
 /********************************************************************
  *  when brakeAndThrottle_errorMsg is true (=1),
  *  it generally means either (1) brake signal is not connected and/or (2) throttle signal is not connect
- *  IQValue is set to 0 = zero throttle
+ *  IQValue is set to 0 = zero throttle in default
  */
 uint8_t brakeAndThrottle_errorMsg = BRAKE_AND_THROTTLE_NORMAL;
+uint8_t throttle_errorStatus = 0;
+uint8_t brake_errorStatus = 0;
 
-uint8_t speedModeChgFlag = 0;    // SpeedModeChgFlag = 1 when speed mode has changed but instruction is not yet sent to Motor Controller
+// A Flag: SpeedModeChgFlag becomes 1 when speed mode has been changed but instruction is not yet sent to Motor Controller due to Unreleased Throttle Condition
+//uint8_t speedModeChgFlag = 0;
 
 /*********************************************************************
+ *
  * LOCAL VARIABLES
  */
 static brakeAndThrottle_timerManager_t  *brake_timerManager;
@@ -48,9 +52,10 @@ static brakeAndThrottle_adcManager_t    *brake_adc2Manager;
 static brakeAndThrottle_CBs_t           *brakeAndThrottle_CBs;
 
 static uint8_t  state = 0;
-static uint8_t  brakeIndex = 0;
+static uint8_t  brakeAndThrottleIndex = 0;
+//static uint8_t  brakeIndex = 0;
 static uint16_t brakeADCValues[BRAKE_AND_THROTTLE_SAMPLES];
-static uint8_t  throttleIndex = 0;
+//static uint8_t  throttleIndex = 0;
 static uint16_t throttleADCValues[BRAKE_AND_THROTTLE_SAMPLES];
 
 
@@ -67,10 +72,10 @@ static void brakeAndThrottle_getSpeedModeParams();
  * @param   none
  *
  * @return  none
- */
+ *********************************************************************/
 void brakeAndThrottle_init()
 {
-    speedMode = BRAKE_AND_THROTTLE_SPEED_MODE_LEISURE; // load and Read NVSinternal and get the last speed mode
+    //speedMode = BRAKE_AND_THROTTLE_SPEED_MODE_LEISURE; // load and Read NVSinternal and get the last speed mode
     brakeAndThrottle_getSpeedModeParams();
     uint8_t ii;
     for (ii = 0; ii < BRAKE_AND_THROTTLE_SAMPLES; ii++)
@@ -148,9 +153,9 @@ void brakeAndThrottle_toggle()
  *
  * @return  none
  */
-void brakeAndThrottle_setSpeedMode(uint8_t speedMode)
+void brakeAndThrottle_setSpeedMode(uint8_t speed_Mode)
 {
-    speedMode = speedMode;
+    speedMode = speed_Mode;
 }
 /*********************************************************************
  * @fn      brakeAndThrottle_getSpeedMode
@@ -192,7 +197,6 @@ uint16_t brakeAndThrottle_getBrakePercent()
     return brakePercent;
 }
 
-
 /*********************************************************************
  * @fn      brakeAndThrottle_getSpeedModeParams
  *
@@ -214,7 +218,6 @@ void brakeAndThrottle_getSpeedModeParams()
         {
             speedMode = BRAKE_AND_THROTTLE_SPEED_MODE_AMBLE;
             reductionRatio = BRAKE_AND_THROTTLE_SPEED_MODE_REDUCTION_RATIO_AMBLE;
-            //speedModeIQmax = BRAKE_AND_THROTTLE_TORQUEIQ_AMBLE;
             speedModeIQmax = reductionRatio * BRAKE_AND_THROTTLE_TORQUEIQ_MAX / 100;
             rampRate = BRAKE_AND_THROTTLE_RAMPRATE_AMBLE;
             allowableSpeed = BRAKE_AND_THROTTLE_MAXSPEED_AMBLE;
@@ -224,7 +227,6 @@ void brakeAndThrottle_getSpeedModeParams()
         {
             speedMode = BRAKE_AND_THROTTLE_SPEED_MODE_LEISURE;
             reductionRatio = BRAKE_AND_THROTTLE_SPEED_MODE_REDUCTION_RATIO_LEISURE;
-            //speedModeIQmax = BRAKE_AND_THROTTLE_TORQUEIQ_LEISURE;
             speedModeIQmax = reductionRatio * BRAKE_AND_THROTTLE_TORQUEIQ_MAX / 100;
             rampRate = BRAKE_AND_THROTTLE_RAMPRATE_LEISURE;
             allowableSpeed = BRAKE_AND_THROTTLE_MAXSPEED_LEISURE;
@@ -234,7 +236,6 @@ void brakeAndThrottle_getSpeedModeParams()
         {
             speedMode = BRAKE_AND_THROTTLE_SPEED_MODE_SPORTS;
             reductionRatio = BRAKE_AND_THROTTLE_SPEED_MODE_REDUCTION_RATIO_SPORTS;
-            //speedModeIQmax = BRAKE_AND_THROTTLE_TORQUEIQ_SPORTS;
             speedModeIQmax = reductionRatio * BRAKE_AND_THROTTLE_TORQUEIQ_MAX / 100;
             rampRate = BRAKE_AND_THROTTLE_RAMPRATE_SPORTS;
             allowableSpeed = BRAKE_AND_THROTTLE_MAXSPEED_SPORTS;
@@ -247,7 +248,7 @@ void brakeAndThrottle_getSpeedModeParams()
 /*********************************************************************
  * @fn      brakeAndThrottle_toggleSpeedMode
  *
- * @brief   To swap / toggle the speed Mode of the e-scooter
+ * @brief   To change / toggle the speed Mode of the e-scooter
  *
  * @param   none
  *
@@ -255,42 +256,58 @@ void brakeAndThrottle_getSpeedModeParams()
  */
 uint8_t brakeAndThrottle_toggleSpeedMode()
 {
-    speedModeChgFlag = 1;
-    if (adc2Result <= THROTTLE_ADC_CALIBRATE_L)                                     // Only allow speed mode change when no throttle is applied
+//    speedModeChgFlag = 1;
+    if (brake_errorStatus == 0)
     {
-        if(speedMode == BRAKE_AND_THROTTLE_SPEED_MODE_AMBLE)                       // Amble mode to Leisure mode
+        if (adc2Result <= THROTTLE_ADC_CALIBRATE_L)                                    // Only allow speed mode change when no throttle is applied - will by-pass if throttle is applied
         {
-            speedMode = BRAKE_AND_THROTTLE_SPEED_MODE_LEISURE;
-            reductionRatio = BRAKE_AND_THROTTLE_SPEED_MODE_REDUCTION_RATIO_LEISURE;
-            speedModeIQmax = reductionRatio * BRAKE_AND_THROTTLE_TORQUEIQ_MAX / 100;
-            rampRate = BRAKE_AND_THROTTLE_RAMPRATE_LEISURE;
-            allowableSpeed = BRAKE_AND_THROTTLE_MAXSPEED_LEISURE;
+            if(speedMode == BRAKE_AND_THROTTLE_SPEED_MODE_AMBLE)                       // Amble mode to Leisure mode
+            {
+                speedMode = BRAKE_AND_THROTTLE_SPEED_MODE_LEISURE;
+                reductionRatio = BRAKE_AND_THROTTLE_SPEED_MODE_REDUCTION_RATIO_LEISURE;
+                speedModeIQmax = reductionRatio * BRAKE_AND_THROTTLE_TORQUEIQ_MAX / 100;
+                rampRate = BRAKE_AND_THROTTLE_RAMPRATE_LEISURE;
+                allowableSpeed = BRAKE_AND_THROTTLE_MAXSPEED_LEISURE;
+            }
+            else if(speedMode == BRAKE_AND_THROTTLE_SPEED_MODE_LEISURE)                 // Leisure mode to Sports mode
+            {
+                speedMode = BRAKE_AND_THROTTLE_SPEED_MODE_SPORTS;
+                reductionRatio = BRAKE_AND_THROTTLE_SPEED_MODE_REDUCTION_RATIO_SPORTS;
+                speedModeIQmax = reductionRatio * BRAKE_AND_THROTTLE_TORQUEIQ_MAX / 100;
+                rampRate = BRAKE_AND_THROTTLE_RAMPRATE_SPORTS;
+                allowableSpeed = BRAKE_AND_THROTTLE_MAXSPEED_SPORTS;
+            }
+            else if(speedMode == BRAKE_AND_THROTTLE_SPEED_MODE_SPORTS)                  // Sports mode back to Amble mode
+            {
+                speedMode = BRAKE_AND_THROTTLE_SPEED_MODE_AMBLE;
+                reductionRatio = BRAKE_AND_THROTTLE_SPEED_MODE_REDUCTION_RATIO_AMBLE;
+                speedModeIQmax = reductionRatio * BRAKE_AND_THROTTLE_TORQUEIQ_MAX / 100;
+                rampRate = BRAKE_AND_THROTTLE_RAMPRATE_AMBLE;
+                allowableSpeed = BRAKE_AND_THROTTLE_MAXSPEED_AMBLE;
+            }
+            // Send updated speed mode parameters to motor control unit
+            motorcontrol_speedModeChgCB(speedModeIQmax, allowableSpeed, rampRate);
+            //Save the current setting
         }
-        else if(speedMode == BRAKE_AND_THROTTLE_SPEED_MODE_LEISURE)                 // Leisure mode to Sports mode
-        {
-            speedMode = BRAKE_AND_THROTTLE_SPEED_MODE_SPORTS;
-            reductionRatio = BRAKE_AND_THROTTLE_SPEED_MODE_REDUCTION_RATIO_SPORTS;
-            speedModeIQmax = reductionRatio * BRAKE_AND_THROTTLE_TORQUEIQ_MAX / 100;
-            rampRate = BRAKE_AND_THROTTLE_RAMPRATE_SPORTS;
-            allowableSpeed = BRAKE_AND_THROTTLE_MAXSPEED_SPORTS;
-        }
-        else if(speedMode == BRAKE_AND_THROTTLE_SPEED_MODE_SPORTS)                  // Sports mode back to Amble mode
+    }
+    else
+    {
+        if(speedMode != BRAKE_AND_THROTTLE_SPEED_MODE_AMBLE)        // This condition prevents unnecessary repetitive changes that does nothing
         {
             speedMode = BRAKE_AND_THROTTLE_SPEED_MODE_AMBLE;
             reductionRatio = BRAKE_AND_THROTTLE_SPEED_MODE_REDUCTION_RATIO_AMBLE;
             speedModeIQmax = reductionRatio * BRAKE_AND_THROTTLE_TORQUEIQ_MAX / 100;
             rampRate = BRAKE_AND_THROTTLE_RAMPRATE_AMBLE;
             allowableSpeed = BRAKE_AND_THROTTLE_MAXSPEED_AMBLE;
+            // Send updated speed mode parameters to motor control unit
+            motorcontrol_speedModeChgCB(speedModeIQmax, allowableSpeed, rampRate);
         }
-        //Save the current setting
-
-        motorcontrol_setGatt(DASHBOARD_SERV_UUID, DASHBOARD_SPEED_MODE, DASHBOARD_SPEED_MODE_LEN, (uint8_t *) &speedMode);  //update speed mode on client (App)
-
-        return speedMode;
-
     }
-
+    // Send updated speed mode parameters to App
+    motorcontrol_setGatt(DASHBOARD_SERV_UUID, DASHBOARD_SPEED_MODE, DASHBOARD_SPEED_MODE_LEN, (uint8_t *) &speedMode);  //update speed mode on client (App)
+    return speedMode;
 }
+
 /*********************************************************************
  * @fn      brakeAndThrottle_registerCBs
  *
@@ -364,6 +381,10 @@ void brakeAndThrottle_convertion(brakeAndThrottle_adcManager_t *obj)
  *
  * @param
  */
+//uint8_t brakeAndThrottle_errorMsg_Old = 0x00;
+//uint8_t speedModeChgCheck = 0;
+uint8_t brake_errorLog = 0;
+
 void brakeAndThrottle_ADC_conversion()
 {
     /*******************************************************************************************************************************
@@ -371,20 +392,17 @@ void brakeAndThrottle_ADC_conversion()
      *      get throttle ADC measurement
      *      Stores ADC measurement in arrays brakeADCValues & throttleADCValues
      *******************************************************************************************************************************/
-    uint16_t adc1Result;                           // adc1Result is a holder of the ADC reading
+    uint16_t adc1Result;                           // adc1Result is a holder of the brake ADC reading
     brake_adc1Manager -> brakeAndThrottle_ADC_Convert( &adc1Result );
-    brakeADCValues[ brakeIndex++ ] = adc1Result;
-    if (brakeIndex >= BRAKE_AND_THROTTLE_SAMPLES)
-    {
-        brakeIndex = 0;
-    }
+    brakeADCValues[ brakeAndThrottleIndex ] = adc1Result;
 
-    //uint16_t adc2Result;                           // adc2Result is a holder of the ADC reading
     brake_adc2Manager -> brakeAndThrottle_ADC_Convert( &adc2Result );
-    throttleADCValues[ throttleIndex++ ] = adc2Result;
-    if (throttleIndex >= BRAKE_AND_THROTTLE_SAMPLES)
+    throttleADCValues[ brakeAndThrottleIndex ] = adc2Result;
+
+    brakeAndThrottleIndex = brakeAndThrottleIndex++;
+    if (brakeAndThrottleIndex >= BRAKE_AND_THROTTLE_SAMPLES)
     {
-        throttleIndex = 0;
+        brakeAndThrottleIndex = 0;
     }
 
     /*******************************************************************************************************************************
@@ -393,45 +411,18 @@ void brakeAndThrottle_ADC_conversion()
      *      Sum the most recent "BRAKE_AND_THROTTLE_SAMPLES" number of data points, and
      *      calculate moving average brake and throttle ADC values
      *******************************************************************************************************************************/
-    uint16_t brakeADCTotal = 0xFF;
-    uint16_t throttleADCTotal = 0xFF;
+    uint16_t    brakeADCTotal = 0;
+    uint16_t    throttleADCTotal = 0;
     for (uint8_t index = 0; index < BRAKE_AND_THROTTLE_SAMPLES; index++)
     {
         brakeADCTotal += brakeADCValues[index];
         throttleADCTotal += throttleADCValues[index];
     }
     //uint16_t
-    brakeADCAvg = brakeADCTotal/BRAKE_AND_THROTTLE_SAMPLES;
+    brakeADCAvg = brakeADCTotal/BRAKE_AND_THROTTLE_SAMPLES;             // declared as global variable for debugging only
     //uint16_t
-    throttleADCAvg = throttleADCTotal/BRAKE_AND_THROTTLE_SAMPLES;
+    throttleADCAvg = throttleADCTotal/BRAKE_AND_THROTTLE_SAMPLES;       // declared as global variable for debugging only
 
-    /*******************************************************************************************************************************
-     *      Error Checking
-     *      Check whether brake ADC reading is logical, if illogical, brakeAndThrottle_errorMsg = error (!=0)
-     *      These Conditions occur when brake signals/power are not connected, or incorrect supply voltage
-     *      Once this condition occurs (brakeAndThrottle_errorMsg != 0), check brake connections, hall sensor fault,
-     *      Reset (Power off and power on again) is require to reset brakeAndThrottle_errorMsg.
-     *******************************************************************************************************************************/
-    if (BRAKE_ADC_THRESHOLD_L > brakeADCAvg)
-    {
-        brakeAndThrottle_errorMsg = BRAKE_ERROR;
-    }
-    if (brakeADCAvg > BRAKE_ADC_THRESHOLD_H)
-    {
-        brakeAndThrottle_errorMsg = BRAKE_ERROR;
-    }
-    /*******************************************************************************************************************************
-     *      Brake Signal Calibration
-     *      Truncates the average brake ADC signals to within BRAKE_ADC_CALIBRATE_L and BRAKE_ADC_CALIBRATE_H
-     *******************************************************************************************************************************/
-    if(brakeADCAvg > BRAKE_ADC_CALIBRATE_H)
-    {
-        brakeADCAvg = BRAKE_ADC_CALIBRATE_H;
-    }
-    if(brakeADCAvg < BRAKE_ADC_CALIBRATE_L)
-    {
-        brakeADCAvg = BRAKE_ADC_CALIBRATE_L;
-    }
     /*******************************************************************************************************************************
      *      Error Checking
      *      Check whether throttle ADC reading is logical, if illogical, brakeAndThrottle_errorMsg = error (!=0)
@@ -441,24 +432,83 @@ void brakeAndThrottle_ADC_conversion()
      *******************************************************************************************************************************/
     if (throttleADCAvg < THROTTLE_ADC_THRESHOLD_L)
     {
-       brakeAndThrottle_errorMsg = THROTTLE_ERROR;
+        throttle_errorStatus = 1;
+        // if throttle errorStatus = 1 -> disable throttle input and zero Iq command to Motor Controller Unit
+        ledControl_getError(11);
+
     }
     if (throttleADCAvg > THROTTLE_ADC_THRESHOLD_H)
     {
-       brakeAndThrottle_errorMsg = THROTTLE_ERROR;
+        throttle_errorStatus = 1;
+        // if throttle errorStatus = 1 -> disable throttle input and zero Iq command to Motor Controller Unit
+        ledControl_getError(11);
     }
     /*******************************************************************************************************************************
      *      Throttle Signal Calibration
      *      Truncates the average throttle ADC signals to within THROTTLE_ADC_CALIBRATE_L and THROTTLE_ADC_CALIBRATE_H
      *******************************************************************************************************************************/
-    if(throttleADCAvg > THROTTLE_ADC_CALIBRATE_H)
+    if((throttleADCAvg > THROTTLE_ADC_CALIBRATE_H) && (throttleADCAvg <= THROTTLE_ADC_THRESHOLD_H))
     {
         throttleADCAvg = THROTTLE_ADC_CALIBRATE_H;
     }
-    if(throttleADCAvg < THROTTLE_ADC_CALIBRATE_L)
+    if((throttleADCAvg < THROTTLE_ADC_CALIBRATE_L) && (throttleADCAvg >= THROTTLE_ADC_THRESHOLD_L))
     {
         throttleADCAvg = THROTTLE_ADC_CALIBRATE_L;
     }
+    /*******************************************************************************************************************************
+     *      Error Checking
+     *      Check whether brake ADC reading is logical, if illogical, brakeAndThrottle_errorMsg = error (!=0)
+     *      These Conditions occur when brake signals/power are not connected, or incorrect supply voltage
+     *      Once this condition occurs (brakeAndThrottle_errorMsg != 0), check brake connections, hall sensor fault,
+     *      Reset (Power off and power on again) is require to reset brakeAndThrottle_errorMsg.
+     *******************************************************************************************************************************/
+    if ((brakeADCAvg < BRAKE_ADC_THRESHOLD_L) || (brake_errorLog == 1))
+    {
+        brake_errorLog = 1;
+        if ((brake_errorStatus == 0) && (adc2Result <= THROTTLE_ADC_CALIBRATE_L))       // For safety reason, will change only when throttle value is less than THROTTLE_ADC_CALIBRATE_L
+        {
+            brakeAndThrottle_errorMsg = BRAKE_ERROR;
+            brake_errorStatus = 1;
+            speedMode = BRAKE_AND_THROTTLE_SPEED_MODE_AMBLE;
+            brakeAndThrottle_toggleSpeedMode();
+            ledControl_setSpeedMode(speedMode);
+            // if brake errorStatus = 1 -> limited to Amble mode Only
+            brake_errorLog = 0;
+        }
+        ledControl_getError(10);
+
+    }
+
+    if ((brakeADCAvg < BRAKE_ADC_THRESHOLD_L) || (brake_errorLog == 1))
+    {
+        brake_errorLog = 1;
+        if ((brake_errorStatus == 0) && (adc2Result <= THROTTLE_ADC_CALIBRATE_L))       // For safety reason, will change only when throttle value is less than THROTTLE_ADC_CALIBRATE_L
+        {
+            brakeAndThrottle_errorMsg = BRAKE_ERROR;
+            brake_errorStatus = 1;
+            speedMode = BRAKE_AND_THROTTLE_SPEED_MODE_AMBLE;
+            brakeAndThrottle_toggleSpeedMode();
+            ledControl_setSpeedMode(speedMode);
+            // if brake errorStatus = 1 -> limited to Amble mode Only
+            brake_errorLog = 0;
+        }
+        ledControl_getError(10);
+
+    }
+
+    /*******************************************************************************************************************************
+     *      Brake Signal Calibration
+     *      Truncates the average brake ADC signals to within BRAKE_ADC_CALIBRATE_L and BRAKE_ADC_CALIBRATE_H
+     *******************************************************************************************************************************/
+    if((brakeADCAvg > BRAKE_ADC_CALIBRATE_H) && (brakeADCAvg <= BRAKE_ADC_THRESHOLD_H))
+    {
+        brakeADCAvg = BRAKE_ADC_CALIBRATE_H;
+    }
+    if((brakeADCAvg < BRAKE_ADC_CALIBRATE_L) && (brakeADCAvg >= BRAKE_ADC_THRESHOLD_L))
+    {
+        brakeADCAvg = BRAKE_ADC_CALIBRATE_L;
+    }
+
     /********************************************************************************************************************************
      *  brakePercent is in percentage - has value between 0 - 100 %
      ********************************************************************************************************************************/
@@ -470,27 +520,37 @@ void brakeAndThrottle_ADC_conversion()
      *              dashboard will instruct motor controller to cut power to motor.
      *              Once power to motor is cut, both the brake & throttle must be released before power delivery can be resumed
     **********************************************************************************************************************************************/
-    if ((brakeStatus == 1) && (throttlePercent >= throttlePercent0 * THROTTLEPERCENTREDUCTION)) {                           // condition when rider has not release the throttle
-        if ((throttlePercent0 == 0) && (brakePercent <= BRAKEPERCENTTHRESHOLD)) {
-            brakeStatus = 0;                                                                                                // if brake is not pulled
+    if (brake_errorStatus == 0)         // under normal condition
+    {
+        if ((brakeStatus == 1) && (throttlePercent >= throttlePercent0 * THROTTLEPERCENTREDUCTION))
+        {                           // condition when rider has not release the throttle
+            if ((throttlePercent0 == 0) && (brakePercent <= BRAKEPERCENTTHRESHOLD))
+            {
+                brakeStatus = 0;                                                                                                // if brake is not pulled
+            }
+            else {
+                brakeStatus = 1;                                                                                                // if brake is pulled
+            }
         }
-        else {
-            brakeStatus = 1;                                                                                                // if brake is pulled
+        else if ((brakeStatus == 0) && (brakePercent > BRAKEPERCENTTHRESHOLD)) {                                                // condition when rider pulls on the brake
+            brakeStatus = 1;
+            throttlePercent0 = throttlePercent;
+        }
+        else if ((throttlePercent < throttlePercent0 * THROTTLEPERCENTREDUCTION) && (brakePercent <= BRAKEPERCENTTHRESHOLD)) {  // condition when rider releases the throttle && brake is released
+            brakeStatus = 0;
         }
     }
-    else if ((brakeStatus == 0) && (brakePercent > BRAKEPERCENTTHRESHOLD)) {                                                // condition when rider pulls on the brake
-        brakeStatus = 1;
-        throttlePercent0 = throttlePercent;
-    }
-    else if ((throttlePercent < throttlePercent0 * THROTTLEPERCENTREDUCTION) && (brakePercent <= BRAKEPERCENTTHRESHOLD)) {  // condition when rider releases the throttle && brake is released
+    else {                              // when brake error is present
         brakeStatus = 0;
     }
 
-    if (brakeStatus == 1){
+    if (brakeStatus == 1)
+    {
         // send instruction to STM32 to activate brake light
         // for regen-brake, send brakePercent to STM32
     }
-    else {
+    else
+    {
         // brake light off
         // regen-brake off
     }
@@ -500,32 +560,41 @@ void brakeAndThrottle_ADC_conversion()
     //uint16_t
     throttlePercent = (uint16_t) ((throttleADCAvg - THROTTLE_ADC_CALIBRATE_L) * 100 / (THROTTLE_ADC_CALIBRATE_H - THROTTLE_ADC_CALIBRATE_L));
 
-    if (brakeAndThrottle_errorMsg == 0) {
-        if (brakeStatus == 1){
+    // Throttle Error Safety Protocol -> when throttle error detected, IQValue is set to zero
+    if (throttle_errorStatus == 0)
+    {
+        if (brakeStatus == 1)
+        {
             IQValue = 0;
         }
-        else {
+        else
+        {
             IQValue = BRAKE_AND_THROTTLE_TORQUEIQ_MAX * reductionRatio * throttlePercent / 10000;
         }
     }
-    else {
+    else
+    {
         IQValue = 0;
     }
 
     /********************************************************************************************************************************
      * Send the throttle signal to STM32 Motor Controller
      ********************************************************************************************************************************/
-    brakeAndThrottle_CBs -> brakeAndThrottle_CB(allowableSpeed, throttlePercent, brakeAndThrottle_errorMsg);
+    // in "brakeAndThrottle_CB(allowableSpeed, IQValue, brakeAndThrottle_errorMsg)", brakeAndThrottle_errorMsg is sent to the motor control unit for error handling if necessary.
+    brakeAndThrottle_CBs -> brakeAndThrottle_CB(allowableSpeed, IQValue, brakeAndThrottle_errorMsg);
+
     /********************************************************************************************************************************
      *      The following is a safety critical routine/condition
      *      Firmware only allows speed mode change when throttle is not pressed concurrently/fully released
      *      If speed mode is changed && throttle is not pressed or is released,
      *      firmware will then send instructions to STM32 and assigns speed mode parameters
      ********************************************************************************************************************************/
-    //if ((speedModeChgFlag == 1) && (adc2Result <= THROTTLE_ADC_CALIBRATE_L)) {
-        motorcontrol_speedModeChgCB(speedModeIQmax, allowableSpeed, rampRate);
-        speedModeChgFlag = 0;
-    //}
+//    if ((speedModeChgFlag == 1) && (adc2Result <= THROTTLE_ADC_CALIBRATE_L))
+//    {
+////        motorcontrol_speedModeChgCB(speedModeIQmax, allowableSpeed, rampRate);
+//        speedModeChgFlag = 0;
+//        speedModeChgCheck++;
+//    }
 
     //Sends brake signal to the controller for tail light toggling
     //Do it as you like !!!

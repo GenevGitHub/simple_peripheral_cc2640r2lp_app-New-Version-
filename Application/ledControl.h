@@ -76,8 +76,12 @@ extern void ledControl_setUnitSelectDash( uint8_t UnitSelectDash );     // Set U
 extern void ledControl_changeUnit();
 extern void ledControl_setBLEStatus( uint8_t BLEStatus );               // Set BLE status
 extern void ledControl_changeBLE();
-extern void ledControl_setErrorCodeWarning( uint8_t errorCode );        // Set Warning
-extern void ledControl_changeError();
+
+//extern void ledControl_setErrorCode( uint8_t errorCode );        // Set Warning
+
+extern void ledControl_getError(uint8_t error_code);
+extern void ledControl_ErrorDisplay();
+//extern void ledControl_changeError();
 extern void ledControl_setLightMode( uint8_t light_mode );           // Set light mode
 extern void ledControl_changeLightMode();
 extern void ledControl_setLightStatus( uint8_t light_status );          // Set Light Status

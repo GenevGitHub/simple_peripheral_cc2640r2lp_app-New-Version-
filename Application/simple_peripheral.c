@@ -496,7 +496,7 @@ static void SimplePeripheral_init(void)
     // Note that advTimeout sets the time duration in seconds at which the peripheral is discover-able, except when...
     // advTimeout = 0.  when advTimeout = 0, the discover-able time duration is infinity.
     // e.g. advTimeout = 30, the peripheral is discover-able for 30 seconds, after which will switch over to waiting state.
-    uint16_t advTimeout = 120;                                       // Advertising time-out
+    uint16_t advTimeout = 30;                                       // Advertising time-out
     GAP_SetParamValue(TGAP_LIM_DISC_ADV_INT_MIN, advInt);
     GAP_SetParamValue(TGAP_LIM_DISC_ADV_INT_MAX, advInt);
     GAP_SetParamValue(TGAP_LIM_ADV_TIMEOUT, advTimeout);

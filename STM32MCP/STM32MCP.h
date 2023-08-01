@@ -70,7 +70,8 @@ extern "C"
 #define STM32MCP_SET_REVUP_DATA_FRAME_ID                                                     0x09
 #define STM32MCP_SET_CURRENT_REFERENCES_FRAME_ID                                             0x0A
 #define STM32MCP_SET_SYSTEM_CONTROL_CONFIG_FRAME_ID                                          0x0E
-
+#define STM32MCP_SET_DRIVE_MODE_CONFIG_FRAME_ID                                              0x13
+#define STM32MCP_SET_DYNAMIC_TORQUE_FRAME_ID                                                 0x14
 
 //payload for frame id (except for set_register_frame ID
 #define STM32MCP_GET_REGISTER_FRAME_PAYLOAD_LENGTH                                           0x01
@@ -81,7 +82,8 @@ extern "C"
 #define STM32MCP_SET_REVUP_DATA_FRAME_PAYLOAD_LENGTH                                         0x09
 #define STM32MCP_GET_REVUP_DATA_FRAME_PAYLOAD_LENGTH                                         0x01
 #define STM32MCP_SET_SYSTEM_CONTROL_CONFIG_PAYLOAD_LENGTH                                    0x01
-
+#define STM32MCP_SET_DRIVING_MODE_CONFIG_PAYLOAD_LENGTH                                      0x0A
+#define STM32MCP_SET_DYNAMIC_TORQUE_FRAME_PAYLOAD_LENGTH                                     0x08
 
 //Error code
 #define STM32MCP_BAD_FRAME_ID                                                                0x01
@@ -405,7 +407,9 @@ extern void STM32MCP_getRevupDataFrame(uint8_t motorID, uint8_t stage);
 extern void STM32MCP_setRevupDataFrame(uint8_t motorID, uint8_t stage, int32_t finalSpeed, int16_t finalTorque, uint16_t duration);
 extern void STM32MCP_setCurrentReferencesFrame(uint8_t motorID, int16_t torqueReference, int16_t fluxReference);
 extern void STM32MCP_setSystemControlConfigFrame(uint8_t sysCmdId);
-/*====================================================================================================================================*/
+/*==========================================================E-SCOOTER Control Functions ==============================================================*/
+extern void STM32MCP_setSpeedModeConfiguration(int32_t torqueIQ, int32_t allowableSpeed, uint16_t rampRate);
+extern void STM32MCP_setDynamicCurrent(int32_t allowableSpeed, int32_t IQValue);
 /*=================================================Functions to set the internal registers============================================*/
 extern void STM32MCP_setRegisterAttribute(uint8_t motorID, uint8_t regID, uint8_t payloadLength, uint8_t *payload);
 extern STM32MCP_regAttribute_t *STM32MCP_getRegisterAttribute(uint8_t motorID, uint8_t regID);

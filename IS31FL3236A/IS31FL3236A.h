@@ -46,8 +46,8 @@ extern "C"
 #define ZERO_ZERO_CUSTOM            0x00
 
 //PWM Brightness control
-#define PWM_CUSTOM                  0x8E //255 STEPS
-#define PWM_LOW                     0x20
+#define PWM_CUSTOM                  0xC8 //0x8E //255 STEPS
+#define PWM_LOW                     0x64 //0x20
 #define PWM_ZERO                    0x00
 
 

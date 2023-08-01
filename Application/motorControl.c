@@ -54,7 +54,7 @@ static void motorcontrol_rxMsgCb(uint8_t *rxMsg, STM32MCP_txMsgNode_t *STM32MCP_
 static void motorcontrol_exMsgCb(uint8_t exceptionCode);
 static void motorcontrol_erMsgCb(uint8_t errorCode);
 
-static void motorcontrol_brakeAndThrottleCB(uint16_t allowableSpeed, uint16_t throttlePercent, uint8_t errorMsg);
+static void motorcontrol_brakeAndThrottleCB(uint16_t allowableSpeed, uint16_t IQValue, uint8_t errorMsg);
 static void motorcontrol_controllerCB(uint8_t paramID);
 static void motorcontrol_dashboardCB(uint8_t paramID);
 static void motorcontrol_singleButtonCB(uint8_t messageID);
@@ -130,7 +130,7 @@ void motorcontrol_init(void)
 
     STM32MCP_init();
     STM32MCP_registerCBs(&STM32MCP_CBs);
-//    STM32MCP_startCommunication();    // Not activated
+    STM32MCP_startCommunication();    // Not activated
     mccheck = 4;
 
     periodicCommunication_start();
@@ -381,17 +381,20 @@ static void motorcontrol_erMsgCb(uint8_t errorCode)
  */
 uint16_t execute_rpm;
 //static void motorcontrol_brakeAndThrottleCB(uint16_t allowableSpeed, uint16_t IQValue, uint8_t errorMsg)
-static void motorcontrol_brakeAndThrottleCB(uint16_t allowableSpeed, uint16_t throttlePercent, uint8_t errorMsg)
+static void motorcontrol_brakeAndThrottleCB(uint16_t allowableSpeed, uint16_t IQValue, uint8_t errorMsg)
 {
-    if((errorMsg == BRAKE_AND_THROTTLE_NORMAL) && (throttlePercent >= 1))
+    if((errorMsg == BRAKE_AND_THROTTLE_NORMAL))
     {
-        //uint16_t
-        execute_rpm = (uint16_t) (allowableSpeed * throttlePercent / 100) & 0xFFFF;
-        STM32MCP_executeRampFrame(STM32MCP_MOTOR_1_ID, execute_rpm, 200);
-        STM32MCP_executeCommandFrame(STM32MCP_MOTOR_1_ID, STM32MCP_START_MOTOR_COMMAND_ID);
+        /*When driver accelerates / decelerates by twisting the throttle, the IQ signal with max. speed will be sent to the motor controller.
+         * */
+        STM32MCP_setDynamicCurrent(allowableSpeed, IQValue);
     }
     else
     {
+        /*In case the brake and throttle are in malfunction, for safety, the E-Scooter stops operation. User
+         *has to check the wire connections.
+         *You have to ensure the wires are connected properly!
+         * */
         STM32MCP_executeCommandFrame(STM32MCP_MOTOR_1_ID, STM32MCP_STOP_MOTOR_COMMAND_ID);
     }
 
@@ -412,9 +415,7 @@ void motorcontrol_speedModeChgCB(uint16_t torqueIQ, uint16_t allowableSpeed, uin
 {
     motorcontrol_speedModeChgCount++;           // for debugging only
     // send speed mode change parameters to motor control
-
-    //STM32MCP_executeRampFrame(STM32MCP_MOTOR_1_ID, rpm, 200);
-    //STM32MCP_executeCommandFrame(STM32MCP_MOTOR_1_ID, STM32MCP_START_MOTOR_COMMAND_ID);
+    STM32MCP_setSpeedModeConfiguration(torqueIQ, allowableSpeed, rampRate);
 }
 
 /*********************************************************************
@@ -490,6 +491,8 @@ static void motorcontrol_singleButtonCB(uint8_t messageID)
             // if Powering On -> switch to Power Off
             if(powerOn == 1){
                 powerOn = 0;
+                //  send power off command to motor controller
+                //  enters low power mode
                 //  turn off ADC
                 //  turn off I2C
                 //  turn off TSL2561
@@ -501,6 +504,7 @@ static void motorcontrol_singleButtonCB(uint8_t messageID)
             // if Powering Off -> switch to Power On
             else if(powerOn == 0){
                 powerOn = 1;
+                //  system reset (Program Counter resets)
                 //  call nvs read to read NVS memory - will take a few milliseconds to complete
                 //  nvsControl_nvsRead();
                 //  close NVS
@@ -508,6 +512,8 @@ static void motorcontrol_singleButtonCB(uint8_t messageID)
                 //  initialize I2C
                 //  initialize TSL2561
                 //  turn ON tasks
+                //  checks UART connection
+                //  send power on command to motor controller
             }
         // ICallPlatform_pwrNotify(unsigned int eventType, uintptr_t eventArg, uintptr_t clientArg)
             break;
