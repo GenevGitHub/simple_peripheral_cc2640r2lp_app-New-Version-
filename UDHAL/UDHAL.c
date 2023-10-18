@@ -44,7 +44,7 @@
 uint8_t udhalcheck = 0;
 void UDHAL_init()
 {
-    //UDHAL_NVSINT_init();          // nvs internal
+//    UDHAL_NVSINT_init();          // nvs internal
     //UDHAL_NVSINT_params_init();   // nvs internal
     udhalcheck = 1;
 
@@ -110,3 +110,5 @@ uint8_t UDHAL_getI2CStatus()
 {
     return UDHAL_I2C_getOpenStatus();
 }
+
+/*Peripheral De-Initialization*/

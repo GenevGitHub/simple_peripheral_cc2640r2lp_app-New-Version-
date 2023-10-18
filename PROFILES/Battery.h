@@ -57,6 +57,7 @@ extern "C"
 * CONSTANTS
 */
 // Service UUID
+//#define BATTERY_SERV_UUID                       0x5810
 #define BATTERY_SERV_UUID                       0x180F
 
 //  Characteristic definition - in percentage
@@ -81,14 +82,15 @@ extern "C"
 
 //  Characteristic defines -> display battery status from 1 to 5
 #define BATTERY_BATTERY_STATUS                  4
+//#define BATTERY_BATTERY_STATUS_UUID             0x5801
 #define BATTERY_BATTERY_STATUS_UUID             0x2A1B
 #define BATTERY_BATTERY_STATUS_LEN              1
 
 // Battery Error Code
-#define BATTERY_NORMAL                          10
-#define BMS_COMMUNICATION_ERROR                 11
-#define BATTERY_TEMPERATURE_ABNORMAL            12
-#define BATTERY_OVER_CURRENT                    13
+#define BATTERY_NORMAL                          0x00
+#define BMS_COMMUNICATION_ERROR                 0x1C
+#define BATTERY_TEMPERATURE_ABNORMAL            0x1A
+#define BATTERY_OVER_CURRENT                    0x1E
 
 /*********************************************************************
  * TYPEDEFS

@@ -159,7 +159,7 @@ extern Display_Handle dispHandle;
  * @return      None.
  */
 int main()
-    {
+{
 #if defined( USE_FPGA )
   HWREG(PRCM_BASE + PRCM_O_PDCTL0) &= ~PRCM_PDCTL0_RFC_ON;
   HWREG(PRCM_BASE + PRCM_O_PDCTL1) &= ~PRCM_PDCTL1_RFC_ON;
@@ -211,6 +211,7 @@ int main()
   user0Cfg.appServiceInfo->timerMaxMillisecond  = ICall_getMaxMSecs();
 #endif  /* ICALL_JT */
 
+//  UDHAL_NVSINT_init();
 
   /* Initialize ICall module */
   ICall_init();
@@ -251,7 +252,8 @@ int main()
  *              for use by their own application.  To do this, add hal_assert.c
  *              to your project workspace, the path to hal_assert.h (this can
  *              be found on the stack side). Asserts are raised by including
- *              hal_assert.h and using macro HAL_ASSERT(cause) to raise an
+ *              hal_assert.h and using macro H
+ *              AL_ASSERT(cause) to raise an
  *              assert with argument assertCause.  the assertSubcause may be
  *              optionally set by macro HAL_ASSERT_SET_SUBCAUSE(subCause) prior
  *              to asserting the cause it describes. More information is

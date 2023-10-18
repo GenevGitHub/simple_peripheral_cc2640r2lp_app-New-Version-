@@ -590,6 +590,9 @@ static void SimplePeripheral_init(void)
  */
 static void SimplePeripheral_taskFxn(UArg a0, UArg a1)
 {
+  /*Start booting process here !*/
+  /*Count for 1.5 seconds, otherwise, the system enters into sleep mode !*/
+
   SimplePeripheral_init();
   motorcontrol_init();
   motorcontrol_registerCB(&EnqueueMsgCB);

@@ -179,6 +179,12 @@ PROFILES/Controller.obj: C:/ti/xdctools_3_51_03_28_core/packages/xdc/runtime/Typ
 PROFILES/Controller.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/kernel/tirtos/packages/ti/sysbios/interfaces/ITaskSupport.h
 PROFILES/Controller.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/kernel/tirtos/packages/ti/sysbios/knl/Task__epilogue.h
 PROFILES/Controller.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/kernel/tirtos/packages/ti/sysbios/knl/package/Task_SupportProxy.h
+PROFILES/Controller.obj: C:/Users/Public/Documents/TI-workspace/simple_peripheral_cc2640r2lp_app/Application/motorControl.h
+PROFILES/Controller.obj: C:/Users/Public/Documents/TI-workspace/simple_peripheral_cc2640r2lp_app/Application/simple_peripheral.h
+PROFILES/Controller.obj: C:/ti/ti-cgt-arm_18.12.5.LTS/include/stdlib.h
+PROFILES/Controller.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/I2C.h
+PROFILES/Controller.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/NVS.h
+PROFILES/Controller.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/GPIO.h
 PROFILES/Controller.obj: ../PROFILES/Controller.h
 
 ../PROFILES/Controller.c:
@@ -538,6 +544,18 @@ C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/kernel/tirtos/packages/ti/sysbios/inter
 C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/kernel/tirtos/packages/ti/sysbios/knl/Task__epilogue.h:
 
 C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/kernel/tirtos/packages/ti/sysbios/knl/package/Task_SupportProxy.h:
+
+C:/Users/Public/Documents/TI-workspace/simple_peripheral_cc2640r2lp_app/Application/motorControl.h:
+
+C:/Users/Public/Documents/TI-workspace/simple_peripheral_cc2640r2lp_app/Application/simple_peripheral.h:
+
+C:/ti/ti-cgt-arm_18.12.5.LTS/include/stdlib.h:
+
+C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/I2C.h:
+
+C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/NVS.h:
+
+C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/GPIO.h:
 
 ../PROFILES/Controller.h:
 

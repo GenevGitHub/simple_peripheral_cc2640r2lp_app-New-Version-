@@ -16,7 +16,7 @@
 /*********************************************************************
 * LOCAL VARIABLES
 */
-static uint8_t buttonState = SINGLE_BUTTON_WAITING_STATE;
+static uint8_t buttonState = SINGLE_BUTTON_WAITING_STATE; //It's a default waiting state!!!!
 uint32_t timerPeriod;
 uint8_t risingEdgeCount = 0;    // make this static if not debugging
 uint8_t fallingEdgeCount = 0;   // make this static if not debugging
@@ -133,6 +133,7 @@ uint8_t buttonEvent = 0x00;
 
 void singleButton_processTimerOv()
 {
+//    singleButton_timerManager->timerStop();
     // TOGGLE POWER ON/OFF
     if (risingEdgeCount == 0 && fallingEdgeCount == 1)
     {

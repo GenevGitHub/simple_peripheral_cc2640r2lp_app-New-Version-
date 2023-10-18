@@ -20,6 +20,7 @@
 #include "UDHAL/UDHAL_I2C.h"
 #include "IS31FL3236A/IS31FL3236A.h"
 #include "TSL2561/TSL2561.h"
+#include "STM32MCP/STM32MCP.h"
 
 /*********************************************************************
  * @fn      lightControl_initialization
@@ -97,15 +98,14 @@ static void GPtimer_taskFxn(UArg a0, UArg a1)
         ledControl_changeLightMode();
         ledControl_changeSpeedMode();
         ledControl_changeUnit();
-        ledControl_changeBLE();
-        ledControl_changeBatteryStatus();
+        ledControl_changeBLE(GPT_taskCounter);
+        ledControl_changeBatteryStatus(GPT_taskCounter);
         ledControl_changeDashSpeed();
         ledControl_changeLightStatus();
-
+        //STM32MCP_setSystemControlConfigFrame(STM32MCP_HEARTBEAT);
         // Task timing & delay
         Task_sleep(utime_Interval * 1000 / Clock_tickPeriod);
         GPT_taskCounter++;                              // for debugging only
-
     }
 
 }

@@ -17,7 +17,7 @@ extern "C"
 #include <stdlib.h>
 #include <ti/sysbios/knl/Clock.h>
 #include <ti/sysbios/knl/Task.h>
-
+#include "motorControl.h"
 //Constants
 #define DATAANALYSIS_TASK_PRIORITY      6
 /*********************************************************************************************
@@ -30,10 +30,11 @@ extern "C"
 // Note:    Data Analysis Interval = (DATA_ANALYSIS_POINTS - 1) x DATA_ANALYSIS_SAMPLING_TIME
 //          Averge_economy refresh interval =  Data Analysis Interval x UDTRIGGER
 //          Total time interval stored in memory = Averge_economy refresh interval x UDARRAYSIZE
+//          (DATA_ANALYSIS_POINTS-1) x DATA_ANALYSIS_SAMPLING_TIME = Integration_time.  Integration_time x UDTRIGGER = NVS_Data_Interval.  NVS_Data_Interval x UDARRAYSIZE = Total_Data_Interval
 // Option 1:  (21-1) x 400ms = 8000ms.  8000ms x 45 = 360000ms = 6 minutes. 6 minutes x 20 = 120 minutes = 2 hours
-// Option 2:  (13-1) x 400ms = 4800ms.  4800ms x 75 = 360000ms = 6 minutes. 6 minutes x 10 = 60 minutes
+// Option 2:  (13-1) x 400ms = 4800ms.  4800ms x 75 = 360000ms = 6 minutes. 6 minutes x 10 = 60 minutes (1 hour)
 // Option 3:  (13-1) x 400ms = 4800ms.  4800ms x 125 = 600000ms = 10 minutes. 10 minutes x 6 = 60 minutes = 1 hour
-// Option 4:  (17-1) x 300ms = 4800ms.  4800ms x 75 = 480000ms = 6 minutes. 6 minutes x 10 = 60 minutes = 1 hour
+// Option 4:  (17-1) x 300ms = 4800ms.  4800ms x 75 = 360000ms = 6 minutes. 6 minutes x 10 = 60 minutes = 1 hour
 /*********************************************************************************************
  *  Vehicle Information
  *********************************************************************************************/
@@ -41,8 +42,8 @@ extern "C"
 #define COEFF01                         0.2156          // kg/km
 #define COEFF02                         0.000386        // kg/W-hr
 #define BCF                             0.9             // Battery Capacity Safety Factor
-#define CRIT_HEATSINKTEMPERATURE_C      100             // Critical Heatsink Temperature
-#define CRIT_MOTORTEMPERATURE_C         125             // Critical Motor Temperature
+#define CRIT_HEATSINKTEMPERATURE_C      90              // Critical Heatsink Temperature
+#define CRIT_MOTORTEMPERATURE_C         100             // Critical Motor Temperature
 /*********************************************************************************************
  *  Unit Conversion
  *********************************************************************************************/
@@ -98,7 +99,7 @@ typedef struct usageData{
         uint32_t UDCounter;                             // to Cloud - require device parameters
         uint32_t totalPowerConsumption_mWh;             // to Cloud, App display input - require device parameters
         uint32_t totalMileage_dm;                       // to Cloud, App display input - require device parameters
-}UD;
+}UD_t;
 
 // This set of data is temporary on the dashboard - this set of data is sent to the APP for displaying when connected with BLE
 typedef struct appData{                                 // is appData needed here??
@@ -107,16 +108,16 @@ typedef struct appData{                                 // is appData needed her
         uint32_t accumMileage_dm;                       // length = 4 . to Cloud, App display input - require device parameters
         uint32_t range_m;                               // length = 4 . App display input - require device parameters
         uint32_t co2Saved_g;                            // length = 4 . App display input
+        uint32_t economy_100Whpk;                       // length = 4 . App display input - require retrieving saved data
         uint16_t instantEconomy_100Whpk;                // length = 2 . Disable for now  // App display input - require retrieving saved data
-        uint16_t economy_100Whpk;                       // length = 2 . App display input - require retrieving saved data
         uint16_t avgBatteryVoltage_mV;                  // length = 2 . to Cloud - require device parameters
-        uint16_t errorCode;                             // length = 2 . to Cloud, Both LED display and App Display (May have to separate error code into their respective services)
+        uint8_t errorCode;                             // length = 2 . to Cloud, Both LED display and App Display (May have to separate error code into their respective services)
         uint8_t avgSpeed_kph;                           // length = 1 . to Cloud - require device parameters
         int8_t avgHeatSinkTemperature_C;                // temperature can be sub-zero
         uint8_t batteryPercentage;                      // length = 1 (0-100%). App display input - require device parameters
         uint8_t batteryStatus;                          // length = 1 . Both LED display and App display input - require device parameters
         int8_t motorTemperature_C;                      // temperature can be sub-zero
-}AD;        // 4-4-4-4-4-2-2-2-2-1-1-1-1-1 decreasing byte size minimizes the amount of struct padding
+}AD_t;        // 4-4-4-4-4-2-2-2-2-1-1-1-1-1 decreasing byte size minimizes the amount of struct padding
 
 /*********************************************************************
 * MACROS
@@ -142,6 +143,7 @@ typedef struct
 extern void dataAnalysis_registerNVSINT( dataAnalysis_NVS_Manager_t *nvsManager );
 
 static void dataAnalysis_taskFxn(UArg a0, UArg a1);
+extern void dataAnalsis_motorControl(MCUD_t (*ptrMCUD));
 
 //Battery status related Function declaration
 extern uint8_t computeBatteryPercentage( void );
@@ -178,18 +180,18 @@ extern void dataAnalysis_NVSWrite( void );
 //Performance related Function declaration
 extern uint32_t computePowerConsumption( void ); // output in mW-hr
 extern uint32_t computeDistanceTravelled( void );// output in decimeter
-extern uint8_t computeAvgSpeed(uint32_t deltaMileage_dm);   // output in km/hr
-extern int8_t computeAvgHeatSinkTemperature( void );         // output in degrees celsius
+extern uint8_t  computeAvgSpeed(uint32_t deltaMileage_dm);   // output in km/hr
+extern int8_t   computeAvgHeatSinkTemperature( void );         // output in degrees celsius
 extern uint32_t computeAvgBatteryVoltage( void ); // output in mV
 extern uint16_t computeInstantEconomy(uint32_t deltaPowerConsumption_mWh, uint32_t deltaMileage_dm); // unit in W-hr / km x 100
-extern uint16_t computeEconomy( void );  // unit in W-hr / km x 100
+extern uint32_t computeEconomy( void );  // unit in W-hr / km x 100
 extern uint32_t computeRange( void ); // output in metres
 extern uint32_t computeCO2Saved( void ); // in g
-extern int8_t computeMotorTemperature( void ); // in degrees Celsius
+extern int8_t   computeMotorTemperature( void ); // in degrees Celsius
 
 extern void dataAnalysis_sampling(uint8_t x_hf, uint16_t STM32MCP_batteryVoltage, uint16_t STM32MCP_batteryCurrent,
                                   uint16_t STM32MCP_rpm, int8_t STM32MCP_heatsinkTemp, int8_t STM32MCP_motorTemp);
-
+extern uint8_t dataAnalysis_getInitSpeedMode(void);
 //
 #ifdef __cplusplus
 }

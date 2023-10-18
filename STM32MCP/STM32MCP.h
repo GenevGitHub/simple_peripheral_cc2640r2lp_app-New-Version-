@@ -70,6 +70,7 @@ extern "C"
 #define STM32MCP_SET_REVUP_DATA_FRAME_ID                                                     0x09
 #define STM32MCP_SET_CURRENT_REFERENCES_FRAME_ID                                             0x0A
 #define STM32MCP_SET_SYSTEM_CONTROL_CONFIG_FRAME_ID                                          0x0E
+#define STM32MCP_ESCOOTER_CONTROL_DEBUG_FRAME_ID                                             0x1E
 #define STM32MCP_SET_DRIVE_MODE_CONFIG_FRAME_ID                                              0x13
 #define STM32MCP_SET_DYNAMIC_TORQUE_FRAME_ID                                                 0x14
 
@@ -82,6 +83,7 @@ extern "C"
 #define STM32MCP_SET_REVUP_DATA_FRAME_PAYLOAD_LENGTH                                         0x09
 #define STM32MCP_GET_REVUP_DATA_FRAME_PAYLOAD_LENGTH                                         0x01
 #define STM32MCP_SET_SYSTEM_CONTROL_CONFIG_PAYLOAD_LENGTH                                    0x01
+#define STM32MCP_ESCOOTER_CONTROL_DEBUG_PAYLOAD_LENGTH                                       0x01
 #define STM32MCP_SET_DRIVING_MODE_CONFIG_PAYLOAD_LENGTH                                      0x0A
 #define STM32MCP_SET_DYNAMIC_TORQUE_FRAME_PAYLOAD_LENGTH                                     0x08
 
@@ -154,6 +156,10 @@ extern "C"
 #define STM32MCP_RAMP_FINAL_SPEED_REG_ID                                                     0x5B
 #define STM32MCP_RAMP_DURATION_REG_ID                                                        0x5C
 
+//self defined REG_ID
+#define STM32MCP_MOTOR_TEMPERATURE_REG_ID                                                    0x71
+#define STM32MCP_CONTROLLER_ERRORCODE_REG_ID                                                 0x72
+
 //Payload length for regID
 #define STM32MCP_TARGET_MOTOR_PAYLOAD_LENGTH                                                 0x02
 #define STM32MCP_FLAGS_PAYLOAD_LENGTH                                                        0x05
@@ -207,6 +213,10 @@ extern "C"
 #define STM32MCP_RAMP_FINAL_SPEED_PAYLOAD_LENGTH                                             0x05
 #define STM32MCP_RAMP_DURATION_PAYLOAD_LENGTH                                                0x03
 
+//self defined PAYLOAD_LENGTH
+#define STM32MCP_MOTOR_TEMPERATURE_PAYLOAD_LENGTH                                            0x03
+#define STM32MCP_CONTROLLER_ERRORCODE_PAYLOAD_LENGTH                                         0x02
+
 //Command list
 #define STM32MCP_START_MOTOR_COMMAND_ID                                                      0x01
 #define STM32MCP_STOP_MOTOR_COMMAND_ID                                                       0x02
@@ -217,15 +227,21 @@ extern "C"
 
 //system command ID
 #define STM32MCP_POWER_OFF                                                                   0x00
-#define STM32MCP_POWER_ON                                                                    0x01
+#define STM32MCP_POWER_ON                                                                    0x01   //Maybe it's not necessary (?) Since we wake up the controller by GPIO EXTI
 #define STM32MCP_HEARTBEAT                                                                   0x02
 #define STM32MCP_GET_SERIAL_NUMBER                                                           0x03
 #define STM32MCP_TAIL_LIGHT_ON                                                               0x04
 #define STM32MCP_TAIL_LIGHT_OFF                                                              0x05
 #define STM32MCP_TOGGLE_TAIL_LIGHT                                                           0x06
 
-#define STM32MCP_SYSTEM_MAXIMUM_VOLTAGE                                                      42000  // for 37000 mV battery, max V is 42000 mV - we will assume 42000 mV for all calculations
-#define STM32MCP_SYSTEM_MIMIMUM_VOLTAGE                                                      29000  // for 37000 mV battery, min usable V is 29000 mV - below this will damage the battery pack
+//Escooter Application Control Command ID (Fast Debugging for Basic Operations)
+#define STM32MCP_ESCOOTER_THROTTLE_PRESS                                                     0x00
+#define STM32MCP_ESCOOTER_BRAKE_PRESS                                                        0x01
+#define STM32MCP_ESCOOTER_BRAKE_RELEASE                                                      0x02
+#define STM32MCP_ESCOOTER_DRIVE_MODE_CONFIG                                                  0x03
+
+#define STM32MCP_SYSTEM_MAXIMUM_VOLTAGE                                                      41700  // for 37000 mV battery, max V is 42000 mV - we will assume 42000 mV for all calculations
+#define STM32MCP_SYSTEM_MIMIMUM_VOLTAGE                                                      30000  // for 37000 mV battery, min usable V is 29000 mV - below this will damage the battery pack
 /*********************************************************************
  * MACROS
  */
@@ -407,9 +423,10 @@ extern void STM32MCP_getRevupDataFrame(uint8_t motorID, uint8_t stage);
 extern void STM32MCP_setRevupDataFrame(uint8_t motorID, uint8_t stage, int32_t finalSpeed, int16_t finalTorque, uint16_t duration);
 extern void STM32MCP_setCurrentReferencesFrame(uint8_t motorID, int16_t torqueReference, int16_t fluxReference);
 extern void STM32MCP_setSystemControlConfigFrame(uint8_t sysCmdId);
+extern void STM32MCP_setEscooterControlDebugFrame(uint8_t debugID);
 /*==========================================================E-SCOOTER Control Functions ==============================================================*/
 extern void STM32MCP_setSpeedModeConfiguration(int32_t torqueIQ, int32_t allowableSpeed, uint16_t rampRate);
-extern void STM32MCP_setDynamicCurrent(int32_t allowableSpeed, int32_t IQValue);
+extern void STM32MCP_setDynamicCurrent(int16_t allowableSpeed, int16_t IQValue);
 /*=================================================Functions to set the internal registers============================================*/
 extern void STM32MCP_setRegisterAttribute(uint8_t motorID, uint8_t regID, uint8_t payloadLength, uint8_t *payload);
 extern STM32MCP_regAttribute_t *STM32MCP_getRegisterAttribute(uint8_t motorID, uint8_t regID);

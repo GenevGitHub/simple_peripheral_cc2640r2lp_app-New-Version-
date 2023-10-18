@@ -166,6 +166,10 @@ Application/brakeAndThrottle.obj: ../Application/dataAnalysis.h
 Application/brakeAndThrottle.obj: C:/ti/ti-cgt-arm_18.12.5.LTS/include/stdlib.h
 Application/brakeAndThrottle.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/kernel/tirtos/packages/ti/sysbios/knl/Clock.h
 Application/brakeAndThrottle.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/kernel/tirtos/packages/ti/sysbios/knl/Task.h
+Application/brakeAndThrottle.obj: ../Application/lightControl.h
+Application/brakeAndThrottle.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/kernel/tirtos/packages/ti/sysbios/knl/Clock.h
+Application/brakeAndThrottle.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/kernel/tirtos/packages/ti/sysbios/knl/Task.h
+Application/brakeAndThrottle.obj: C:/Users/Public/Documents/TI-workspace/simple_peripheral_cc2640r2lp_app/STM32MCP/STM32MCP.h
 
 ../Application/brakeAndThrottle.c:
 
@@ -498,4 +502,12 @@ C:/ti/ti-cgt-arm_18.12.5.LTS/include/stdlib.h:
 C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/kernel/tirtos/packages/ti/sysbios/knl/Clock.h:
 
 C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/kernel/tirtos/packages/ti/sysbios/knl/Task.h:
+
+../Application/lightControl.h:
+
+C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/kernel/tirtos/packages/ti/sysbios/knl/Clock.h:
+
+C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/kernel/tirtos/packages/ti/sysbios/knl/Task.h:
+
+C:/Users/Public/Documents/TI-workspace/simple_peripheral_cc2640r2lp_app/STM32MCP/STM32MCP.h:
 

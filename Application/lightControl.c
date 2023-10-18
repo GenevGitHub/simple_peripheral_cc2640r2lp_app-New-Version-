@@ -270,10 +270,9 @@ uint8_t lightControl_lightModeChange()
     {
         light_mode = 0;
     }
-    motorcontrol_setGatt(DASHBOARD_SERV_UUID, DASHBOARD_LIGHT_MODE, DASHBOARD_LIGHT_MODE_LEN, (uint8_t *) &light_mode);
-//    ledControl_setLightMode(light_mode);
-    (*lightModeArray[light_mode])();
 
+    motorcontrol_setGatt(DASHBOARD_SERV_UUID, DASHBOARD_LIGHT_MODE, DASHBOARD_LIGHT_MODE_LEN, (uint8_t *) &light_mode);
+    (*lightModeArray[light_mode])();
     return light_mode;
 
 }
@@ -313,4 +312,11 @@ void lightControl_ALS_Controller( void )
         luxIndex = 0;
     }
 
+}
+
+
+
+void lightControl_gapRoleChg()
+{
+    motorcontrol_setGatt(DASHBOARD_SERV_UUID, DASHBOARD_LIGHT_MODE, DASHBOARD_LIGHT_MODE_LEN, (uint8_t *) &light_mode);
 }

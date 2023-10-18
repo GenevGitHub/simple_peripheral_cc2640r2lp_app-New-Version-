@@ -101,7 +101,7 @@ extern "C"
 //  Characteristic definition
 #define CONTROLLER_TOTAL_ENERGY_EFFICIENCY          8
 #define CONTROLLER_TOTAL_ENERGY_EFFICIENCY_UUID     0X7806
-#define CONTROLLER_TOTAL_ENERGY_EFFICIENCY_LEN      2
+#define CONTROLLER_TOTAL_ENERGY_EFFICIENCY_LEN      4
 
 //  Characteristic definition
 #define CONTROLLER_RANGE                            9
@@ -124,16 +124,16 @@ extern "C"
 #define CONTROLLER_MOTOR_TEMPERATURE_LEN            1
 
 // Controller Error Codes
-#define CONTROLLER_NORMAL                           20
-#define PHASE_CURRENT_ABNORMAL                      21
-#define MOSFET_ABNORMAL                             22
-#define OPAMP_ABNORAML                              23
-#define CURRENT_ABNORMAL                            24
-#define HEATSINK_TEMPERATURE_ABNORMAL               25
+#define CONTROLLER_NORMAL                           0x00
+#define PHASE_CURRENT_ABNORMAL                      0x2A
+#define MOSFET_ABNORMAL                             0x2E
+//#define OPAMP_ABNORAML
+#define GATE_DRIVER_ABNORMAL                        0x2C
+#define HEATSINK_TEMPERATURE_ABNORMAL               0x2F
 //  Motor Error Codes
-#define MOTOR_NORMAL                                30
-#define HALL_SENSOR_ABNORMAL                        31
-#define MOTOR_TEMPERATURE_ABNORMAL                  32
+#define MOTOR_NORMAL                                0x00
+#define HALL_SENSOR_ABNORMAL                        0x3A
+#define MOTOR_TEMPERATURE_ABNORMAL                  0x3C
 /*********************************************************************
  * TYPEDEFS
  */

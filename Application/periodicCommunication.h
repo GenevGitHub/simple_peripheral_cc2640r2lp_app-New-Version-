@@ -25,8 +25,9 @@ extern "C"
 /*********************************************************************
  * CONSTANTS
  */
-//  PERIODIC_COMMUNICATION_HF_SAMPLING_TIME = 400 ms is the optimum time based on tests
-#define PERIODIC_COMMUNICATION_HF_SAMPLING_TIME      300    //400    // This must be the same as DATA_ANALYSIS_SAMPLING_TIME = 400ms
+//  if PERIODIC_COMMUNICATION_HF_SAMPLING_TIME = 400 ms , DATA_ANALYSIS_POINTS = 13
+//  if PERIODIC_COMMUNICATION_HF_SAMPLING_TIME = 300 ms , DATA_ANALYSIS_POINTS = 17
+#define PERIODIC_COMMUNICATION_HF_SAMPLING_TIME      300    //400
 // DATA_ANALYSIS_POINTS must be an odd number (due to numerical integration using Simpson's 1/3 rule)
 #define DATA_ANALYSIS_POINTS                         17     //13     // Must satisfy the equation:  (DATA_ANALYSIS_POINTS - 1) x DATA_ANALYSIS_SAMPLING_TIME = (21 - 1) * 400 ms = 8000 ms
                                                             // Must satisfy the equation:  (DATA_ANALYSIS_POINTS - 1) x DATA_ANALYSIS_SAMPLING_TIME = (13 - 1) * 400 ms = 4800 ms
@@ -62,6 +63,7 @@ extern void periodicCommunication_register_lfTimer(motorcontrol_timerManager_t *
 extern void periodicCommunication_registerBLE_Gatt(simplePeripheral_bleCBs_t *obj);
 extern void periodicCommunication_hf_communication();
 extern void periodicCommunication_lf_communication();
+void periodicCommunication_STM32MCP_getRegisterFrame();
 extern uint8_t periodicCommunication_getxlf();
 extern uint8_t periodicCommunication_getxhf();
 //extern void periodicCommunication_setGatt(uint16_t serviceUUID, uint8_t charteristics, uint8_t payloadLength, uint8_t* payload)

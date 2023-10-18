@@ -69,36 +69,44 @@
 */
 
 // Battery Service UUID
+//static CONST uint8 BatteryUUID[ATT_UUID_SIZE] =
+//{
+//     TI_BASE_UUID_128(BATTERY_SERV_UUID)
+//};
 static CONST uint8 BatteryUUID[ATT_BT_UUID_SIZE] =
 {
-  LO_UINT16(BATTERY_SERV_UUID), HI_UINT16(BATTERY_SERV_UUID)
+     LO_UINT16(BATTERY_SERV_UUID), HI_UINT16(BATTERY_SERV_UUID)
 };
 
 // Battery_Level UUID
 static CONST uint8 Battery_Battery_LevelUUID[ATT_BT_UUID_SIZE] =
 {
-  LO_UINT16(BATTERY_BATTERY_LEVEL_UUID), HI_UINT16(BATTERY_BATTERY_LEVEL_UUID)
+     LO_UINT16(BATTERY_BATTERY_LEVEL_UUID), HI_UINT16(BATTERY_BATTERY_LEVEL_UUID)
 };
 // BATTERY_VOLTAGE UUID
 static CONST uint8 Battery_Battery_VoltageUUID[ATT_BT_UUID_SIZE] =
 {
-  LO_UINT16(BATTERY_BATTERY_VOLTAGE_UUID), HI_UINT16(BATTERY_BATTERY_VOLTAGE_UUID)
+     LO_UINT16(BATTERY_BATTERY_VOLTAGE_UUID), HI_UINT16(BATTERY_BATTERY_VOLTAGE_UUID)
 };
 // BATTERY_TEMPERATURE UUID
 static CONST uint8 Battery_Battery_TemperatureUUID[ATT_BT_UUID_SIZE] =
 {
-  LO_UINT16(BATTERY_BATTERY_TEMPERATURE_UUID), HI_UINT16(BATTERY_BATTERY_TEMPERATURE_UUID)
+     LO_UINT16(BATTERY_BATTERY_TEMPERATURE_UUID), HI_UINT16(BATTERY_BATTERY_TEMPERATURE_UUID)
 };
 // Battery_Error Code UUID
 static CONST uint8 Battery_Battery_Error_CodeUUID[ATT_UUID_SIZE] =
 {
-  TI_BASE_UUID_128(BATTERY_BATTERY_ERROR_CODE_UUID)
+     TI_BASE_UUID_128(BATTERY_BATTERY_ERROR_CODE_UUID)
 };
 // Battery_Statuse UUID
-static CONST uint8 Battery_Battery_StatusUUID[ATT_BT_UUID_SIZE] =
+static CONST uint8 Battery_Battery_StatusUUID[ATT_UUID_SIZE] =
 {
-  LO_UINT16(BATTERY_BATTERY_STATUS_UUID), HI_UINT16(BATTERY_BATTERY_STATUS_UUID)
+     TI_BASE_UUID_128(BATTERY_BATTERY_STATUS_UUID)
 };
+//static CONST uint8 Battery_Battery_StatusUUID[ATT_BT_UUID_SIZE] =
+//{
+//     LO_UINT16(BATTERY_BATTERY_STATUS_UUID), HI_UINT16(BATTERY_BATTERY_STATUS_UUID)
+//};
 /*********************************************************************
  * LOCAL VARIABLES
  */
@@ -110,6 +118,7 @@ static BatteryCBs_t *pAppCBs = NULL;
 */
 
 // Service declaration
+//static CONST gattAttrType_t BatteryDecl = { ATT_UUID_SIZE, BatteryUUID };
 static CONST gattAttrType_t BatteryDecl = { ATT_BT_UUID_SIZE, BatteryUUID };
 
 // Characteristic "Battery_Level" Properties (for declaration)
@@ -122,7 +131,7 @@ static gattCharCfg_t *Battery_Battery_LevelConfig;
 // Characteristic "BATTERY_VOLTAGE" Properties (for declaration)
 static uint8 Battery_Battery_VoltageProps = GATT_PROP_READ | GATT_PROP_NOTIFY;
 // Characteristic "BATTERY_VOLTAGE" Value variable
-static uint8 Battery_Battery_VoltageVal[BATTERY_BATTERY_VOLTAGE_LEN] = {255};  // voltage is in mV
+static uint8 Battery_Battery_VoltageVal[BATTERY_BATTERY_VOLTAGE_LEN] = {0x90, 0x88};  // {0x90, 0x88} = 37,000 mV : voltage is in mV
 // Characteristic "BATTERY_VOLTAGE" CCCD
 static gattCharCfg_t *Battery_Battery_VoltageConfig;
 
@@ -154,21 +163,20 @@ static gattCharCfg_t *Battery_Battery_StatusConfig;
 
 static gattAttribute_t BatteryAttrTbl[] =
 {
-  // Battery Service Declaration
-  {
-    { ATT_BT_UUID_SIZE, primaryServiceUUID },
-      GATT_PERMIT_READ,
-      0,
-      (uint8 *)&BatteryDecl
-  },
-
-  // Battery_Level Characteristic Declaration
-  {
-    { ATT_BT_UUID_SIZE, characterUUID },
-      GATT_PERMIT_READ,
-      0,
-      &Battery_Battery_LevelProps
-  },
+  // ************ Battery Service Declaration
+      {
+        { ATT_BT_UUID_SIZE, primaryServiceUUID },
+          GATT_PERMIT_READ,
+          0,
+          (uint8 *)&BatteryDecl
+      },
+  // ************ Battery_Level Characteristic Declaration
+      {
+        { ATT_BT_UUID_SIZE, characterUUID },
+          GATT_PERMIT_READ,
+          0,
+          &Battery_Battery_LevelProps
+      },
       // Battery_Level Characteristic Value
       {
         { ATT_BT_UUID_SIZE, Battery_Battery_LevelUUID },
@@ -191,13 +199,13 @@ static gattAttribute_t BatteryAttrTbl[] =
           "Battery Level (%)"
       },
 
-  // BATTERY_VOLTAGE Characteristic Declaration
-  {
-    { ATT_BT_UUID_SIZE, characterUUID },
-      GATT_PERMIT_READ,
-      0,
-      &Battery_Battery_VoltageProps
-  },
+  // ************ BATTERY_VOLTAGE Characteristic Declaration
+      {
+        { ATT_BT_UUID_SIZE, characterUUID },
+          GATT_PERMIT_READ,
+          0,
+          &Battery_Battery_VoltageProps
+      },
       // BATTERY_VOLTAGE Characteristic Value
       {
         { ATT_BT_UUID_SIZE, Battery_Battery_VoltageUUID },
@@ -220,91 +228,92 @@ static gattAttribute_t BatteryAttrTbl[] =
           "Battery Voltage (mV)"     // average battery voltage in mV
       },
 
-  // BATTERY_TEMPERATURE Characteristic Declaration
-  {
-    { ATT_BT_UUID_SIZE, characterUUID },
-      GATT_PERMIT_READ,
-      0,
-      &Battery_Battery_TemperatureProps
-  },
-          // BATTERY_TEMPERATURE Characteristic Value
-      {
-        { ATT_BT_UUID_SIZE, Battery_Battery_TemperatureUUID },
-          GATT_PERMIT_READ,
-          0,
-          Battery_Battery_TemperatureVal
-      },
-      // BATTERY_TEMPERATURE CCCD
-      {
-        { ATT_BT_UUID_SIZE, clientCharCfgUUID },
-          GATT_PERMIT_READ | GATT_PERMIT_WRITE,
-          0,
-          (uint8 *)&Battery_Battery_TemperatureConfig
-      },
-      // BATTERY_TEMPERATURE user descriptor
-      {
-         {ATT_BT_UUID_SIZE, charUserDescUUID},
-          GATT_PERMIT_READ,
-          0,
-          "Battery Temperature (C)"
-      },
-
-  // BATTERY_STATUS Characteristic Declaration
-  {
-      { ATT_BT_UUID_SIZE, characterUUID },
-      GATT_PERMIT_READ,
-      0,
-      &Battery_Battery_StatusProps
-  },
-           // BATTERY_STATUS Characteristic Value
-          {
-            { ATT_BT_UUID_SIZE, Battery_Battery_StatusUUID },
+  // ************ BATTERY_TEMPERATURE Characteristic Declaration
+        {
+            { ATT_BT_UUID_SIZE, characterUUID },
               GATT_PERMIT_READ,
               0,
-              Battery_Battery_StatusVal
-          },
-          // BATTERY_STATUS CCCD
-          {
-             { ATT_BT_UUID_SIZE, clientCharCfgUUID },
-               GATT_PERMIT_READ | GATT_PERMIT_WRITE,
-               0,
-               (uint8 *)&Battery_Battery_StatusConfig
-          },
-          // BATTERY_STATUS user descriptor
-          {
+              &Battery_Battery_TemperatureProps
+        },
+              // BATTERY_TEMPERATURE Characteristic Value
+        {
+            { ATT_BT_UUID_SIZE, Battery_Battery_TemperatureUUID },
+              GATT_PERMIT_READ,
+              0,
+              Battery_Battery_TemperatureVal
+        },
+        // BATTERY_TEMPERATURE CCCD
+        {
+            { ATT_BT_UUID_SIZE, clientCharCfgUUID },
+              GATT_PERMIT_READ | GATT_PERMIT_WRITE,
+              0,
+              (uint8 *)&Battery_Battery_TemperatureConfig
+        },
+        // BATTERY_TEMPERATURE user descriptor
+        {
              {ATT_BT_UUID_SIZE, charUserDescUUID},
-             GATT_PERMIT_READ,
-             0,
-             "Battery Status"
-          },
-  // BATTERY_ERROR_CODE Characteristic Declaration
+              GATT_PERMIT_READ,
+              0,
+              "Battery Temperature (C)"
+        },
+
+  // ************ BATTERY_STATUS Characteristic Declaration
+      {
+          { ATT_BT_UUID_SIZE, characterUUID },
+          GATT_PERMIT_READ,
+          0,
+          &Battery_Battery_StatusProps
+      },
+           // BATTERY_STATUS Characteristic Value
+      {
+        { ATT_BT_UUID_SIZE, Battery_Battery_StatusUUID },
+//       { ATT_UUID_SIZE, Battery_Battery_StatusUUID },
+          GATT_PERMIT_READ,
+          0,
+          Battery_Battery_StatusVal
+      },
+      // BATTERY_STATUS CCCD
+      {
+         { ATT_BT_UUID_SIZE, clientCharCfgUUID },
+           GATT_PERMIT_READ | GATT_PERMIT_WRITE,
+           0,
+           (uint8 *)&Battery_Battery_StatusConfig
+      },
+      // BATTERY_STATUS user descriptor
+      {
+         {ATT_BT_UUID_SIZE, charUserDescUUID},
+         GATT_PERMIT_READ,
+         0,
+         "Battery Status"
+      },
+  // ************ BATTERY_ERROR_CODE Characteristic Declaration
     {
       { ATT_BT_UUID_SIZE, characterUUID },
         GATT_PERMIT_READ,
         0,
         &Battery_Battery_Error_CodeProps
     },
-            // BATTERY_ERROR_CODE Characteristic Value
-        {
-          { ATT_UUID_SIZE, Battery_Battery_Error_CodeUUID },
-            GATT_PERMIT_READ,
-            0,
-            Battery_Battery_Error_CodeVal
-        },
-        // BATTERY_ERROR_CODE CCCD
-        {
-          { ATT_BT_UUID_SIZE, clientCharCfgUUID },
-            GATT_PERMIT_READ | GATT_PERMIT_WRITE,
-            0,
-            (uint8 *)&Battery_Battery_Error_CodeConfig
-        },
-        // BATTERY_ERROR_CODE user descriptor
-        {
-           {ATT_BT_UUID_SIZE, charUserDescUUID},
-            GATT_PERMIT_READ,
-            0,
-            "Battery Error Code"
-        }
+        // BATTERY_ERROR_CODE Characteristic Value
+    {
+      { ATT_UUID_SIZE, Battery_Battery_Error_CodeUUID },
+        GATT_PERMIT_READ,
+        0,
+        Battery_Battery_Error_CodeVal
+    },
+    // BATTERY_ERROR_CODE CCCD
+    {
+      { ATT_BT_UUID_SIZE, clientCharCfgUUID },
+        GATT_PERMIT_READ | GATT_PERMIT_WRITE,
+        0,
+        (uint8 *)&Battery_Battery_Error_CodeConfig
+    },
+    // BATTERY_ERROR_CODE user descriptor
+    {
+       {ATT_BT_UUID_SIZE, charUserDescUUID},
+        GATT_PERMIT_READ,
+        0,
+        "Battery Error Code"
+    }
 };
 
 /*********************************************************************

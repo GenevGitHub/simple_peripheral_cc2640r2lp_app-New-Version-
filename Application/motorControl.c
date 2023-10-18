@@ -32,7 +32,6 @@
 #include "singleButton/singleButton.h"
 #include "peripheral.h"
 #include "TSL2561/TSL2561.h"
-
 /*********************************************************************
  * CONSTANTS
  */
@@ -45,6 +44,7 @@
 static uint8_t motorcontrol_i2cOpenStatus = 0;
 static simplePeripheral_bleCBs_t *motorcontrol_bleCBs;
 static uint8_t motorControl_getGAPRole_taskCreate_flag = 0;
+uint8_t powerOn = 1;            // How does power on and power off work? powerOn Should be 1
 /**********************************************************************
  *  Local functions
  */
@@ -60,6 +60,10 @@ static void motorcontrol_dashboardCB(uint8_t paramID);
 static void motorcontrol_singleButtonCB(uint8_t messageID);
 
 static void motorcontrol_getGAPROLE(void);
+
+MCUD_t MCUDArray = {30000, 3000, 380, 20, 20, 0};
+MCUD_t *ptrMCUDArray = &MCUDArray;
+
 
 //uint16_t throttle_Percent;
 
@@ -113,64 +117,57 @@ static brakeAndThrottle_CBs_t brakeAndThrottle_CBs =
  *
  * @return  none
  */
-uint8_t mccheck = 0;
+uint8_t mccheck = 0;        // FOR DEBUGGING ONLY
 void motorcontrol_init(void)
 {
 // Activate NVS_internal to Recall the last set of saved data in memory
 //    NVS_init();
 
     UDHAL_init();
-    mccheck = 1;
+    mccheck = 1;        // FOR DEBUGGING ONLY
 
     Controller_RegisterAppCBs(&ControllerCBs);
-    mccheck = 2;
 
     Dashboard_RegisterAppCBs(&DashboardCBs);
-    mccheck = 3;
 
     STM32MCP_init();
     STM32MCP_registerCBs(&STM32MCP_CBs);
     STM32MCP_startCommunication();    // Not activated
-    mccheck = 4;
+
+    periodicCommunication_STM32MCP_getRegisterFrame();
+    dataAnalsis_motorControl(ptrMCUDArray);
 
     periodicCommunication_start();
-    mccheck = 5;
 
     dataAnalysis_init();                // Initiate data analytics
-    mccheck = 6;
 
     brakeAndThrottle_init();
     brakeAndThrottle_registerCBs(&brakeAndThrottle_CBs);
     brakeAndThrottle_start();
-    mccheck = 7;
 
     singleButton_init();
     singleButton_registerCBs(&singleButtonCBs);
-    mccheck = 8;
 
     buzzerControl_init();               // Initiate buzzer on dashboard
-    mccheck = 9;
 
     motorcontrol_i2cOpenStatus = UDHAL_getI2CStatus();
-// if i2c open successfully, motorcontrol_i2cOpenStatus = 1,
-// if i2c opens unsuccessfully, motorcontrol_i2cOpenStatus = 0 -> do not activate TSL2561 light sensor and Led Display
-    if (motorcontrol_i2cOpenStatus == 1) // TSL2561 and ledDisplay require I2C.  If I2C did not open successfully, TSL2561 and ledDisplay will not be initialized
+
+// ************* when i2c open successfully, motorcontrol_i2cOpenStatus = 1,
+// ************* when i2c opens unsuccessfully, motorcontrol_i2cOpenStatus = 0 -> TSL2561 light sensor and Led Display are not initiated or activated
+    if (motorcontrol_i2cOpenStatus == 1)
     {
         TSL2561_init();
         ledControl_init();
     }
-    mccheck = 10;
 
     lightControl_init( motorcontrol_i2cOpenStatus );                            // UDHAL_I2C must be initiated before ightControl_init();
-    mccheck = 11;
 
     powerOnTime_init();           // merged with lightControl 20230705
-    mccheck = 12;
 
 // If GAPRole_createTask initiated and called successfully, gapRole_getGAPRole_taskCreate_flag() returns 1
-// motorControl_getGAPRole_taskCreate_flag
     motorControl_getGAPRole_taskCreate_flag = gapRole_getGAPRole_taskCreate_flag();
-    mccheck = 13;
+
+    mccheck = 3;        // FOR DEBUGGING ONLY
 
 }
 
@@ -205,61 +202,79 @@ static void motorcontrol_processGetRegisterFrameMsg(uint8_t *txPayload, uint8_t 
     case STM32MCP_BUS_VOLTAGE_REG_ID:
         {
             uint16_t voltage_mV = *((uint16_t*) rxPayload) * 1000; // rxPayload in V, voltage in mV
+        // **** store voltage_mV in (*ptrMCUDArray).voltage_mV
+            (*ptrMCUDArray).voltage_mV = voltage_mV;
 
-            // send battery voltage to dataAnalysis
-            //dataAnalysis_mcData(voltageID, &voltage);
-
-            // this is battery percentage.  batteryLevel = batteryPercentage.
-            //uint8_t batteryLevel = (uint8_t) ((((uint32_t)voltage - STM32MCP_SYSTEM_MIMIMUM_VOLTAGE)*100/(STM32MCP_SYSTEM_MAXIMUM_VOLTAGE - STM32MCP_SYSTEM_MIMIMUM_VOLTAGE)) & 0xFF);
             break;
         }
-        // !!!!!!!!!!!!!!!!!!!!!!!!!  current sensor to be added to MCU.  Reserved case for current measurement
-    //case STM32MCP_BUS_CURRENT_REG_ID:
-        //{
-            // keep current in mV - do not convert it to A
-//          uint16_t current_mA = *((uint8_t*) rxPayload) * 1000;
-//
-            //send current to dataAnalysis
-            //dataAnalysis_mcData(currentID, &current);
-            //break;
-        //}
+    // *********  current sensor to be added to MCU.  Reserved case for current measurement
+    case STM32MCP_TORQUE_MEASURED_REG_ID:
+        {
+        //keep current in mV - do not convert it to A
+            uint16_t current_mA = *((uint8_t*) rxPayload) * 1000;
+        // **** store current_mA in (*ptrMCUDArray).current_mV
+            (*ptrMCUDArray).current_mA = 3000;//current_mA;
+            break;
+        }
     case STM32MCP_HEATSINK_TEMPERATURE_REG_ID:
         {
             int8_t heatSinkTemperature_Celcius = (int8_t) (*((uint8_t*) rxPayload) & 0xFF);     // temperature can be a negative value, unless it is in Kelvin
-            //send heatSinkTemperature to dataAnalysis
-            //dataAnalysis_mcData(heatSinkTemperatureID, &heatSinkTemperature);
+        // **** store heatSinkTemperature_Celcius in (*ptrMCUDArray).heatSinkTemperature_Celcius
+            (*ptrMCUDArray).heatSinkTemperature_Celcius = 15;//heatSinkTemperature_Celcius;
             break;
         }
     case STM32MCP_SPEED_MEASURED_REG_ID:
         {
+            uint16_t rpm;
             int32_t rawRPM = *((int32_t*) rxPayload);
             if(rawRPM >= 0)
             {
-                uint16_t rpm = (uint16_t) (rawRPM & 0xFFFF);
-                //send rpm to dataAnalysis
-                //dataAnalysis_mcData(rpmID, &rpm);
+                rpm = (uint16_t) (rawRPM & 0xFFFF);
             }
-            else
+            else  // **** what if rawRPM is negative??? e.g. pushing the E-scooter in reverse.  Then rawRPM would be negative!!!
             {
-                // what if rawRPM is negative???  Would rawRPM be negative??? Rolling in reverse or measurement error???
+                rpm = (uint16_t) (-rawRPM & 0xFFFF);
             }
+            // **** store rpm in (*ptrMCUDArray).speed_rpm
+            (*ptrMCUDArray).speed_rpm = rpm;
+
             break;
         }
 // ********************    Need to create new REG_IDs
-    //case STM32MCP_MOTOR_TEMPERATURE_REG_ID:
-        //{
+    case STM32MCP_MOTOR_TEMPERATURE_REG_ID:
+        {
+            int8_t motorTemperature_Celcius = (int8_t) (*((uint8_t*) rxPayload) & 0xFF);     // temperature can be a negative value, unless it is in Kelvin
 
-            //break;
-        //}
-    //case STM32MCP_CONTROLLER_ERRORCODE_REG_ID:
-        //{
+            (*ptrMCUDArray).motorTemperature_Celcius = 20;//motorTemperature_Celcius;
 
-            //break;
-        //}
+            break;
+        }
+    case STM32MCP_CONTROLLER_ERRORCODE_REG_ID:
+        {
+
+            //
+            break;
+        }
     default:
             break;
     }
 
+}
+
+/*********************************************************************
+ * @fn      motorcontrol_dataAnalysis_sampling
+ *
+ * @brief   Pass motor sensor data to data analysis
+ *
+ * @param   x_hf - counts the number of high frequency periodic communication executions
+ *
+ * @return  None.
+ */
+void motorcontrol_dataAnalysis_sampling(uint8_t x_hf)
+{
+    (*ptrMCUDArray).count_hf = x_hf;
+    dataAnalysis_sampling((*ptrMCUDArray).count_hf, (*ptrMCUDArray).voltage_mV, (*ptrMCUDArray).current_mA, (*ptrMCUDArray).speed_rpm,
+                          (*ptrMCUDArray).heatSinkTemperature_Celcius, (*ptrMCUDArray).motorTemperature_Celcius);
 }
 
 /*********************************************************************
@@ -304,6 +319,12 @@ static void motorcontrol_rxMsgCb(uint8_t *rxMsg, STM32MCP_txMsgNode_t *STM32MCP_
         break;
     case STM32MCP_SET_CURRENT_REFERENCES_FRAME_ID:
         break;
+    case STM32MCP_SET_SYSTEM_CONTROL_CONFIG_FRAME_ID:
+        break;
+    case STM32MCP_SET_DRIVE_MODE_CONFIG_FRAME_ID:
+        break;
+    case STM32MCP_SET_DYNAMIC_TORQUE_FRAME_ID:
+        break;
     default:
         break;
     }
@@ -327,6 +348,7 @@ static void motorcontrol_exMsgCb(uint8_t exceptionCode)
         case STM32MCP_QUEUE_OVERLOAD:
             break;
         case STM32MCP_EXCEED_MAXIMUM_RETRANSMISSION_ALLOWANCE:
+            powerOn = 0;
             break;
         default:
             break;
@@ -388,6 +410,7 @@ static void motorcontrol_brakeAndThrottleCB(uint16_t allowableSpeed, uint16_t IQ
         /*When driver accelerates / decelerates by twisting the throttle, the IQ signal with max. speed will be sent to the motor controller.
          * */
         STM32MCP_setDynamicCurrent(allowableSpeed, IQValue);
+
     }
     else
     {
@@ -395,7 +418,9 @@ static void motorcontrol_brakeAndThrottleCB(uint16_t allowableSpeed, uint16_t IQ
          *has to check the wire connections.
          *You have to ensure the wires are connected properly!
          * */
-        STM32MCP_executeCommandFrame(STM32MCP_MOTOR_1_ID, STM32MCP_STOP_MOTOR_COMMAND_ID);
+        //STM32MCP_executeCommandFrame(STM32MCP_MOTOR_1_ID, STM32MCP_STOP_MOTOR_COMMAND_ID);
+        STM32MCP_setDynamicCurrent(allowableSpeed, 0);
+        /*Sends Error Report to STM32 Motor Controller --> Transition to EMERGENCY STOP state*/
     }
 
 }
@@ -416,6 +441,7 @@ void motorcontrol_speedModeChgCB(uint16_t torqueIQ, uint16_t allowableSpeed, uin
     motorcontrol_speedModeChgCount++;           // for debugging only
     // send speed mode change parameters to motor control
     STM32MCP_setSpeedModeConfiguration(torqueIQ, allowableSpeed, rampRate);
+
 }
 
 /*********************************************************************
@@ -459,7 +485,8 @@ static void motorcontrol_dashboardCB(uint8_t paramID)
     {
     case DASHBOARD_LIGHT_MODE: // whenever user tabs the light mode icon on the mobile app, motorcontrol_dashboardCB will toggle the light mode by calling lightControl_change()
         {
-            lightControl_lightModeChange();
+            uint8_t light_mode_temp = lightControl_lightModeChange();
+            ledControl_setLightMode( light_mode_temp );
             break;
         }
     default:
@@ -479,7 +506,7 @@ static void motorcontrol_dashboardCB(uint8_t paramID)
  */
 //uint8_t advertEnable = FALSE;
 uint8_t messageid;              // for debugging only
-uint8_t powerOn = 0;            // How does power on and power off work?
+/*Might be we have to create a state machine to monitor the power status! */
 static void motorcontrol_singleButtonCB(uint8_t messageID)
 {
     messageid = messageID;  // for debugging only
@@ -491,20 +518,27 @@ static void motorcontrol_singleButtonCB(uint8_t messageID)
             // if Powering On -> switch to Power Off
             if(powerOn == 1){
                 powerOn = 0;
+                //  trigger Power Transition Notification, when Power Stage Transition is triggered, before shutting down, the
+                //  system is jumped into powerTransitionNotifyFxn Function to doing the followings if the transition event is PowerCC26XX_ENTERING_SHUTDOWN:
                 //  send power off command to motor controller
-                //  enters low power mode
-                //  turn off ADC
-                //  turn off I2C
-                //  turn off TSL2561
-                //  turn off all tasks
+                //  Peripheral De-Initialization
+                //  before enters low power mode.........
+                //  1.turn off ADC
+                //  2.turn off I2C
+                //  3.turn off TSL2561
+                //  4.turn off all tasks
                 // At very last:
-                //  call nvs write to write into NVS memory only when power off - will take a few milliseconds to complete
-                //  nvsControl_nvsWrite();
+                // call nvs write to write into NVS memory only when power off - will take a few milliseconds to complete
+                // 5.nvsControl_nvsWrite();
+                // STM32MCP_setSystemControlConfigFrame(STM32MCP_POWER_OFF);
+                // pinConfig = PINCC26XX_setWakeup(ExternalWakeUpPin);
+                // Power_shutdown(0,0);
             }
             // if Powering Off -> switch to Power On
             else if(powerOn == 0){
                 powerOn = 1;
                 //  system reset (Program Counter resets)
+                //  wait for 1.5 seconds to power on
                 //  call nvs read to read NVS memory - will take a few milliseconds to complete
                 //  nvsControl_nvsRead();
                 //  close NVS
@@ -533,13 +567,14 @@ static void motorcontrol_singleButtonCB(uint8_t messageID)
                 gaprole_States_t get_gaproleState;
                 GAPRole_GetParameter(GAPROLE_STATE, &get_gaproleState);
                 if((get_gaproleState == GAPROLE_WAITING) || (get_gaproleState == GAPROLE_WAITING_AFTER_TIMEOUT) || (get_gaproleState == GAPROLE_STARTED))
-                    {
-                        uint8_t advertising = true;
-                        GAPRole_SetParameter(GAPROLE_ADVERT_ENABLED, sizeof(uint8_t), &advertising);
-                    }
+                {
+                    uint8_t advertising = true;
+                    GAPRole_SetParameter(GAPROLE_ADVERT_ENABLED, sizeof(uint8_t), &advertising);
+                }
+                brakeAndThrottle_gapRoleChg(1);
 
-                //ledControl_setBLEStatus( get_gaproleState );
             }
+
 
             break;
         }

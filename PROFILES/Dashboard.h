@@ -78,7 +78,7 @@ extern "C"
 
 #define DASHBOARD_POWER_ON_TIME                 4
 #define DASHBOARD_POWER_ON_TIME_UUID            0x6804
-#define DASHBOARD_POWER_ON_TIME_LEN             2
+#define DASHBOARD_POWER_ON_TIME_LEN             1
 
 #define DASHBOARD_ADCOUNTER                     5
 #define DASHBOARD_ADCOUNTER_UUID                0x6805

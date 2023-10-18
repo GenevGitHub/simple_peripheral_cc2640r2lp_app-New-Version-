@@ -24,8 +24,9 @@ extern "C"
 /*********************************************************************
  * CONSTANTS
  */
-#define BRAKE_AND_THROTTLE_ADC_SAMPLING_PERIOD                    100
-#define BRAKE_AND_THROTTLE_SAMPLES                                8
+// The parameters BRAKE_AND_THROTTLE_ADC_SAMPLING_PERIOD & BRAKE_AND_THROTTLE_SAMPLES control the sensitivity of the throttle input to motor output
+#define BRAKE_AND_THROTTLE_ADC_SAMPLING_PERIOD                    80   // 100: [time in mS]
+#define BRAKE_AND_THROTTLE_SAMPLES                                3     // 3 seems ideal, 5 is okay, 8 is too laggy
 
 //Speed modes
 #define BRAKE_AND_THROTTLE_SPEED_MODE_AMBLE                       0x00
@@ -34,9 +35,9 @@ extern "C"
 
 #define BRAKE_AND_THROTTLE_MAXIMUMN_SPEED                         663       // 663 RPM = 25.4 Km/hr
 
-//Speed mode reduction ratio    <--- what is the purpose and logic of reduction ratio???? Is it output power reduction???
-#define BRAKE_AND_THROTTLE_SPEED_MODE_REDUCTION_RATIO_AMBLE       41        //64%   Pout = 216.75 W
-#define BRAKE_AND_THROTTLE_SPEED_MODE_REDUCTION_RATIO_LEISURE     73        //80%   Pout = 240 W
+//Speed mode TORQUEIQ reduction ratio
+#define BRAKE_AND_THROTTLE_SPEED_MODE_REDUCTION_RATIO_AMBLE       65        //64%   Pout = 216.75 W
+#define BRAKE_AND_THROTTLE_SPEED_MODE_REDUCTION_RATIO_LEISURE     80        //80%   Pout = 240 W
 #define BRAKE_AND_THROTTLE_SPEED_MODE_REDUCTION_RATIO_SPORTS      100       //100%  Pout = 300 W
 
 //Speed mode maximum "powered" speed in RPM
@@ -45,21 +46,21 @@ extern "C"
 #define BRAKE_AND_THROTTLE_MAXSPEED_SPORTS                        663       // 663 RPM = 25.4 Km/hr
 
 //Speed mode ramp rate (acceleration) in milliseconds
-#define BRAKE_AND_THROTTLE_RAMPRATE_AMBLE                         4000
-#define BRAKE_AND_THROTTLE_RAMPRATE_LEISURE                       3000
-#define BRAKE_AND_THROTTLE_RAMPRATE_SPORTS                        2000
+#define BRAKE_AND_THROTTLE_RAMPRATE_AMBLE                         3000      // 4000
+#define BRAKE_AND_THROTTLE_RAMPRATE_LEISURE                       2250      // 3000
+#define BRAKE_AND_THROTTLE_RAMPRATE_SPORTS                        1500      // 2000
 
 //Speed mode Torque IQ value
-#define BRAKE_AND_THROTTLE_TORQUEIQ_AMBLE                         6500     // IQ 10125  = 9.0 Amp
-#define BRAKE_AND_THROTTLE_TORQUEIQ_LEISURE                       11450     // IQ 12600 = 11.2 Amp
-#define BRAKE_AND_THROTTLE_TORQUEIQ_SPORTS                        15750     // IQ 15750 = 14.0 Amp
-#define BRAKE_AND_THROTTLE_TORQUEIQ_MAX                           15750     // IQ 15750 = 14.0 Amp
+//#define BRAKE_AND_THROTTLE_TORQUEIQ_AMBLE                         10400     // IQ 10125 = 9.0 Amp
+//#define BRAKE_AND_THROTTLE_TORQUEIQ_LEISURE                       12800     // IQ 12600 = 11.2 Amp
+//#define BRAKE_AND_THROTTLE_TORQUEIQ_SPORTS                        16000     // IQ 15750 = 14.0 Amp
+#define BRAKE_AND_THROTTLE_TORQUEIQ_MAX                           16000     // IQ 16000 = 14.222 Amp
 
 //Hard braking definition   (What is Hard Braking? why is this necessary?)
 #define HARD_BRAKING_THROTTLE_PERCENTAGE                          5
 #define HARD_BRAKING_BRAKE_PERCENTAGE                             5
 #define BRAKEPERCENTTHRESHOLD                                     5
-#define THROTTLEPERCENTREDUCTION                                  0.7
+#define THROTTLEPERCENTREDUCTION                                  0.3
 //Throttle calibration values = value range the throttle ADC is conditioned to be within
 #define THROTTLE_ADC_CALIBRATE_H                                  2350
 #define THROTTLE_ADC_CALIBRATE_L                                  850
@@ -78,8 +79,8 @@ extern "C"
 
 //Error message
 #define BRAKE_AND_THROTTLE_NORMAL                                 0x00
-#define BRAKE_ERROR                                               0x0E
 #define THROTTLE_ERROR                                            0x0C
+#define BRAKE_ERROR                                               0x0E
 #define HARD_BRAKING_ERROR                                        0x0F
 
 /*********************************************************************
@@ -130,6 +131,8 @@ extern void brakeAndThrottle_registerADC2(brakeAndThrottle_adcManager_t *obj);
 extern void brakeAndThrottle_ADC_conversion();
 extern uint16_t brakeAndThrottle_getThrottlePercent();
 extern uint16_t brakeAndThrottle_getBrakePercent();
+
+extern void brakeAndThrottle_gapRoleChg(uint8_t flag);
 /*********************************************************************
 *********************************************************************/
 

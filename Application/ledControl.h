@@ -26,8 +26,8 @@ extern "C"
 */
 #define LED_POWER_LIGHT_ON                              60
 #define LED_POWER_LIGHT_OFF                             100
-#define LEDCONTROL_INIT_TIME                            1500
-#define LEDCONTROL_REFRESH_TIME                         120
+//#define LEDCONTROL_INIT_TIME                            1500
+//#define LEDCONTROL_REFRESH_TIME                         120
 
 /*********************************************************************
  * @Structure ledControl_LedDisplayManager_t
@@ -69,19 +69,15 @@ extern void ledControl_setAllOff( void );                               // Led A
 extern void ledControl_setDashSpeed( uint8_t dashSpeed );               // Set Speed Digit 1 and Digit 2
 extern void ledControl_changeDashSpeed();
 extern void ledControl_setBatteryStatus( uint8_t batteryStatus );       // Set battery level
-extern void ledControl_changeBatteryStatus();
+extern void ledControl_changeBatteryStatus(uint16_t gpt_taskCounter);
 extern void ledControl_setSpeedMode( uint8_t speedMode );               // Set speed mode
 extern void ledControl_changeSpeedMode();
 extern void ledControl_setUnitSelectDash( uint8_t UnitSelectDash );     // Set Unit
 extern void ledControl_changeUnit();
-extern void ledControl_setBLEStatus( uint8_t BLEStatus );               // Set BLE status
-extern void ledControl_changeBLE();
-
-//extern void ledControl_setErrorCode( uint8_t errorCode );        // Set Warning
-
+//extern void ledControl_setBLEStatus( uint8_t BLEStatus );               // Set BLE status
+extern void ledControl_changeBLE(uint16_t gpt_taskCounter);
 extern void ledControl_getError(uint8_t error_code);
 extern void ledControl_ErrorDisplay();
-//extern void ledControl_changeError();
 extern void ledControl_setLightMode( uint8_t light_mode );           // Set light mode
 extern void ledControl_changeLightMode();
 extern void ledControl_setLightStatus( uint8_t light_status );          // Set Light Status

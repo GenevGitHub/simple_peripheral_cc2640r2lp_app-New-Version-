@@ -47,6 +47,10 @@ uint8_t ledBrightness;
 uint8_t ledBrightness_old;
 uint8_t led_error_priority;
 uint8_t led_error_code_old;
+uint8_t battery_bar1_status;
+uint8_t BLE_flash_status;
+
+uint8_t led_allOn = 0;
 /*********************************************************************
 *
 * LOCAL FUNCTIONS
@@ -1352,33 +1356,39 @@ void ledControl_init()
     turn_on_led_driver();
     enable_channels();
 
-    //ledControl_setAllOn();
 //    code = 0;
-    ledLightMode_old = 10;
-    ledBLESelect_old = 10;
-    ledUnitSelect_old = 10;
-    ledSpeedModeSelect_old = 10;
-    ledSpeed_old = 10;
-    ledPower_old = 10;
+    ledLightMode_old = 0xFF;
+    ledBLESelect_old = 0xFF;
+    ledUnitSelect_old = 0xFF;
+    ledSpeedModeSelect_old = 0xFF;
+    ledSpeed_old = 0xFF;
+    ledPower_old = 0xFF;
     ledBrightness = PWM_CUSTOM;
     led_error_code_old = 0xFF;
     led_error_priority = 0xFF;
+    ledBatteryStatus_old = 0xFF;
+    battery_bar1_status = 1;
+    BLE_flash_status = 1;
+
+//    ledControl_setAllOn();
+
+
 }
 
 /*******************      Basic Operation       **********************
  *
  *
  *********************************************************************/
-void ledControl_i2c2Display( uint8_t Param, uint8_t *ParamValue )
-{
-    uint8_t ledControl_readBuffer = NULL;                       // local variables are not stored in memory. This is equivalent to reset each time this function is called.
-    uint8_t ledControl_writeBuffer[2] = {0, 0};
-    size_t  readBufferSize  = 0;
-    size_t  writeBufferSize = 2;
-
-    ledControl_i2cTransferStatus = ledControl_ledDisplayManager -> ledControl_transfer(IS31FL3236A_ADDR, &ledControl_writeBuffer, writeBufferSize, &ledControl_readBuffer, readBufferSize);
-
-}
+//void ledControl_i2c2Display( uint8_t Param, uint8_t *ParamValue )
+//{
+//    uint8_t ledControl_readBuffer = NULL;                       // local variables are not stored in memory. This is equivalent to reset each time this function is called.
+//    uint8_t ledControl_writeBuffer[2] = {0, 0};
+//    size_t  readBufferSize  = 0;
+//    size_t  writeBufferSize = 2;
+//
+//    ledControl_i2cTransferStatus = ledControl_ledDisplayManager -> ledControl_transfer(IS31FL3236A_ADDR, &ledControl_writeBuffer, writeBufferSize, &ledControl_readBuffer, readBufferSize);
+//
+//}
 
 /*********************************************************************
  * @fn      ledControl_setAllOn
@@ -1389,10 +1399,15 @@ void ledControl_i2c2Display( uint8_t Param, uint8_t *ParamValue )
  *
  * @return  Nil
  *********************************************************************/
-void ledControl_setAllOn(){
+void ledControl_setAllOn()
+{
     // I2C to command lit all LED on Dashboard
-    ledControl_i2c2Display( 0, NULL );
-//    LED_Turn_ON_ALL();
+//    ledControl_i2c2Display( 0, NULL );
+    if (led_allOn == 0)
+    {
+        LED_Turn_ON_ALL();
+        led_allOn = 1;
+    }
 }
 /*********************************************************************
  * @fn      ledControl_setAllOff
@@ -1453,6 +1468,7 @@ void ledControl_changeDashSpeed()
         }
     }
 }
+
 /*********************************************************************
  * @fn      ledControl_setBatteryStatus
  *
@@ -1466,6 +1482,8 @@ void ledControl_setBatteryStatus(uint8_t batteryStatus)
 {
     // I2C command to set Battery Status
     ledBatteryStatus = batteryStatus;
+//    ledBatteryStatus = 0;
+
 }
 
 /*********************************************************************
@@ -1477,15 +1495,25 @@ void ledControl_setBatteryStatus(uint8_t batteryStatus)
  *
  * @return  none
  *********************************************************************/
-void ledControl_changeBatteryStatus()
+void ledControl_changeBatteryStatus(uint16_t gpt_taskCounter)
 {
-    if((ledBatteryStatus_old != ledBatteryStatus) || (ledBrightness != ledBrightness_old)){
-
-        if(ledBatteryStatus == 0)
+    //Enables flashing when battery status is low (batteryStatus = 0)
+    if ((ledBatteryStatus == 0) && ((gpt_taskCounter % 2) == 1))
+    {
+        if(battery_bar1_status == 1)
         {
-             functionTable[34](I_OUT,ledBrightness);
+            functionTable[33](I_OUT,ledBrightness);     //turn on battery bar 1
+            battery_bar1_status = 0;                    //flash control bit
         }
-        else if(ledBatteryStatus == 1)
+        else if(battery_bar1_status == 0)
+        {
+            functionTable[33](I_OUT,PWM_ZERO);          //turn off battery bar 1
+            battery_bar1_status = 1;                    //flash control bit
+        }
+    }
+    else if((ledBatteryStatus_old != ledBatteryStatus) || (ledBrightness != ledBrightness_old))
+    {
+        if(ledBatteryStatus == 1)
         {
             functionTable[33](I_OUT,ledBrightness);
         }
@@ -1506,8 +1534,10 @@ void ledControl_changeBatteryStatus()
             functionTable[29](I_OUT,ledBrightness);
         }
 
-        ledBatteryStatus_old = ledBatteryStatus;
     }
+
+    ledBatteryStatus_old = ledBatteryStatus;
+
 }
 
 /*********************************************************************
@@ -1593,19 +1623,6 @@ void ledControl_changeUnit()
 
     }
 }
-/*********************************************************************
- * @fn      ledControl_setBLEStatus
- *
- * @brief   call this function to activate Warning Light on LED display
- *
- * @param   BLEStatus
- *
- * @return  none
- *********************************************************************/
-void ledControl_setBLEStatus(uint8_t BLEStatus){
-    // I2C command to set BLE Light Status
-    ledBLEStatus = BLEStatus;
-}
 
 /*********************************************************************
  * @fn      ledControl_changeBLE
@@ -1617,27 +1634,43 @@ void ledControl_setBLEStatus(uint8_t BLEStatus){
  * @return  none
  *********************************************************************/
 gaprole_States_t get_gaproleState;
-void ledControl_changeBLE()
+void ledControl_changeBLE(uint16_t gpt_taskCounter)
 {
     //gaprole_States_t get_gaproleState;
     GAPRole_GetParameter(GAPROLE_STATE, &get_gaproleState);
-    if (get_gaproleState == GAPROLE_ADVERTISING  || get_gaproleState == GAPROLE_CONNECTED || get_gaproleState == GAPROLE_CONNECTED_ADV)
+    if (get_gaproleState == GAPROLE_CONNECTED || get_gaproleState == GAPROLE_CONNECTED_ADV)
     {
         ledBLEStatus = 1;
+    }
+    else if(get_gaproleState == GAPROLE_ADVERTISING)
+    {
+        ledBLEStatus = 2;
     }
     else
     {
         ledBLEStatus = 0;
     }
 
-    if ( ledBLESelect_old != ledBLEStatus || ledBrightness!=ledBrightness_old )
+    if ((ledBLEStatus == 2) && ((gpt_taskCounter % 2) == 1)){
+        if(BLE_flash_status == 1)
+                {
+                    functionTable[4](I_OUT,ledBrightness);     //turn on BLE
+                    BLE_flash_status = 0;                    //flash control bit
+                }
+        else if(BLE_flash_status == 0)
+                {
+                    functionTable[4](I_OUT,PWM_ZERO);          //turn off BLE
+                    BLE_flash_status = 1;                    //flash control bit
+                }
+    }
+    else if ( ledBLESelect_old != ledBLEStatus || ledBrightness!=ledBrightness_old )
     {
         // change BLE
         if(ledBLEStatus == 1)
         {
             functionTable[4](I_OUT,ledBrightness);
         }
-        else
+        else if(ledBLEStatus == 0)
         {
             functionTable[4](I_OUT,PWM_ZERO);
         }
@@ -1646,22 +1679,16 @@ void ledControl_changeBLE()
 
     }
 }
+
 /*********************************************************************
- * @fn      ledControl_setWarningMode
+ * @fn      ledControl_getError
  *
- * @brief   call this function to activate Warning Light on LED display
+ * @brief   this function is called by other functions to sort error priority
  *
- * @param   WarningStatus
+ * @param   error_priority
  *
  * @return  none
  *********************************************************************/
-//void ledControl_setErrorCode(uint8_t errorCode)
-//{
-//    // I2C command to set Warning Light Status
-//    ledErrorCode = errorCode;
-//
-//}
-
 void ledControl_getError(uint8_t error_priority)
 {
     if(error_priority < led_error_code_old){
@@ -1745,31 +1772,6 @@ void ledControl_ErrorDisplay()
         led_error_code_old = led_error_priority;
     }
 }
-
-/*********************************************************************
- * @fn      ledControl_changeError
- *
- * @brief   Updates the Error status on LED display
- *
- * @param   none
- *
- * @return  none
- *********************************************************************/
-//void ledControl_changeError()
-//{
-//    if ( led_error_code_old != led_error_priority || ledBrightness!=ledBrightness_old )
-//    {
-//        // change Error code
-//        if(led_error_code_old == 0xFF)
-//        {
-//            functionTable[7](I_OUT,PWM_ZERO);
-//        }
-//        else
-//        {
-//            functionTable[7](I_OUT,ledBrightness);
-//        }
-//    }
-//}
 
 /*********************************************************************
  * @fn      ledControl_setLightMode

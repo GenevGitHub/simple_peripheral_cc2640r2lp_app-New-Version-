@@ -80,7 +80,7 @@
 									<listOptionValue builtIn="false" value="ICALL_MAX_NUM_TASKS=4"/>
 									<listOptionValue builtIn="false" value="ICALL_STACK0_ADDR"/>
 									<listOptionValue builtIn="false" value="MAX_NUM_BLE_CONNS=1"/>
-									<listOptionValue builtIn="false" value="POWER_SAVING"/>
+									<listOptionValue builtIn="false" value="POWER_SAVING "/>
 									<listOptionValue builtIn="false" value="STACK_LIBRARY"/>
 									<listOptionValue builtIn="false" value="USE_ICALL"/>
 									<listOptionValue builtIn="false" value="xdc_runtime_Assert_DISABLE_ALL"/>

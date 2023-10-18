@@ -164,11 +164,27 @@ void periodicCommunication_registerBLE_Gatt(simplePeripheral_bleCBs_t *obj)
  *********************************************************************/
 uint8_t x_hf = 1;
 uint16_t x_tt = 0;
-uint16_t STM32MCP_batteryVoltage;
-uint16_t STM32MCP_batteryCurrent;
-uint16_t STM32MCP_rpm;
-int8_t STM32MCP_heatSinkTemp;
-int8_t STM32MCP_motorTemp;
+//uint16_t STM32MCP_batteryVoltage;
+//uint16_t STM32MCP_batteryCurrent;
+//uint16_t STM32MCP_rpm;
+//int8_t STM32MCP_heatSinkTemp;
+//int8_t STM32MCP_motorTemp;
+
+void periodicCommunication_STM32MCP_getRegisterFrame()
+{
+    /*************************************************
+     *  Get Bus Voltage
+     *  Get Bus Current
+     *  Get RPM
+     *  Get Heatsink Temperature
+     *  Get Motor Temperature
+     *************************************************/
+    STM32MCP_getRegisterFrame(STM32MCP_MOTOR_1_ID, STM32MCP_BUS_VOLTAGE_REG_ID);
+    STM32MCP_getRegisterFrame(STM32MCP_MOTOR_1_ID, STM32MCP_TORQUE_MEASURED_REG_ID);       // Need to create a getRegisterFrame for battery current
+    STM32MCP_getRegisterFrame(STM32MCP_MOTOR_1_ID, STM32MCP_SPEED_MEASURED_REG_ID);    // is speed in RPM
+    //STM32MCP_getRegisterFrame(STM32MCP_MOTOR_1_ID, STM32MCP_HEATSINK_TEMPERATURE_REG_ID);
+    //STM32MCP_getRegisterFrame(STM32MCP_MOTOR_1_ID, STM32MCP_MOTOR_TEMPERATURE_REG_ID);
+}
 
 void periodicCommunication_hf_communication()
 {
@@ -179,26 +195,32 @@ void periodicCommunication_hf_communication()
      *  Get Heatsink Temperature
      *  Get Motor Temperature
      *************************************************/
-    //STM32MCP_getRegisterFrame(STM32MCP_MOTOR_1_ID,STM32MCP_BUS_VOLTAGE_REG_ID);
-    // Sim Battery Voltage
-    STM32MCP_batteryVoltage = 6000 *sin(M_PI * x_tt / 180) + 36000;                               // get battery voltage from MCU:  unit in mV
-    //STM32MCP_getRegisterFrame(STM32MCP_MOTOR_1_ID,STM32MCP_BUS_CURRENT_REG_ID);       // Need to create a getRegisterFrame for battery current
-    // Sim Battery Current
-    STM32MCP_batteryCurrent = 3000; //rand()%13 * 1000;                                          // get battery current from MCU:  unit in mA
-    //STM32MCP_getRegisterFrame(STM32MCP_MOTOR_1_ID,STM32MCP_SPEED_MEASURED_REG_ID);    // is speed in RPM
-    // Sim RPM
-    STM32MCP_rpm = 350 * sin(M_PI * x_tt / 40) + 380;                                            // get RPM from MCU:  unit in rpm,  188 rpm @ r = 0.1016m => 200 cm/sec = 7 km/hr
-    //STM32MCP_getRegisterFrame(STM32MCP_MOTOR_1_ID,STM32MCP_HEATSINK_TEMPERATURE_REG_ID);
-    // Sim Heatsink Temp
-    STM32MCP_heatSinkTemp = 20 *sin(M_PI * x_tt / 180) + 15;                        // temperature is shifted by 20 degrees for taking care of - negative temperature
-                                                                                        // get heat sink temperature from MCU: unit in degrees Celsius
-    //STM32MCP_getRegisterFrame(STM32MCP_MOTOR_1_ID,STM32MCP_MOTOR_TEMPERATURE_REG_ID);
-    // Sim Motor Temp
-    STM32MCP_motorTemp = 30 *sin(M_PI * x_tt / 180) + 20;                            // temperature is shifted by 20 degrees for taking care of - negative temperature
-                                                                                        // get motor temperature from MCU: unit in degrees Celsius
+    //STM32MCP_getRegisterFrame(STM32MCP_MOTOR_1_ID, STM32MCP_BUS_VOLTAGE_REG_ID);
+    // ***** Sim Battery Voltage
+    //STM32MCP_batteryVoltage = 37000; //6000 *sin(M_PI * x_tt / 180) + 36000;                     // dummy data - get battery voltage from MCU:  unit in mV
 
-    // Passing motor sensor data to data analysis
-    dataAnalysis_sampling(x_hf, STM32MCP_batteryVoltage, STM32MCP_batteryCurrent, STM32MCP_rpm, STM32MCP_heatSinkTemp, STM32MCP_motorTemp);
+    //STM32MCP_getRegisterFrame(STM32MCP_MOTOR_1_ID, STM32MCP_TORQUE_MEASURED_REG_ID);       // Need to create a getRegisterFrame for battery current
+    // ***** Sim Battery Current
+    //STM32MCP_batteryCurrent = 3000; //rand()%13 * 1000;                                 // dummy data - get battery current from MCU:  unit in mA
+
+    //STM32MCP_getRegisterFrame(STM32MCP_MOTOR_1_ID, STM32MCP_SPEED_MEASURED_REG_ID);    // is speed in RPM
+    // ***** Sim RPM
+    //STM32MCP_rpm = 380;  //380 * sin(M_PI * (x_tt + 60) / 40) + 380;                            // dummy data - get RPM from MCU:  unit in rpm,  188 rpm @ r = 0.1016m => 200 cm/sec = 7 km/hr
+
+    //STM32MCP_getRegisterFrame(STM32MCP_MOTOR_1_ID, STM32MCP_HEATSINK_TEMPERATURE_REG_ID);
+    // ***** Sim Heatsink Temp
+    //STM32MCP_heatSinkTemp = 20 * sin(M_PI * x_tt / 180) + 15;                           // dummy data - temperature is shifted by 20 degrees for taking care of - negative temperature
+                                                                                        // get heat sink temperature from MCU: unit in degrees Celsius
+    //STM32MCP_getRegisterFrame(STM32MCP_MOTOR_1_ID, STM32MCP_MOTOR_TEMPERATURE_REG_ID);
+    // ***** Sim Motor Temp
+    //STM32MCP_motorTemp = 30 * sin(M_PI * x_tt / 180) + 20;                              //  dummy data - temperature is shifted by 20 degrees for taking care of - negative temperature
+                                                                                        // get motor temperature from MCU: unit in degrees Celsius
+    // ***** or replace above with
+    periodicCommunication_STM32MCP_getRegisterFrame();
+
+    // ******* Passing motor sensor data to data analysis
+    // ******* call a function in motorControl.c to call dataAnalysis_sampling
+    motorcontrol_dataAnalysis_sampling(x_hf);
 
     x_tt++;
     x_hf++;

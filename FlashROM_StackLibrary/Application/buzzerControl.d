@@ -141,6 +141,20 @@ Application/buzzerControl.obj: C:/ti/xdctools_3_51_03_28_core/packages/xdc/runti
 Application/buzzerControl.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/kernel/tirtos/packages/ti/sysbios/interfaces/ITaskSupport.h
 Application/buzzerControl.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/kernel/tirtos/packages/ti/sysbios/knl/Task__epilogue.h
 Application/buzzerControl.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/kernel/tirtos/packages/ti/sysbios/knl/package/Task_SupportProxy.h
+Application/buzzerControl.obj: ../Application/motorControl.h
+Application/buzzerControl.obj: ../Application/simple_peripheral.h
+Application/buzzerControl.obj: C:/ti/ti-cgt-arm_18.12.5.LTS/include/string.h
+Application/buzzerControl.obj: C:/ti/ti-cgt-arm_18.12.5.LTS/include/stdlib.h
+Application/buzzerControl.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/icall/src/inc/icall.h
+Application/buzzerControl.obj: C:/ti/ti-cgt-arm_18.12.5.LTS/include/stdbool.h
+Application/buzzerControl.obj: C:/ti/ti-cgt-arm_18.12.5.LTS/include/stdlib.h
+Application/buzzerControl.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/hal/src/inc/hal_assert.h
+Application/buzzerControl.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/hal/src/target/_common/hal_types.h
+Application/buzzerControl.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/hal/src/target/_common/cc26xx/_hal_types.h
+Application/buzzerControl.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/hal/src/inc/hal_defs.h
+Application/buzzerControl.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/I2C.h
+Application/buzzerControl.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/NVS.h
+Application/buzzerControl.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/GPIO.h
 Application/buzzerControl.obj: ../Application/buzzerControl.h
 
 ../Application/buzzerControl.c:
@@ -424,6 +438,34 @@ C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/kernel/tirtos/packages/ti/sysbios/inter
 C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/kernel/tirtos/packages/ti/sysbios/knl/Task__epilogue.h:
 
 C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/kernel/tirtos/packages/ti/sysbios/knl/package/Task_SupportProxy.h:
+
+../Application/motorControl.h:
+
+../Application/simple_peripheral.h:
+
+C:/ti/ti-cgt-arm_18.12.5.LTS/include/string.h:
+
+C:/ti/ti-cgt-arm_18.12.5.LTS/include/stdlib.h:
+
+C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/icall/src/inc/icall.h:
+
+C:/ti/ti-cgt-arm_18.12.5.LTS/include/stdbool.h:
+
+C:/ti/ti-cgt-arm_18.12.5.LTS/include/stdlib.h:
+
+C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/hal/src/inc/hal_assert.h:
+
+C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/hal/src/target/_common/hal_types.h:
+
+C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/hal/src/target/_common/cc26xx/_hal_types.h:
+
+C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/hal/src/inc/hal_defs.h:
+
+C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/I2C.h:
+
+C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/NVS.h:
+
+C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/GPIO.h:
 
 ../Application/buzzerControl.h:
 

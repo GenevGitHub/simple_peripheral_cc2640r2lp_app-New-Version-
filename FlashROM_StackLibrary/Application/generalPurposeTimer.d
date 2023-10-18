@@ -207,6 +207,7 @@ Application/generalPurposeTimer.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/so
 Application/generalPurposeTimer.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/dpl/SemaphoreP.h
 Application/generalPurposeTimer.obj: C:/Users/Public/Documents/TI-workspace/simple_peripheral_cc2640r2lp_app/TSL2561/TSL2561.h
 Application/generalPurposeTimer.obj: C:/ti/ti-cgt-arm_18.12.5.LTS/include/stdlib.h
+Application/generalPurposeTimer.obj: C:/Users/Public/Documents/TI-workspace/simple_peripheral_cc2640r2lp_app/STM32MCP/STM32MCP.h
 
 ../Application/generalPurposeTimer.c:
 
@@ -621,4 +622,6 @@ C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/dpl/SemaphoreP.h:
 C:/Users/Public/Documents/TI-workspace/simple_peripheral_cc2640r2lp_app/TSL2561/TSL2561.h:
 
 C:/ti/ti-cgt-arm_18.12.5.LTS/include/stdlib.h:
+
+C:/Users/Public/Documents/TI-workspace/simple_peripheral_cc2640r2lp_app/STM32MCP/STM32MCP.h:
 

@@ -193,168 +193,168 @@ static gattAttribute_t DashboardAttrTbl[] =
       // Dashboard_Error_Code Characteristic Value
       {
         { ATT_UUID_SIZE, Dashboard_Error_CodeUUID },
-        GATT_PERMIT_READ,
-        0,
-        Dashboard_Error_CodeVal
+            GATT_PERMIT_READ,
+            0,
+            Dashboard_Error_CodeVal
       },
       // Dashboard_Error_Code CCCD
       {
         { ATT_BT_UUID_SIZE, clientCharCfgUUID },
-        GATT_PERMIT_READ | GATT_PERMIT_WRITE,
-        0,
-        (uint8 *)&Dashboard_Error_CodeConfig
+            GATT_PERMIT_READ | GATT_PERMIT_WRITE,
+            0,
+            (uint8 *)&Dashboard_Error_CodeConfig
       },
       // Dashboard_Error_Code user descriptor
       {
         {ATT_BT_UUID_SIZE, charUserDescUUID},
-        GATT_PERMIT_READ,
-        0,
-        "Dashboard Error Code"
+            GATT_PERMIT_READ,
+            0,
+            "Dashboard Error Code"
       },
     // SPEED MODE
     // Dashboard_Speed_Mode Characteristic Declaration
     {
       { ATT_BT_UUID_SIZE, characterUUID },
-      GATT_PERMIT_READ,
-      0,
-      &Dashboard_Speed_ModeProps
+          GATT_PERMIT_READ,
+          0,
+          &Dashboard_Speed_ModeProps
     },
       // Dashboard_Speed_Mode Characteristic Value
       {
         { ATT_UUID_SIZE, Dashboard_Speed_ModeUUID },
-        GATT_PERMIT_READ,
-        0,
-        Dashboard_Speed_ModeVal
+            GATT_PERMIT_READ,
+            0,
+            Dashboard_Speed_ModeVal
       },
       // Dashboard_Speed_Mode CCCD
       {
         { ATT_BT_UUID_SIZE, clientCharCfgUUID },
-        GATT_PERMIT_READ | GATT_PERMIT_WRITE,
-        0,
-        (uint8 *)&Dashboard_Speed_ModeConfig
+            GATT_PERMIT_READ | GATT_PERMIT_WRITE,
+            0,
+            (uint8 *)&Dashboard_Speed_ModeConfig
       },
       // Dashboard_Speed_Mode user descriptor
       {
         {ATT_BT_UUID_SIZE, charUserDescUUID},
-        GATT_PERMIT_READ,
-        0,
-        "Speed Mode"
+            GATT_PERMIT_READ,
+            0,
+            "Speed Mode"
       },
     // LIGHT STATUS
     // Dashboard_Light_Status Characteristic Declaration
     {
       { ATT_BT_UUID_SIZE, characterUUID },
-      GATT_PERMIT_READ,
-      0,
-      &Dashboard_Light_StatusProps
+          GATT_PERMIT_READ,
+          0,
+          &Dashboard_Light_StatusProps
     },
       // Dashboard_Light_Status Characteristic Value
       {
         { ATT_UUID_SIZE,  Dashboard_Light_StatusUUID},
-        GATT_PERMIT_READ,
-        0,
-        Dashboard_Light_StatusVal
+            GATT_PERMIT_READ,
+            0,
+            Dashboard_Light_StatusVal
       },
       // Dashboard_Light_Status CCCD
       {
         { ATT_BT_UUID_SIZE, clientCharCfgUUID },
-        GATT_PERMIT_READ | GATT_PERMIT_WRITE,
-        0,
-        (uint8 *)&Dashboard_Light_StatusConfig
+            GATT_PERMIT_READ | GATT_PERMIT_WRITE,
+            0,
+            (uint8 *)&Dashboard_Light_StatusConfig
       },
       // Dashboard_Light_Status user descriptor
       {
         {ATT_BT_UUID_SIZE, charUserDescUUID},
-        GATT_PERMIT_READ,
-        0,
-        "Light Status"
+            GATT_PERMIT_READ,
+            0,
+            "Light Status"
       },
     // LIGHT MODE
     // Dashboard_Light_Mode Characteristic Declaration
     {
       { ATT_BT_UUID_SIZE, characterUUID },
-      GATT_PERMIT_READ,
-      0,
-      &Dashboard_Light_ModeProps
+          GATT_PERMIT_READ,
+          0,
+          &Dashboard_Light_ModeProps
     },
       // Dashboard_Light_Mode Characteristic Value
       {
         { ATT_UUID_SIZE, Dashboard_Light_ModeUUID },
-        GATT_PERMIT_READ | GATT_PERMIT_WRITE,   // Client is given the permission to write
-        0,
-        Dashboard_Light_ModeVal
+            GATT_PERMIT_READ | GATT_PERMIT_WRITE,   // Client is given the permission to write
+            0,
+            Dashboard_Light_ModeVal
       },
       // Dashboard_Light_Mode CCCD
       {
         { ATT_BT_UUID_SIZE, clientCharCfgUUID },
-        GATT_PERMIT_READ | GATT_PERMIT_WRITE,
-        0,
-        (uint8 *)&Dashboard_Light_ModeConfig
+            GATT_PERMIT_READ | GATT_PERMIT_WRITE,
+            0,
+            (uint8 *)&Dashboard_Light_ModeConfig
       },
       // Dashboard_Light_Mode user descriptor
       {
         {ATT_BT_UUID_SIZE, charUserDescUUID},
-        GATT_PERMIT_READ,
-        0,
-        "Light Mode"
+            GATT_PERMIT_READ,
+            0,
+            "Light Mode"
       },
     // POWER ON TIME
     // Dashboard_Power_On_Time Characteristic Declaration
     {
       { ATT_BT_UUID_SIZE, characterUUID },
-      GATT_PERMIT_READ,
-      0,
-      &Dashboard_Power_On_TimeProps
+          GATT_PERMIT_READ,
+          0,
+          &Dashboard_Power_On_TimeProps
     },
       // Dashboard_Power_On_Time Characteristic Value
       {
         { ATT_UUID_SIZE, Dashboard_Power_On_TimeUUID },
-        GATT_PERMIT_READ,
-        0,
-        Dashboard_Power_On_TimeVal
+            GATT_PERMIT_READ,
+            0,
+            Dashboard_Power_On_TimeVal
       },
       // Dashboard_Power_On_Time CCCD
       {
         { ATT_BT_UUID_SIZE, clientCharCfgUUID },
-        GATT_PERMIT_READ | GATT_PERMIT_WRITE,
-        0,
-        (uint8 *)&Dashboard_Power_On_TimeConfig
+            GATT_PERMIT_READ | GATT_PERMIT_WRITE,
+            0,
+            (uint8 *)&Dashboard_Power_On_TimeConfig
       },
       // Dashboard_Power_On_Time user descriptor
       {
         {ATT_BT_UUID_SIZE, charUserDescUUID},
-        GATT_PERMIT_READ,
-        0,
-        "Power On Time (minutes)"
+            GATT_PERMIT_READ,
+            0,
+            "Power On Time (minutes)"
       },
     // ADCOUNTER
     // Dashboard_ADCounter Characteristic Declaration
       {
         { ATT_BT_UUID_SIZE, characterUUID },
-        GATT_PERMIT_READ,
-        0,
-        &Dashboard_ADCounterProps
+            GATT_PERMIT_READ,
+            0,
+            &Dashboard_ADCounterProps
       },
       // Dashboard_ADCounter Characteristic Value
       {
         { ATT_UUID_SIZE, Dashboard_ADCounterUUID },
-        GATT_PERMIT_READ,
-        0,
-        Dashboard_ADCounterVal
+            GATT_PERMIT_READ,
+            0,
+            Dashboard_ADCounterVal
       },
       // Dashboard_ADCounter CCCD
       {
         { ATT_BT_UUID_SIZE, clientCharCfgUUID },
-        GATT_PERMIT_READ | GATT_PERMIT_WRITE,
-        0,
-        (uint8 *)&Dashboard_ADCounterConfig
+            GATT_PERMIT_READ | GATT_PERMIT_WRITE,
+            0,
+            (uint8 *)&Dashboard_ADCounterConfig
       },
       // Dashboard_ADCounter user descriptor
       {
         {ATT_BT_UUID_SIZE, charUserDescUUID},
-        GATT_PERMIT_READ,
-        0,
-        "Data ID"
+            GATT_PERMIT_READ,
+            0,
+            "Data ID"
       }
 };
 

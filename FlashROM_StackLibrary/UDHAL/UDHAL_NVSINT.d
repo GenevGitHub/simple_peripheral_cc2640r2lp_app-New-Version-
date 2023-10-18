@@ -173,6 +173,17 @@ UDHAL/UDHAL_NVSINT.obj: C:/ti/xdctools_3_51_03_28_core/packages/xdc/runtime/Type
 UDHAL/UDHAL_NVSINT.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/kernel/tirtos/packages/ti/sysbios/interfaces/ITaskSupport.h
 UDHAL/UDHAL_NVSINT.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/kernel/tirtos/packages/ti/sysbios/knl/Task__epilogue.h
 UDHAL/UDHAL_NVSINT.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/kernel/tirtos/packages/ti/sysbios/knl/package/Task_SupportProxy.h
+UDHAL/UDHAL_NVSINT.obj: C:/Users/Public/Documents/TI-workspace/simple_peripheral_cc2640r2lp_app/Application/motorControl.h
+UDHAL/UDHAL_NVSINT.obj: C:/Users/Public/Documents/TI-workspace/simple_peripheral_cc2640r2lp_app/Application/simple_peripheral.h
+UDHAL/UDHAL_NVSINT.obj: C:/ti/ti-cgt-arm_18.12.5.LTS/include/stdlib.h
+UDHAL/UDHAL_NVSINT.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/icall/src/inc/icall.h
+UDHAL/UDHAL_NVSINT.obj: C:/ti/ti-cgt-arm_18.12.5.LTS/include/stdlib.h
+UDHAL/UDHAL_NVSINT.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/hal/src/inc/hal_assert.h
+UDHAL/UDHAL_NVSINT.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/hal/src/target/_common/hal_types.h
+UDHAL/UDHAL_NVSINT.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/hal/src/target/_common/cc26xx/_hal_types.h
+UDHAL/UDHAL_NVSINT.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/hal/src/inc/hal_defs.h
+UDHAL/UDHAL_NVSINT.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/I2C.h
+UDHAL/UDHAL_NVSINT.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/GPIO.h
 
 ../UDHAL/UDHAL_NVSINT.c:
 
@@ -519,4 +530,26 @@ C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/kernel/tirtos/packages/ti/sysbios/inter
 C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/kernel/tirtos/packages/ti/sysbios/knl/Task__epilogue.h:
 
 C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/kernel/tirtos/packages/ti/sysbios/knl/package/Task_SupportProxy.h:
+
+C:/Users/Public/Documents/TI-workspace/simple_peripheral_cc2640r2lp_app/Application/motorControl.h:
+
+C:/Users/Public/Documents/TI-workspace/simple_peripheral_cc2640r2lp_app/Application/simple_peripheral.h:
+
+C:/ti/ti-cgt-arm_18.12.5.LTS/include/stdlib.h:
+
+C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/icall/src/inc/icall.h:
+
+C:/ti/ti-cgt-arm_18.12.5.LTS/include/stdlib.h:
+
+C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/hal/src/inc/hal_assert.h:
+
+C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/hal/src/target/_common/hal_types.h:
+
+C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/hal/src/target/_common/cc26xx/_hal_types.h:
+
+C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/hal/src/inc/hal_defs.h:
+
+C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/I2C.h:
+
+C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/GPIO.h:
 

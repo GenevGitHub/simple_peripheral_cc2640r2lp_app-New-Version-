@@ -1,6 +1,6 @@
 /*
  * UDHAL_TIM2.h
- *  This library is used for singleButton.h to counter the button press duration
+ *  This library is used for STM32MCP/STM32MCP.h to counter the heartbeat duration
  *  Created on:   26 Jan 2021 by Siu Yeung Yik
  *  Last Updated: 26 Jan 2021 by Siu Yeung Yik
  */

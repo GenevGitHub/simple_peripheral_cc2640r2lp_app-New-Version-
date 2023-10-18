@@ -132,25 +132,25 @@ static CONST uint8 Controller_Total_Energy_EfficiencyUUID[ATT_UUID_SIZE] =
 // Controller_Range UUID
 static CONST uint8 Controller_RangeUUID[ATT_UUID_SIZE] =
 {
-  TI_BASE_UUID_128(CONTROLLER_RANGE_UUID)
+     TI_BASE_UUID_128(CONTROLLER_RANGE_UUID)
 };
 
 // Controller_co2Saved UUID
 static CONST uint8 Controller_co2SavedUUID[ATT_UUID_SIZE] =
 {
-  TI_BASE_UUID_128(CONTROLLER_CO2SAVED_UUID)
+     TI_BASE_UUID_128(CONTROLLER_CO2SAVED_UUID)
 };
 
 // Controller_Motor_Temperature UUID
 static CONST uint8 Controller_Motor_TemperatureUUID[ATT_BT_UUID_SIZE] =
 {
-  LO_UINT16(CONTROLLER_MOTOR_TEMPERATURE_UUID), HI_UINT16(CONTROLLER_MOTOR_TEMPERATURE_UUID)
+     LO_UINT16(CONTROLLER_MOTOR_TEMPERATURE_UUID), HI_UINT16(CONTROLLER_MOTOR_TEMPERATURE_UUID)
 };
 
 // Controller_Instant_Economy UUID
 static CONST uint8 Controller_Instant_EconomyUUID[ATT_UUID_SIZE] =
 {
-  TI_BASE_UUID_128(CONTROLLER_INSTANT_ECONOMY_UUID)
+     TI_BASE_UUID_128(CONTROLLER_INSTANT_ECONOMY_UUID)
 };
 
 /*********************************************************************
@@ -165,7 +165,6 @@ static ControllerCBs_t *pAppCBs = NULL;
 
 // Service declaration
 static CONST gattAttrType_t ControllerDecl = { ATT_UUID_SIZE, ControllerUUID };
-
 
 // Characteristic "Controller_Voltage" Properties (for declaration)
 static uint8_t Controller_VoltageProps = GATT_PROP_READ | GATT_PROP_NOTIFY;
@@ -355,7 +354,7 @@ static gattAttribute_t ControllerAttrTbl[] =
         {ATT_BT_UUID_SIZE, charUserDescUUID},
         GATT_PERMIT_READ,
         0,
-        "Heat Sink Temperature (C)"
+        "Heat Sink Temperature (Cels)"
       },
     // Controller_Error_Code Characteristic Declaration
     {
@@ -469,6 +468,7 @@ static gattAttribute_t ControllerAttrTbl[] =
         0,
         "Total Distance Travelled (dm)"
       },
+    // Total_Energy_Consumption
     // Controller_Total_Energy_Consumption Characteristic Declaration
     {
       { ATT_BT_UUID_SIZE, characterUUID },
@@ -497,6 +497,7 @@ static gattAttribute_t ControllerAttrTbl[] =
         0,
         "Total Energy Consumption (mWh)"
       },
+    // Total_Energy_Efficiency
     // Controller_Total_Energy_Efficiency Characteristic Declaration
     {
       { ATT_BT_UUID_SIZE, characterUUID },
@@ -609,7 +610,7 @@ static gattAttribute_t ControllerAttrTbl[] =
         {ATT_BT_UUID_SIZE, charUserDescUUID},
         GATT_PERMIT_READ,
         0,
-        "Motor Temperature (C)"
+        "Motor Temperature (Cels)"
       },
   // Controller_Instant_Economy Characteristic Declaration
   {
@@ -870,15 +871,15 @@ bStatus_t Controller_SetParameter( uint8 param, uint8 len, void *value )
     {
         if ( len == CONTROLLER_HEAT_SINK_TEMPERATURE_LEN )
         {
-        memcpy(Controller_Heat_Sink_TemperatureVal, value, len);
-        // Try to send notification.
-        GATTServApp_ProcessCharCfg( Controller_Heat_Sink_TemperatureConfig, (uint8_t *)&Controller_Heat_Sink_TemperatureVal, FALSE,
-                                    ControllerAttrTbl, GATT_NUM_ATTRS( ControllerAttrTbl ),
-                                    INVALID_TASK_ID,  Controller_ReadAttrCB);
+            memcpy(Controller_Heat_Sink_TemperatureVal, value, len);
+            // Try to send notification.
+            GATTServApp_ProcessCharCfg( Controller_Heat_Sink_TemperatureConfig, (uint8_t *)&Controller_Heat_Sink_TemperatureVal, FALSE,
+                                        ControllerAttrTbl, GATT_NUM_ATTRS( ControllerAttrTbl ),
+                                        INVALID_TASK_ID,  Controller_ReadAttrCB);
         }
         else
         {
-        ret = bleInvalidRange;
+            ret = bleInvalidRange;
         }
         break;
     }
@@ -886,15 +887,15 @@ bStatus_t Controller_SetParameter( uint8 param, uint8 len, void *value )
     {
         if ( len == CONTROLLER_ERROR_CODE_LEN )
         {
-        memcpy(Controller_Error_CodeVal, value, len);
-        // Try to send notification.
-        GATTServApp_ProcessCharCfg( Controller_Error_CodeConfig, (uint8_t *)&Controller_Error_CodeVal, FALSE,
-                                    ControllerAttrTbl, GATT_NUM_ATTRS( ControllerAttrTbl ),
-                                    INVALID_TASK_ID,  Controller_ReadAttrCB);
+            memcpy(Controller_Error_CodeVal, value, len);
+            // Try to send notification.
+            GATTServApp_ProcessCharCfg( Controller_Error_CodeConfig, (uint8_t *)&Controller_Error_CodeVal, FALSE,
+                                        ControllerAttrTbl, GATT_NUM_ATTRS( ControllerAttrTbl ),
+                                        INVALID_TASK_ID,  Controller_ReadAttrCB);
         }
         else
         {
-        ret = bleInvalidRange;
+            ret = bleInvalidRange;
         }
         break;
     }
@@ -902,15 +903,15 @@ bStatus_t Controller_SetParameter( uint8 param, uint8 len, void *value )
     {
         if ( len == CONTROLLER_MOTOR_RPM_LEN )
         {
-        memcpy(Controller_Motor_RPM_Val, value, len);
-        // Try to send notification.
-        GATTServApp_ProcessCharCfg( Controller_Motor_RPM_Config, (uint8_t *)&Controller_Motor_RPM_Val, FALSE,
-                                    ControllerAttrTbl, GATT_NUM_ATTRS( ControllerAttrTbl ),
-                                    INVALID_TASK_ID,  Controller_ReadAttrCB);
+            memcpy(Controller_Motor_RPM_Val, value, len);
+            // Try to send notification.
+            GATTServApp_ProcessCharCfg( Controller_Motor_RPM_Config, (uint8_t *)&Controller_Motor_RPM_Val, FALSE,
+                                        ControllerAttrTbl, GATT_NUM_ATTRS( ControllerAttrTbl ),
+                                        INVALID_TASK_ID,  Controller_ReadAttrCB);
         }
         else
         {
-        ret = bleInvalidRange;
+            ret = bleInvalidRange;
         }
         break;
     }
@@ -918,15 +919,15 @@ bStatus_t Controller_SetParameter( uint8 param, uint8 len, void *value )
     {
         if ( len == CONTROLLER_MOTOR_SPEED_LEN )
         {
-        memcpy(Controller_Motor_SpeedVal, value, len);
-        // Try to send notification.
-        GATTServApp_ProcessCharCfg( Controller_Motor_SpeedConfig, (uint8_t *)&Controller_Motor_SpeedVal, FALSE,
-                                    ControllerAttrTbl, GATT_NUM_ATTRS( ControllerAttrTbl ),
-                                    INVALID_TASK_ID,  Controller_ReadAttrCB);
+            memcpy(Controller_Motor_SpeedVal, value, len);
+            // Try to send notification.
+            GATTServApp_ProcessCharCfg( Controller_Motor_SpeedConfig, (uint8_t *)&Controller_Motor_SpeedVal, FALSE,
+                                        ControllerAttrTbl, GATT_NUM_ATTRS( ControllerAttrTbl ),
+                                        INVALID_TASK_ID,  Controller_ReadAttrCB);
         }
         else
         {
-        ret = bleInvalidRange;
+            ret = bleInvalidRange;
         }
         break;
     }
@@ -934,15 +935,15 @@ bStatus_t Controller_SetParameter( uint8 param, uint8 len, void *value )
     {
         if ( len == CONTROLLER_TOTAL_DISTANCE_TRAVELLED_LEN )
         {
-        memcpy(Controller_Total_Distance_TravelledVal, value, len);
-        // Try to send notification.
-        GATTServApp_ProcessCharCfg( Controller_Total_Distance_TravelledConfig, (uint8_t *)&Controller_Total_Distance_TravelledVal, FALSE,
-                                    ControllerAttrTbl, GATT_NUM_ATTRS( ControllerAttrTbl ),
-                                    INVALID_TASK_ID,  Controller_ReadAttrCB);
+            memcpy(Controller_Total_Distance_TravelledVal, value, len);
+            // Try to send notification.
+            GATTServApp_ProcessCharCfg( Controller_Total_Distance_TravelledConfig, (uint8_t *)&Controller_Total_Distance_TravelledVal, FALSE,
+                                        ControllerAttrTbl, GATT_NUM_ATTRS( ControllerAttrTbl ),
+                                        INVALID_TASK_ID,  Controller_ReadAttrCB);
         }
         else
         {
-        ret = bleInvalidRange;
+            ret = bleInvalidRange;
         }
         break;
     }
@@ -950,15 +951,15 @@ bStatus_t Controller_SetParameter( uint8 param, uint8 len, void *value )
     {
         if ( len == CONTROLLER_TOTAL_ENERGY_CONSUMPTION_LEN )
         {
-        memcpy(Controller_Total_Energy_ConsumptionVal, value, len);
-        // Try to send notification.
-        GATTServApp_ProcessCharCfg( Controller_Total_Energy_ConsumptionConfig, (uint8_t *)&Controller_Total_Energy_ConsumptionVal, FALSE,
-                                    ControllerAttrTbl, GATT_NUM_ATTRS( ControllerAttrTbl ),
-                                    INVALID_TASK_ID,  Controller_ReadAttrCB);
+            memcpy(Controller_Total_Energy_ConsumptionVal, value, len);
+            // Try to send notification.
+            GATTServApp_ProcessCharCfg( Controller_Total_Energy_ConsumptionConfig, (uint8_t *)&Controller_Total_Energy_ConsumptionVal, FALSE,
+                                        ControllerAttrTbl, GATT_NUM_ATTRS( ControllerAttrTbl ),
+                                        INVALID_TASK_ID,  Controller_ReadAttrCB);
         }
         else
         {
-        ret = bleInvalidRange;
+            ret = bleInvalidRange;
         }
         break;
     }
@@ -967,81 +968,81 @@ bStatus_t Controller_SetParameter( uint8 param, uint8 len, void *value )
         if ( len == CONTROLLER_TOTAL_ENERGY_EFFICIENCY_LEN )
 
         {
-        memcpy(Controller_Total_Energy_EfficiencyVal, value, len);
-        // Try to send notification.
-        GATTServApp_ProcessCharCfg( Controller_Total_Energy_EfficiencyConfig, (uint8_t *)&Controller_Total_Energy_EfficiencyVal, FALSE,
-                                    ControllerAttrTbl, GATT_NUM_ATTRS( ControllerAttrTbl ),
-                                    INVALID_TASK_ID,  Controller_ReadAttrCB);
+            memcpy(Controller_Total_Energy_EfficiencyVal, value, len);
+            // Try to send notification.
+            GATTServApp_ProcessCharCfg( Controller_Total_Energy_EfficiencyConfig, (uint8_t *)&Controller_Total_Energy_EfficiencyVal, FALSE,
+                                        ControllerAttrTbl, GATT_NUM_ATTRS( ControllerAttrTbl ),
+                                        INVALID_TASK_ID,  Controller_ReadAttrCB);
         }
         else
         {
-        ret = bleInvalidRange;
+            ret = bleInvalidRange;
         }
         break;
     }
-    case CONTROLLER_RANGE:
-    {
-            if ( len == CONTROLLER_RANGE_LEN )
-            {
-            memcpy(Controller_RangeVal, value, len);
-            // Try to send notification.
-            GATTServApp_ProcessCharCfg( Controller_RangeConfig, (uint8_t *)&Controller_RangeVal, FALSE,
-                                        ControllerAttrTbl, GATT_NUM_ATTRS( ControllerAttrTbl ),
-                                        INVALID_TASK_ID,  Controller_ReadAttrCB);
-            }
-            else
-            {
-            ret = bleInvalidRange;
-            }
-            break;
-    }
-    case CONTROLLER_CO2SAVED:
-    {
-            if ( len == CONTROLLER_CO2SAVED_LEN )
-            {
-            memcpy(Controller_co2SavedVal, value, len);
-            // Try to send notification.
-            GATTServApp_ProcessCharCfg( Controller_co2SavedConfig, (uint8_t *)&Controller_co2SavedVal, FALSE,
-                                        ControllerAttrTbl, GATT_NUM_ATTRS( ControllerAttrTbl ),
-                                        INVALID_TASK_ID,  Controller_ReadAttrCB);
-            }
-            else
-            {
-            ret = bleInvalidRange;
-            }
-            break;
-    }
-    case CONTROLLER_MOTOR_TEMPERATURE:
-    {
-        if ( len == CONTROLLER_MOTOR_TEMPERATURE_LEN )
-            {
-            memcpy(Controller_Motor_TemperatureVal, value, len);
-            // Try to send notification.
-            GATTServApp_ProcessCharCfg( Controller_Motor_TemperatureConfig, (uint8_t *)&Controller_Motor_TemperatureVal, FALSE,
-                                        ControllerAttrTbl, GATT_NUM_ATTRS( ControllerAttrTbl ),
-                                        INVALID_TASK_ID,  Controller_ReadAttrCB);
-            }
-            else
-            {
-            ret = bleInvalidRange;
-            }
-            break;
-      }
     case CONTROLLER_INSTANT_ECONOMY:
     {
         if ( len == CONTROLLER_INSTANT_ECONOMY_LEN )
-            {
+        {
             memcpy(Controller_Instant_EconomyVal, value, len);
             // Try to send notification.
             GATTServApp_ProcessCharCfg( Controller_Instant_EconomyConfig, (uint8_t *)&Controller_Instant_EconomyVal, FALSE,
                                         ControllerAttrTbl, GATT_NUM_ATTRS( ControllerAttrTbl ),
                                         INVALID_TASK_ID,  Controller_ReadAttrCB);
-            }
-            else
-            {
+        }
+        else
+        {
             ret = bleInvalidRange;
-            }
-            break;
+        }
+        break;
+    }
+    case CONTROLLER_RANGE:
+    {
+        if ( len == CONTROLLER_RANGE_LEN )
+        {
+            memcpy(Controller_RangeVal, value, len);
+            // Try to send notification.
+            GATTServApp_ProcessCharCfg( Controller_RangeConfig, (uint8_t *)&Controller_RangeVal, FALSE,
+                                        ControllerAttrTbl, GATT_NUM_ATTRS( ControllerAttrTbl ),
+                                        INVALID_TASK_ID,  Controller_ReadAttrCB);
+        }
+        else
+        {
+            ret = bleInvalidRange;
+        }
+        break;
+    }
+    case CONTROLLER_CO2SAVED:
+    {
+        if ( len == CONTROLLER_CO2SAVED_LEN )
+        {
+            memcpy(Controller_co2SavedVal, value, len);
+            // Try to send notification.
+            GATTServApp_ProcessCharCfg( Controller_co2SavedConfig, (uint8_t *)&Controller_co2SavedVal, FALSE,
+                                        ControllerAttrTbl, GATT_NUM_ATTRS( ControllerAttrTbl ),
+                                        INVALID_TASK_ID,  Controller_ReadAttrCB);
+        }
+        else
+        {
+            ret = bleInvalidRange;
+        }
+        break;
+    }
+    case CONTROLLER_MOTOR_TEMPERATURE:
+    {
+        if ( len == CONTROLLER_MOTOR_TEMPERATURE_LEN )
+        {
+            memcpy(Controller_Motor_TemperatureVal, value, len);
+            // Try to send notification.
+            GATTServApp_ProcessCharCfg( Controller_Motor_TemperatureConfig, (uint8_t *)&Controller_Motor_TemperatureVal, FALSE,
+                                        ControllerAttrTbl, GATT_NUM_ATTRS( ControllerAttrTbl ),
+                                        INVALID_TASK_ID,  Controller_ReadAttrCB);
+        }
+        else
+        {
+            ret = bleInvalidRange;
+        }
+        break;
     }
     default:
       ret = INVALIDPARAMETER;

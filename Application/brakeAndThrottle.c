@@ -13,6 +13,8 @@
 #include "motorControl.h"
 #include "ledControl.h"
 #include "dataAnalysis.h"
+#include "lightControl.h"
+#include "STM32MCP/STM32MCP.h"
 #include <stdint.h>
 /*********************************************************************
  * CONSTANTS
@@ -20,6 +22,7 @@
 /*********************************************************************
  * GLOBAL VARIABLES
  */
+uint8_t     gapRoleChanged = 0;
 uint8_t     speedMode;
 uint16_t    adc2Result;             // adc2Result is a holder of the throttle ADC reading
 uint16_t    throttlePercent;        // Actual throttle applied in percentage
@@ -75,7 +78,7 @@ static void brakeAndThrottle_getSpeedModeParams();
  *********************************************************************/
 void brakeAndThrottle_init()
 {
-    //speedMode = BRAKE_AND_THROTTLE_SPEED_MODE_LEISURE; // load and Read NVSinternal and get the last speed mode
+    speedMode = dataAnalysis_getInitSpeedMode(); //BRAKE_AND_THROTTLE_SPEED_MODE_LEISURE; // load and Read NVSinternal and get the last speed mode
     brakeAndThrottle_getSpeedModeParams();
     uint8_t ii;
     for (ii = 0; ii < BRAKE_AND_THROTTLE_SAMPLES; ii++)
@@ -387,6 +390,7 @@ uint8_t brake_errorLog = 0;
 
 void brakeAndThrottle_ADC_conversion()
 {
+    STM32MCP_setSystemControlConfigFrame(STM32MCP_HEARTBEAT);
     /*******************************************************************************************************************************
      *      get brake ADC measurement
      *      get throttle ADC measurement
@@ -474,9 +478,10 @@ void brakeAndThrottle_ADC_conversion()
             ledControl_setSpeedMode(speedMode);
             // if brake errorStatus = 1 -> limited to Amble mode Only
             brake_errorLog = 0;
+            /*Send error code to the Motor Controller*/
         }
         ledControl_getError(10);
-
+        /*Send error code to the Motor Controller*/
     }
 
     if ((brakeADCAvg < BRAKE_ADC_THRESHOLD_L) || (brake_errorLog == 1))
@@ -491,9 +496,10 @@ void brakeAndThrottle_ADC_conversion()
             ledControl_setSpeedMode(speedMode);
             // if brake errorStatus = 1 -> limited to Amble mode Only
             brake_errorLog = 0;
+            /*Send error code to the Motor Controller*/
         }
         ledControl_getError(10);
-
+        /*Send error code to the Motor Controller*/
     }
 
     /*******************************************************************************************************************************
@@ -524,15 +530,15 @@ void brakeAndThrottle_ADC_conversion()
     {
         if ((brakeStatus == 1) && (throttlePercent >= throttlePercent0 * THROTTLEPERCENTREDUCTION))
         {                           // condition when rider has not release the throttle
-            if ((throttlePercent0 == 0) && (brakePercent <= BRAKEPERCENTTHRESHOLD))
+            if ((throttlePercent0 == 0) && (brakePercent <= BRAKEPERCENTTHRESHOLD))                                             // This condition resets brakeStatus to zero
             {
-                brakeStatus = 0;                                                                                                // if brake is not pulled
+                brakeStatus = 0;
             }
-            else {
-                brakeStatus = 1;                                                                                                // if brake is pulled
-            }
+//            else {                                                                                                            // This condition is not necessary
+//                brakeStatus = 1;                                                                                              // Since brakeStatus is initially = 1
+//            }
         }
-        else if ((brakeStatus == 0) && (brakePercent > BRAKEPERCENTTHRESHOLD)) {                                                // condition when rider pulls on the brake
+        else if ((brakeStatus == 0) && (brakePercent > BRAKEPERCENTTHRESHOLD)) {                                                // condition when brake is not initially pressed and rider pulls on the brake
             brakeStatus = 1;
             throttlePercent0 = throttlePercent;
         }
@@ -544,18 +550,20 @@ void brakeAndThrottle_ADC_conversion()
         brakeStatus = 0;
     }
 
-    if (brakeStatus == 1)
+    if (brakeStatus == 1) //Brake Pressed
     {
+        STM32MCP_setEscooterControlDebugFrame(STM32MCP_ESCOOTER_BRAKE_PRESS);
         // send instruction to STM32 to activate brake light
         // for regen-brake, send brakePercent to STM32
     }
-    else
+    else //Brake Released
     {
+        //STM32MCP_setEscooterControlDebugFrame(STM32MCP_ESCOOTER_BRAKE_RELEASE);
         // brake light off
         // regen-brake off
     }
     /********************************************************************************************************************************
-     *  throttkePercent is in percentage - has value between 0 - 100 %
+     *  throttlePercent is in percentage - has value between 0 - 100 %
      ********************************************************************************************************************************/
     //uint16_t
     throttlePercent = (uint16_t) ((throttleADCAvg - THROTTLE_ADC_CALIBRATE_L) * 100 / (THROTTLE_ADC_CALIBRATE_H - THROTTLE_ADC_CALIBRATE_L));
@@ -582,7 +590,6 @@ void brakeAndThrottle_ADC_conversion()
      ********************************************************************************************************************************/
     // in "brakeAndThrottle_CB(allowableSpeed, IQValue, brakeAndThrottle_errorMsg)", brakeAndThrottle_errorMsg is sent to the motor control unit for error handling if necessary.
     brakeAndThrottle_CBs -> brakeAndThrottle_CB(allowableSpeed, IQValue, brakeAndThrottle_errorMsg);
-
     /********************************************************************************************************************************
      *      The following is a safety critical routine/condition
      *      Firmware only allows speed mode change when throttle is not pressed concurrently/fully released
@@ -601,5 +608,17 @@ void brakeAndThrottle_ADC_conversion()
 
     //Send brake percentage for Regen Brake....
     //Do it as you like
+
+    if (gapRoleChanged == 1)
+    {
+        motorcontrol_setGatt(DASHBOARD_SERV_UUID, DASHBOARD_SPEED_MODE, DASHBOARD_SPEED_MODE_LEN, (uint8_t *) &speedMode);  //update speed mode on client (App)
+        lightControl_gapRoleChg();
+        gapRoleChanged = 0;
+    }
 }
 
+
+void brakeAndThrottle_gapRoleChg(uint8_t flag)
+{
+    gapRoleChanged = flag;
+}

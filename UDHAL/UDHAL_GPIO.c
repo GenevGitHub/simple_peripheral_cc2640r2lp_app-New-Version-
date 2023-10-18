@@ -97,11 +97,11 @@ static void UDHAL_GPIO_write(uint8_t index, uint8_t value)
  *
  * @return  none
  */
-uint8_t count = 0;
+//uint8_t count = 0;
 uint8_t logicLevel;
 static void UDHAL_GPIO_InterruptFxn(uint_least8_t index)
 {
-   count++;
+//   count++;
    switch(index)
    {
    case Board_GPIO_BUTTON0:

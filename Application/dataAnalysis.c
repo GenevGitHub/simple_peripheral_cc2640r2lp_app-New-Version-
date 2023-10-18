@@ -78,8 +78,8 @@ static uint32_t UDDataCounter = 0;                  // At new, UDDataCounter = 0
 static uint16_t UDIndex;                            // the last UDIndex saved
 static uint16_t UDIndexPrev;
 
-static AD ADArray = {0};                            //Since this data set is temporary, array struct is not necesary.  ADArray data that are displayed on the mobile app.
-static AD (*ptrADArray) = &ADArray;                 // Provides a pointer option
+static AD_t ADArray = {0};                            //Since this data set is temporary, array struct is not necesary.  ADArray data that are displayed on the mobile app.
+static AD_t (*ptrADArray) = &ADArray;                 // Provides a pointer option
 
 static float lenConvFactorDash;
 
@@ -149,6 +149,14 @@ extern void dataAnalysis_timerInterruptHandler()
         // motorControl.c pass data from MCU at every DATA_ANALYSIS_SAMPLING_TIME interval to dataSim(uint32_t jj)
 }
 
+/****
+ *
+ */
+MCUD_t (*ptr_MCUDArray);
+extern void dataAnalsis_motorControl(MCUD_t (*ptrMCUD))
+{
+    ptr_MCUDArray = ptrMCUD;
+}
 /******************************************************************************************************
  * @fun      dataAnalysis_Init
  *
@@ -168,13 +176,15 @@ extern void dataAnalysis_init()
     // ***************************************************
     uint16_t batteryVoltageStartUp_mV;
     uint16_t batteryCurrentStartUp_mA;
+
+
     // At the instant of POWER ON, we need to obtain BATTERY status for LED display
     // dashboard will instruct motor controller to obtain a battery voltage and current measurement
-    batteryVoltageStartUp_mV = 36000;           // -> STM32MCP_getRegisterFrame(STM32MCP_MOTOR_1_ID,STM32MCP_BUS_VOLTAGE_REG_ID);
-    batteryCurrentStartUp_mA = 3000;            // -> STM32MCP_getRegisterFrame(STM32MCP_MOTOR_1_ID,STM32MCP_BUS_CURRENT_REG_ID);
+    batteryVoltageStartUp_mV = (*ptr_MCUDArray).voltage_mV; //36000;           // -> STM32MCP_getRegisterFrame(STM32MCP_MOTOR_1_ID,STM32MCP_BUS_VOLTAGE_REG_ID);
+    batteryCurrentStartUp_mA = (*ptr_MCUDArray).current_mA; // 3000;            // -> STM32MCP_getRegisterFrame(STM32MCP_MOTOR_1_ID,STM32MCP_BUS_CURRENT_REG_ID);
     //avgBatteryVoltage_mV = batteryVoltageStartUp_mV;
-    int8_t mTStartUp = 15;                      // -> STM32MCP_getRegisterFrame(STM32MCP_MOTOR_1_ID,STM32MCP_BUS_MOTORTEMPERATURE_REG_ID);
-    int8_t hSTStartUp = 15;                     // -> STM32MCP_getRegisterFrame(STM32MCP_MOTOR_1_ID,STM32MCP_BUS_HEATSINKTEMPERATURE_REG_ID);
+    int8_t mTStartUp = (*ptr_MCUDArray).motorTemperature_Celcius; //15;                      // -> STM32MCP_getRegisterFrame(STM32MCP_MOTOR_1_ID,STM32MCP_BUS_MOTORTEMPERATURE_REG_ID);
+    int8_t hSTStartUp = (*ptr_MCUDArray).heatSinkTemperature_Celcius; //15;                     // -> STM32MCP_getRegisterFrame(STM32MCP_MOTOR_1_ID,STM32MCP_BUS_HEATSINKTEMPERATURE_REG_ID);
 
     dA_Count = DATA_ANALYSIS_POINTS;
     // Initialize the following arrays:  RPM, Speed, Battery voltage, Battery Current, Heat sink Temperature, Motor Temperature
@@ -228,6 +238,12 @@ extern void dataAnalysis_init()
         //buzzerControl_Stop();
     }
 
+}
+
+
+extern uint8_t dataAnalysis_getInitSpeedMode(void)
+{
+    return speed_mode_init;
 }
 
 /***********************************************************************************************************
@@ -303,10 +319,12 @@ static void get_UDArrayData()
  *
  * @return  Nil
 ******************************************************************************************************/
-uint8_t dashSpeed;  // for debugging onlu
+uint8_t dashSpeed;  // for debugging only
+uint16_t rawSpeed_100kph;
 extern void dataAnalysis_LEDSpeed(uint16_t xCounter)
 {
-    uint16_t rawSpeed_100kph = ((float) speed_cmps[xCounter] * 3.6 );           // 100*km/hr
+    //uint16_t
+    rawSpeed_100kph = ((float) speed_cmps[xCounter] * 3.6 );           // 100*km/hr
     dashSpeed = ((float) speed_cmps[xCounter] * 0.036 * lenConvFactorDash);     // km/hr or mph
     // Send rpm and speed to client (App)
     motorcontrol_setGatt(CONTROLLER_SERV_UUID, CONTROLLER_MOTOR_RPM, CONTROLLER_MOTOR_RPM_LEN, (uint8_t *) &rpm[dA_Count]);
@@ -324,9 +342,10 @@ extern void dataAnalysis_LEDSpeed(uint16_t xCounter)
  *
  * @return  Nil
 ******************************************************************************************************/
+uint32_t deltaPowerConsumption_mWh, deltaMileage_dm;
 static void dataAnalyt()
 {
-    uint32_t deltaPowerConsumption_mWh, deltaMileage_dm;
+//    uint32_t deltaPowerConsumption_mWh, deltaMileage_dm;
     ADDataCounter++;
     ADArray.ADCounter = ADDataCounter;                // Why not ADDataCounter + 1?              // totalDataCount is total count of all computed datasets
     deltaPowerConsumption_mWh = computePowerConsumption();
@@ -454,7 +473,6 @@ static void dataAnalysis_Main()
         // dataAnalyt() carries out all the data analytics
         dataAnalyt();
         ledControl_setBatteryStatus(ADArray.batteryStatus);                     // Send battery status and errorCode to led display
-//        ledControl_setErrorCode(ADArray.errorCode);
         avgBatteryVoltage_mV = ADArray.avgBatteryVoltage_mV;                     // for debugging only
         batteryPercentage = ADArray.batteryPercentage;                             // for debugging only
 
@@ -495,7 +513,7 @@ static void dataAnalysis_Main()
 ******************************************************************************************************/
 static uint8_t heatSinkOVTempState = 0;
 static uint8_t motorOVTempState = 0;
-
+static uint8_t dummyBatteryErrorCode = 0;
 static void dataAnalysis_motorcontrol_setGatt()
 {
     /******  Dashboard services
@@ -504,40 +522,43 @@ static void dataAnalysis_motorcontrol_setGatt()
 
     /******  Controller services
      *************************************/
-    //motorcontrol_setGatt(CONTROLLER_SERV_UUID, CONTROLLER_VOLTAGE, CONTROLLER_VOLTAGE_LEN, (uint8_t *) &ADArray.voltage);
-    //motorcontrol_setGatt(CONTROLLER_SERV_UUID, CONTROLLER_CURRENT, CONTROLLER_CURRENT_LEN, (uint8_t *) &ADArray.current);
-    motorcontrol_setGatt(CONTROLLER_SERV_UUID, CONTROLLER_HEAT_SINK_TEMPERATURE, CONTROLLER_HEAT_SINK_TEMPERATURE_LEN, (uint8_t *) &ADArray.avgHeatSinkTemperature_C);
+//    motorcontrol_setGatt(CONTROLLER_SERV_UUID, CONTROLLER_VOLTAGE, CONTROLLER_VOLTAGE_LEN, (uint8_t *) &ADArray.voltage);
+//    motorcontrol_setGatt(CONTROLLER_SERV_UUID, CONTROLLER_CURRENT, CONTROLLER_CURRENT_LEN, (uint8_t *) &ADArray.current);
+    //motorcontrol_setGatt(CONTROLLER_SERV_UUID, CONTROLLER_HEAT_SINK_TEMPERATURE, CONTROLLER_HEAT_SINK_TEMPERATURE_LEN, (uint8_t *) &ADArray.avgHeatSinkTemperature_C);
     motorcontrol_setGatt(CONTROLLER_SERV_UUID, CONTROLLER_TOTAL_DISTANCE_TRAVELLED, CONTROLLER_TOTAL_DISTANCE_TRAVELLED_LEN, (uint8_t *) &ADArray.accumMileage_dm);
     motorcontrol_setGatt(CONTROLLER_SERV_UUID, CONTROLLER_TOTAL_ENERGY_CONSUMPTION, CONTROLLER_TOTAL_ENERGY_CONSUMPTION_LEN, (uint8_t *) &ADArray.accumPowerConsumption_mWh);
-    motorcontrol_setGatt(CONTROLLER_SERV_UUID, CONTROLLER_INSTANT_ECONOMY, CONTROLLER_INSTANT_ECONOMY_LEN, (uint8_t *) &ADArray.instantEconomy_100Whpk);
-    motorcontrol_setGatt(CONTROLLER_SERV_UUID, CONTROLLER_TOTAL_ENERGY_EFFICIENCY, CONTROLLER_TOTAL_ENERGY_EFFICIENCY_LEN, (uint8_t *) &ADArray.economy_100Whpk);
-    motorcontrol_setGatt(CONTROLLER_SERV_UUID, CONTROLLER_RANGE, CONTROLLER_RANGE_LEN, (uint8_t *) &ADArray.range_m);
-    motorcontrol_setGatt(CONTROLLER_SERV_UUID, CONTROLLER_CO2SAVED, CONTROLLER_CO2SAVED_LEN, (uint8_t *) &ADArray.co2Saved_g);
-    motorcontrol_setGatt(CONTROLLER_SERV_UUID, CONTROLLER_MOTOR_TEMPERATURE, CONTROLLER_MOTOR_TEMPERATURE_LEN, (uint8_t *) &ADArray.motorTemperature_C);
+    //motorcontrol_setGatt(CONTROLLER_SERV_UUID, CONTROLLER_INSTANT_ECONOMY, CONTROLLER_INSTANT_ECONOMY_LEN, (uint8_t *) &ADArray.instantEconomy_100Whpk);
+    //motorcontrol_setGatt(CONTROLLER_SERV_UUID, CONTROLLER_TOTAL_ENERGY_EFFICIENCY, CONTROLLER_TOTAL_ENERGY_EFFICIENCY_LEN, (uint8_t *) &ADArray.economy_100Whpk);
+    //motorcontrol_setGatt(CONTROLLER_SERV_UUID, CONTROLLER_RANGE, CONTROLLER_RANGE_LEN, (uint8_t *) &ADArray.range_m);
+    //motorcontrol_setGatt(CONTROLLER_SERV_UUID, CONTROLLER_CO2SAVED, CONTROLLER_CO2SAVED_LEN, (uint8_t *) &ADArray.co2Saved_g);
+    //motorcontrol_setGatt(CONTROLLER_SERV_UUID, CONTROLLER_MOTOR_TEMPERATURE, CONTROLLER_MOTOR_TEMPERATURE_LEN, (uint8_t *) &ADArray.motorTemperature_C);
 
     if ((heatSinkOVTempState == HEATSINK_TEMPERATURE_ABNORMAL) && (motorOVTempState == MOTOR_TEMPERATURE_ABNORMAL))
     {
-        motorcontrol_setGatt(CONTROLLER_SERV_UUID, CONTROLLER_ERROR_CODE, CONTROLLER_ERROR_CODE_LEN, (uint8_t *) &heatSinkOVTempState);
+        //motorcontrol_setGatt(CONTROLLER_SERV_UUID, CONTROLLER_ERROR_CODE, CONTROLLER_ERROR_CODE_LEN, (uint8_t *) &heatSinkOVTempState);
     }
     else if ((heatSinkOVTempState == HEATSINK_TEMPERATURE_ABNORMAL) && (motorOVTempState != MOTOR_TEMPERATURE_ABNORMAL))
     {
-        motorcontrol_setGatt(CONTROLLER_SERV_UUID, CONTROLLER_ERROR_CODE, CONTROLLER_ERROR_CODE_LEN, (uint8_t *) &heatSinkOVTempState);
+        //motorcontrol_setGatt(CONTROLLER_SERV_UUID, CONTROLLER_ERROR_CODE, CONTROLLER_ERROR_CODE_LEN, (uint8_t *) &heatSinkOVTempState);
         }
     else if ((heatSinkOVTempState != HEATSINK_TEMPERATURE_ABNORMAL) && (motorOVTempState == MOTOR_TEMPERATURE_ABNORMAL))
     {
-        motorcontrol_setGatt(CONTROLLER_SERV_UUID, CONTROLLER_ERROR_CODE, CONTROLLER_ERROR_CODE_LEN, (uint8_t *) &motorOVTempState);
+        //motorcontrol_setGatt(CONTROLLER_SERV_UUID, CONTROLLER_ERROR_CODE, CONTROLLER_ERROR_CODE_LEN, (uint8_t *) &motorOVTempState);
     }
     else
     {
-        motorcontrol_setGatt(CONTROLLER_SERV_UUID, CONTROLLER_ERROR_CODE, CONTROLLER_ERROR_CODE_LEN, (uint8_t *) &heatSinkOVTempState);
+        //motorcontrol_setGatt(CONTROLLER_SERV_UUID, CONTROLLER_ERROR_CODE, CONTROLLER_ERROR_CODE_LEN, (uint8_t *) &heatSinkOVTempState);
     }
     /*******  Battery services
     *************************************/
-    motorcontrol_setGatt(BATTERY_SERV_UUID, BATTERY_BATTERY_VOLTAGE, BATTERY_BATTERY_VOLTAGE_LEN, (uint8_t *) &ADArray.avgBatteryVoltage_mV);
-    motorcontrol_setGatt(BATTERY_SERV_UUID, BATTERY_BATTERY_LEVEL, BATTERY_BATTERY_LEVEL_LEN, (uint8_t *) &ADArray.batteryPercentage);
-    motorcontrol_setGatt(BATTERY_SERV_UUID, BATTERY_BATTERY_STATUS, BATTERY_BATTERY_STATUS_LEN, (uint8_t *) &ADArray.batteryStatus);
+    //motorcontrol_setGatt(BATTERY_SERV_UUID, BATTERY_BATTERY_VOLTAGE, BATTERY_BATTERY_VOLTAGE_LEN, (uint8_t *) &ADArray.avgBatteryVoltage_mV);
+    //motorcontrol_setGatt(BATTERY_SERV_UUID, BATTERY_BATTERY_LEVEL, BATTERY_BATTERY_LEVEL_LEN, (uint8_t *) &ADArray.batteryPercentage);
+    //motorcontrol_setGatt(BATTERY_SERV_UUID, BATTERY_BATTERY_STATUS, BATTERY_BATTERY_STATUS_LEN, (uint8_t *) &ADArray.batteryStatus);
+
     //motorcontrol_setGatt(BATTERY_SERV_UUID, BATTERY_BATTERY_TEMPERATURE, BATTERY_BATTERY_TEMPERATURE_LEN, (uint8_t *) &ADArray.avgHeatSinkTemperature_C); // currently not available
 
+    //motorcontrol_setGatt(BATTERY_SERV_UUID, BATTERY_BATTERY_ERROR_CODE, BATTERY_BATTERY_ERROR_CODE_LEN, (uint8_t *) &dummyBatteryErrorCode);
+    dummyBatteryErrorCode++;
 }
 
 /***************************************************************************************************
@@ -570,7 +591,7 @@ uint32_t computePowerConsumption()
  *
  * @param   AccumMileage
  *
- * @return  distanceTravelled (unit in decimeters) in type: uint32_t
+ * @return  distanceTravelled (unit in decimeters, i.e.  0.1 meters) in type: uint32_t
 ******************************************************************************************************/
 uint32_t computeDistanceTravelled()
 {
@@ -579,7 +600,7 @@ uint32_t computeDistanceTravelled()
     {
          deltaDistanceTravelled_dm += ((*((*ptrc) + ii)) * speed_cmps[ii]);            // for computational accuracy reasons, calculations are performed in centimeter/second
     }
-    deltaDistanceTravelled_dm = round((float) deltaDistanceTravelled_dm * DATA_ANALYSIS_SAMPLING_TIME / 30000);          // output is then converted to decimeter
+    deltaDistanceTravelled_dm = round((float) deltaDistanceTravelled_dm * DATA_ANALYSIS_SAMPLING_TIME / 30000);// (1/3) x (1/1000) x (1/10) = 1/30000: output is then converted to decimeter
     return deltaDistanceTravelled_dm; // -> convert to the desired unit before displaying on App
 }
 
@@ -675,6 +696,7 @@ int8_t computeMotorTemperature()
     {
         motorOVTempState = MOTOR_TEMPERATURE_ABNORMAL;
         // Action: Restrict speed mode to AMBLE mode or restrict IQ to 0 until temperature drop below the safe threshold
+        ledControl_getError(8);
     }
     else
     {
@@ -787,19 +809,21 @@ uint8_t determineBatteryStatus()
 ***************************************************************************************************/
 uint16_t computeInstantEconomy(uint32_t deltaPowerConsumption_mWh, uint32_t deltaMileage_dm)
 {
-    uint32_t handler;
-    uint16_t instantEconomy_100Whpk = 0;                    // unit in W-hr / km x 100
-    if (deltaMileage_dm <= 0){
-        instantEconomy_100Whpk = 65535;
-        return instantEconomy_100Whpk;
+    uint16_t instantEconomy_100Whpk_holder = 0;                    // unit in W-hr / km x 100
+    if (deltaMileage_dm <= 0)
+    {
+        instantEconomy_100Whpk_holder = 50000;
+        return instantEconomy_100Whpk_holder;
     }                                                       //******** Safeguard from stack overflow due to division by 0
-    handler = (float)(deltaPowerConsumption_mWh * 1000) / deltaMileage_dm;               // unit in W-hr / km x 100
-    if (handler > 65535){                                   // Safeguard from data truncation in case economy is greater than declared variable size
-        instantEconomy_100Whpk = 65535;
-        return instantEconomy_100Whpk;
+
+    instantEconomy_100Whpk_holder = (float)(deltaPowerConsumption_mWh * 1000) / deltaMileage_dm;               // unit in W-hr / km x 100
+
+    if (instantEconomy_100Whpk_holder > 50000)
+    {              // Safeguard from data truncation in case economy is greater than declared variable size
+        instantEconomy_100Whpk_holder = 50000;
+        return instantEconomy_100Whpk_holder;
     }
-    instantEconomy_100Whpk = handler;
-    return instantEconomy_100Whpk;                          // Unit in W-hr / km x 100    -> convert to the desired unit before displaying on App
+    return instantEconomy_100Whpk_holder;                          // Unit in W-hr / km x 100    -> convert to the desired unit before displaying on App
 }
 
 /***************************************************************************************************
@@ -811,21 +835,23 @@ uint16_t computeInstantEconomy(uint32_t deltaPowerConsumption_mWh, uint32_t delt
  *
  * @return  economy (in W-hr/km x 100)
 ***************************************************************************************************/
-uint16_t computeEconomy()
+uint32_t computeEconomy()
 {
-    uint32_t handler;
-    uint16_t economy_100Whpk = 0;                            // unit in W-hr / km x 100
-    if ((ADArray.accumMileage_dm - totalMileage0_dm) <= 0) { // Safeguard from stack overflow due to division by 0
-        economy_100Whpk = 65535;
-        return economy_100Whpk;
+    uint32_t overall_economy_100Whpk = 0;                            // unit in W-hr / km x 100
+    if ((ADArray.accumMileage_dm - totalMileage0_dm) <= 0)
+    { // Safeguard from stack overflow due to division by 0
+        overall_economy_100Whpk = 50000;
+        return overall_economy_100Whpk;
     }
-    handler = (float)(ADArray.accumPowerConsumption_mWh - totalPowerConsumed0_mWh) * 1000 / (ADArray.accumMileage_dm - totalMileage0_dm);     // Unit in W-hr / km x 100
-    if (handler > 65535){                                   // Safeguard from data truncation in case economy is greater than declared variable size
-        economy_100Whpk = 65535;
-        return economy_100Whpk;
+
+    overall_economy_100Whpk = (float)(ADArray.accumPowerConsumption_mWh - totalPowerConsumed0_mWh) * 1000 / (ADArray.accumMileage_dm - totalMileage0_dm);     // Unit in W-hr / km x 100
+
+    if (overall_economy_100Whpk > 50000)
+    {                                   // Safeguard from data truncation in case economy is greater than declared variable size
+        overall_economy_100Whpk = 50000;
+        return overall_economy_100Whpk;
     }
-    economy_100Whpk = handler;
-    return economy_100Whpk;                                 // Unit in W-hr / km x 100    -> convert to the desired unit before displaying on App
+    return overall_economy_100Whpk;                                 // Unit in W-hr / km x 100    -> convert to the desired unit before displaying on App
 }
 
 /***************************************************************************************************
@@ -1005,7 +1031,7 @@ static void dummyUDArray()
                 UDBuffer[26] = 0;        // Free
                 UDBuffer[27] = 0;        // Free
                 UDBuffer[28] = 2;        // speed mode {0 = Amble, 1 = Leisure, 2 = Sports}
-                UDBuffer[29] = 0;        // dashboard unit {0 = kmph, 1 = mph}
+                UDBuffer[29] = 1;        // dashboard unit {0 = kmph, 1 = mph}
                 UDBuffer[30] = 2;        // light mode {0 = Off, 1 = On, 2 = Auto}
                 UDBuffer[31] = 0;        // Free
 

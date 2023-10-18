@@ -84,6 +84,7 @@ extern void lightControl_motorControl_lightStatusChg( void );
 extern uint8_t lightControl_getLightMode( void );
 extern uint8_t lightControl_getLightStatus( void );
 
+extern void lightControl_gapRoleChg();
 /*********************************************************************
 *********************************************************************/
 

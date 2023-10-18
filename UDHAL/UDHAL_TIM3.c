@@ -134,5 +134,6 @@ static void UDHAL_TIM3_stop()
  */
 static void UDHAL_TIM3_OVClockFxn()
 {
+    UDHAL_TIM3_stop();
     singleButton_processTimerOv();
 }
