@@ -150,10 +150,16 @@ extern void dataAnalysis_timerInterruptHandler()
 }
 
 /****
+  * @fun    dataAnalysis_motorControl
  *
+ * @brief   Receiving the pointer for strut array MCUDArray
+ *
+ * @param   ptrMCUD
+ *
+ * @return  Nil
  */
 MCUD_t (*ptr_MCUDArray);
-extern void dataAnalsis_motorControl(MCUD_t (*ptrMCUD))
+extern void dataAnalysis_motorControl(MCUD_t (*ptrMCUD))
 {
     ptr_MCUDArray = ptrMCUD;
 }
@@ -1030,8 +1036,8 @@ static void dummyUDArray()
                 UDBuffer[25] = 0;        // Free
                 UDBuffer[26] = 0;        // Free
                 UDBuffer[27] = 0;        // Free
-                UDBuffer[28] = 2;        // speed mode {0 = Amble, 1 = Leisure, 2 = Sports}
-                UDBuffer[29] = 1;        // dashboard unit {0 = kmph, 1 = mph}
+                UDBuffer[28] = 0;        // speed mode {0 = Amble, 1 = Leisure, 2 = Sports}
+                UDBuffer[29] = 0;        // dashboard unit {0 = kmph, 1 = mph}
                 UDBuffer[30] = 2;        // light mode {0 = Off, 1 = On, 2 = Auto}
                 UDBuffer[31] = 0;        // Free
 

@@ -135,8 +135,8 @@ void motorcontrol_init(void)
     STM32MCP_startCommunication();    // Not activated
 
     periodicCommunication_STM32MCP_getRegisterFrame();
-    dataAnalsis_motorControl(ptrMCUDArray);
-
+    dataAnalysis_motorControl(ptrMCUDArray);     // passes ptrMCUDArray to dataAnalysis.c
+    brakeAndThrottle_motorControl(ptrMCUDArray); // passes ptrMCUDArray to brakeAndThrottle.c
     periodicCommunication_start();
 
     dataAnalysis_init();                // Initiate data analytics

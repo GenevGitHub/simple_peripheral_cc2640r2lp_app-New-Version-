@@ -143,7 +143,7 @@ typedef struct
 extern void dataAnalysis_registerNVSINT( dataAnalysis_NVS_Manager_t *nvsManager );
 
 static void dataAnalysis_taskFxn(UArg a0, UArg a1);
-extern void dataAnalsis_motorControl(MCUD_t (*ptrMCUD));
+extern void dataAnalysis_motorControl(MCUD_t (*ptrMCUD));
 
 //Battery status related Function declaration
 extern uint8_t computeBatteryPercentage( void );

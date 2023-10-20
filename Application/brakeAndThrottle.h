@@ -18,16 +18,20 @@ extern "C"
  */
 #include <stdint.h>
 #include <math.h>
+#include "motorControl.h"
 /*********************************************************************
 *  EXTERNAL VARIABLES
 */
 /*********************************************************************
  * CONSTANTS
  */
+
+#define NormalLaw                                                 1
+#define AlternateLaw                                              0
 // The parameters BRAKE_AND_THROTTLE_ADC_SAMPLING_PERIOD & BRAKE_AND_THROTTLE_SAMPLES control the sensitivity of the throttle input to motor output
 #define BRAKE_AND_THROTTLE_ADC_SAMPLING_PERIOD                    80   // 100: [time in mS]
 #define BRAKE_AND_THROTTLE_SAMPLES                                3     // 3 seems ideal, 5 is okay, 8 is too laggy
-
+#define BRAKE_AND_THROTTLE_QQ                                     0.5
 //Speed modes
 #define BRAKE_AND_THROTTLE_SPEED_MODE_AMBLE                       0x00
 #define BRAKE_AND_THROTTLE_SPEED_MODE_LEISURE                     0x01
@@ -66,16 +70,16 @@ extern "C"
 #define THROTTLE_ADC_CALIBRATE_L                                  850
 
 //Throttle error thresholds = values that should not be possible under nominal operation
-#define THROTTLE_ADC_THRESHOLD_H                                  2500
-#define THROTTLE_ADC_THRESHOLD_L                                  800
+#define THROTTLE_ADC_THRESHOLD_H                                  2700
+#define THROTTLE_ADC_THRESHOLD_L                                  600
 
 //Brake calibration values = value range the Brake ADC is conditioned to be within
 #define BRAKE_ADC_CALIBRATE_H                                     2350
 #define BRAKE_ADC_CALIBRATE_L                                     850
 
 //Brake error thresholds = values that should not be possible under nominal operation
-#define BRAKE_ADC_THRESHOLD_H                                     2500
-#define BRAKE_ADC_THRESHOLD_L                                     800
+#define BRAKE_ADC_THRESHOLD_H                                     2700
+#define BRAKE_ADC_THRESHOLD_L                                     600
 
 //Error message
 #define BRAKE_AND_THROTTLE_NORMAL                                 0x00
@@ -116,6 +120,9 @@ typedef struct
 /*
  * Task creation function for the Simple Peripheral.
  */
+static void brakeAndThrottle_normalLawControl();
+extern void brakeAndThrottle_motorControl(MCUD_t (*ptrMCUD));
+
 extern void brakeAndThrottle_init();
 extern void brakeAndThrottle_start();
 extern void brakeAndThrottle_stop();

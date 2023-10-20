@@ -15,25 +15,25 @@ Application/brakeAndThrottle.obj: C:/ti/ti-cgt-arm_18.12.5.LTS/include/_ti_confi
 Application/brakeAndThrottle.obj: C:/ti/ti-cgt-arm_18.12.5.LTS/include/linkage.h
 Application/brakeAndThrottle.obj: C:/ti/ti-cgt-arm_18.12.5.LTS/include/_defs.h
 Application/brakeAndThrottle.obj: C:/ti/ti-cgt-arm_18.12.5.LTS/include/machine/_limits.h
-Application/brakeAndThrottle.obj: C:/Users/Public/Documents/TI-workspace/simple_peripheral_cc2640r2lp_app/PROFILES/Dashboard.h
-Application/brakeAndThrottle.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/inc/bcomdef.h
-Application/brakeAndThrottle.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/osal/src/inc/comdef.h
-Application/brakeAndThrottle.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/hal/src/target/_common/hal_types.h
-Application/brakeAndThrottle.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/hal/src/target/_common/cc26xx/_hal_types.h
-Application/brakeAndThrottle.obj: C:/ti/ti-cgt-arm_18.12.5.LTS/include/stdbool.h
-Application/brakeAndThrottle.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/hal/src/inc/hal_defs.h
 Application/brakeAndThrottle.obj: ../Application/motorControl.h
 Application/brakeAndThrottle.obj: ../Application/simple_peripheral.h
 Application/brakeAndThrottle.obj: C:/ti/ti-cgt-arm_18.12.5.LTS/include/string.h
 Application/brakeAndThrottle.obj: C:/ti/ti-cgt-arm_18.12.5.LTS/include/stdlib.h
 Application/brakeAndThrottle.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/icall/src/inc/icall.h
+Application/brakeAndThrottle.obj: C:/ti/ti-cgt-arm_18.12.5.LTS/include/stdbool.h
 Application/brakeAndThrottle.obj: C:/ti/ti-cgt-arm_18.12.5.LTS/include/stdlib.h
 Application/brakeAndThrottle.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/hal/src/inc/hal_assert.h
 Application/brakeAndThrottle.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/hal/src/target/_common/hal_types.h
+Application/brakeAndThrottle.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/hal/src/target/_common/cc26xx/_hal_types.h
+Application/brakeAndThrottle.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/hal/src/inc/hal_defs.h
 Application/brakeAndThrottle.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/I2C.h
 Application/brakeAndThrottle.obj: C:/ti/ti-cgt-arm_18.12.5.LTS/include/stddef.h
 Application/brakeAndThrottle.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/NVS.h
 Application/brakeAndThrottle.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/GPIO.h
+Application/brakeAndThrottle.obj: C:/Users/Public/Documents/TI-workspace/simple_peripheral_cc2640r2lp_app/PROFILES/Dashboard.h
+Application/brakeAndThrottle.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/inc/bcomdef.h
+Application/brakeAndThrottle.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/osal/src/inc/comdef.h
+Application/brakeAndThrottle.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/hal/src/target/_common/hal_types.h
 Application/brakeAndThrottle.obj: ../Application/ledControl.h
 Application/brakeAndThrottle.obj: C:/ti/ti-cgt-arm_18.12.5.LTS/include/stdio.h
 Application/brakeAndThrottle.obj: C:/ti/ti-cgt-arm_18.12.5.LTS/include/stdarg.h
@@ -166,6 +166,7 @@ Application/brakeAndThrottle.obj: ../Application/dataAnalysis.h
 Application/brakeAndThrottle.obj: C:/ti/ti-cgt-arm_18.12.5.LTS/include/stdlib.h
 Application/brakeAndThrottle.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/kernel/tirtos/packages/ti/sysbios/knl/Clock.h
 Application/brakeAndThrottle.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/kernel/tirtos/packages/ti/sysbios/knl/Task.h
+Application/brakeAndThrottle.obj: ../Application/periodicCommunication.h
 Application/brakeAndThrottle.obj: ../Application/lightControl.h
 Application/brakeAndThrottle.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/kernel/tirtos/packages/ti/sysbios/knl/Clock.h
 Application/brakeAndThrottle.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/kernel/tirtos/packages/ti/sysbios/knl/Task.h
@@ -201,20 +202,6 @@ C:/ti/ti-cgt-arm_18.12.5.LTS/include/_defs.h:
 
 C:/ti/ti-cgt-arm_18.12.5.LTS/include/machine/_limits.h:
 
-C:/Users/Public/Documents/TI-workspace/simple_peripheral_cc2640r2lp_app/PROFILES/Dashboard.h:
-
-C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/inc/bcomdef.h:
-
-C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/osal/src/inc/comdef.h:
-
-C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/hal/src/target/_common/hal_types.h:
-
-C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/hal/src/target/_common/cc26xx/_hal_types.h:
-
-C:/ti/ti-cgt-arm_18.12.5.LTS/include/stdbool.h:
-
-C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/hal/src/inc/hal_defs.h:
-
 ../Application/motorControl.h:
 
 ../Application/simple_peripheral.h:
@@ -225,11 +212,17 @@ C:/ti/ti-cgt-arm_18.12.5.LTS/include/stdlib.h:
 
 C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/icall/src/inc/icall.h:
 
+C:/ti/ti-cgt-arm_18.12.5.LTS/include/stdbool.h:
+
 C:/ti/ti-cgt-arm_18.12.5.LTS/include/stdlib.h:
 
 C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/hal/src/inc/hal_assert.h:
 
 C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/hal/src/target/_common/hal_types.h:
+
+C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/hal/src/target/_common/cc26xx/_hal_types.h:
+
+C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/hal/src/inc/hal_defs.h:
 
 C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/I2C.h:
 
@@ -238,6 +231,14 @@ C:/ti/ti-cgt-arm_18.12.5.LTS/include/stddef.h:
 C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/NVS.h:
 
 C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/GPIO.h:
+
+C:/Users/Public/Documents/TI-workspace/simple_peripheral_cc2640r2lp_app/PROFILES/Dashboard.h:
+
+C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/inc/bcomdef.h:
+
+C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/osal/src/inc/comdef.h:
+
+C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/hal/src/target/_common/hal_types.h:
 
 ../Application/ledControl.h:
 
@@ -502,6 +503,8 @@ C:/ti/ti-cgt-arm_18.12.5.LTS/include/stdlib.h:
 C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/kernel/tirtos/packages/ti/sysbios/knl/Clock.h:
 
 C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/kernel/tirtos/packages/ti/sysbios/knl/Task.h:
+
+../Application/periodicCommunication.h:
 
 ../Application/lightControl.h:
 
