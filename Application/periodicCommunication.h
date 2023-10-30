@@ -64,6 +64,7 @@ extern void periodicCommunication_registerBLE_Gatt(simplePeripheral_bleCBs_t *ob
 extern void periodicCommunication_hf_communication();
 extern void periodicCommunication_lf_communication();
 void periodicCommunication_STM32MCP_getRegisterFrame();
+void periodicCommunication_STM32MCP_getRegisterFrame_rpm();
 extern uint8_t periodicCommunication_getxlf();
 extern uint8_t periodicCommunication_getxhf();
 //extern void periodicCommunication_setGatt(uint16_t serviceUUID, uint8_t charteristics, uint8_t payloadLength, uint8_t* payload)

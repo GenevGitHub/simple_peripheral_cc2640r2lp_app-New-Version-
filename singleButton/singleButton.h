@@ -40,6 +40,7 @@ extern "C"
 #define SINGLE_BUTTON_SINGLE_SHORT_LONG_PRESS_MSG  0x03
 #define SINGLE_BUTTON_DOUBLE_SHORT_PRESS_MSG       0x04
 #define SINGLE_BUTTON_TREBLE_SHORT_PRESS_MSG       0x05
+#define SINGLE_BUTTON_QUADRUPLE_SHORT_PRESS_MSG    0x06
 #define SINGLE_BUTTON_UNDEFINED_MSG                0x00
 /*********************************************************************
  * MACROS

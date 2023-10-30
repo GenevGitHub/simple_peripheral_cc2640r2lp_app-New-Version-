@@ -58,12 +58,13 @@ static void motorcontrol_brakeAndThrottleCB(uint16_t allowableSpeed, uint16_t IQ
 static void motorcontrol_controllerCB(uint8_t paramID);
 static void motorcontrol_dashboardCB(uint8_t paramID);
 static void motorcontrol_singleButtonCB(uint8_t messageID);
-
 static void motorcontrol_getGAPROLE(void);
 
 MCUD_t MCUDArray = {30000, 3000, 380, 20, 20, 0};
 MCUD_t *ptrMCUDArray = &MCUDArray;
 
+uint16_t brakeAndThrottle_rpm;
+uint16_t *ptrbrakeAndThrottle_rpm = &brakeAndThrottle_rpm;
 
 //uint16_t throttle_Percent;
 
@@ -135,11 +136,11 @@ void motorcontrol_init(void)
     STM32MCP_startCommunication();    // Not activated
 
     periodicCommunication_STM32MCP_getRegisterFrame();
-    dataAnalysis_motorControl(ptrMCUDArray);     // passes ptrMCUDArray to dataAnalysis.c
-    brakeAndThrottle_motorControl(ptrMCUDArray); // passes ptrMCUDArray to brakeAndThrottle.c
+    dataAnalysis_motorControl(ptrMCUDArray);            // passes ptrMCUDArray to dataAnalysis.c
+    brakeAndThrottle_motorControl_rpm(ptrbrakeAndThrottle_rpm);    // passes ptrbrakeAndThrottle_rpm to brakeAndThrottle.c
     periodicCommunication_start();
 
-    dataAnalysis_init();                // Initiate data analytics
+//    dataAnalysis_init();                // Initiate data analytics
 
     brakeAndThrottle_init();
     brakeAndThrottle_registerCBs(&brakeAndThrottle_CBs);
@@ -160,7 +161,9 @@ void motorcontrol_init(void)
         ledControl_init();
     }
 
-    lightControl_init( motorcontrol_i2cOpenStatus );                            // UDHAL_I2C must be initiated before ightControl_init();
+    lightControl_init( motorcontrol_i2cOpenStatus );                            // UDHAL_I2C must be initiated before lightControl_init();
+
+    dataAnalysis_init();                // Initiate data analytics
 
     powerOnTime_init();           // merged with lightControl 20230705
 
@@ -237,7 +240,7 @@ static void motorcontrol_processGetRegisterFrameMsg(uint8_t *txPayload, uint8_t 
             }
             // **** store rpm in (*ptrMCUDArray).speed_rpm
             (*ptrMCUDArray).speed_rpm = rpm;
-
+            brakeAndThrottle_rpm = rpm;
             break;
         }
 // ********************    Need to create new REG_IDs
@@ -599,6 +602,20 @@ static void motorcontrol_singleButtonCB(uint8_t messageID)
 
             // send UnitSelectDash to ledControl.c
             ledControl_setUnitSelectDash(UnitSelectDash);
+            break;
+        }
+    case SINGLE_BUTTON_QUADRUPLE_SHORT_PRESS_MSG:      // case = 0x06 - toggle control law
+        {
+            // toggles control law
+            uint8_t currentControlLaw = brakeAndThrottle_getControlLaw();
+            if (currentControlLaw == BRAKE_AND_THROTTLE_NORMALLAW){
+                currentControlLaw = BRAKE_AND_THROTTLE_DIRECTLAW;
+            }
+            else if (currentControlLaw == BRAKE_AND_THROTTLE_DIRECTLAW){
+                currentControlLaw = BRAKE_AND_THROTTLE_NORMALLAW;
+            }
+            // send currentControlLaw to brakeAndThrotte.c
+            brakeAndThrottle_setControlLaw(currentControlLaw);
             break;
         }
     default:                                        // case 0x00 and all other cases

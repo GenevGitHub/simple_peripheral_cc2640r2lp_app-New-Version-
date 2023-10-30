@@ -186,7 +186,8 @@ extern void dataAnalysis_init()
 
     // At the instant of POWER ON, we need to obtain BATTERY status for LED display
     // dashboard will instruct motor controller to obtain a battery voltage and current measurement
-    batteryVoltageStartUp_mV = (*ptr_MCUDArray).voltage_mV; //36000;           // -> STM32MCP_getRegisterFrame(STM32MCP_MOTOR_1_ID,STM32MCP_BUS_VOLTAGE_REG_ID);
+    batteryVoltageStartUp_mV = (*ptr_MCUDArray).voltage_mV; //36000;
+    //STM32MCP_getRegisterFrame(STM32MCP_MOTOR_1_ID,STM32MCP_BUS_VOLTAGE_REG_ID);
     batteryCurrentStartUp_mA = (*ptr_MCUDArray).current_mA; // 3000;            // -> STM32MCP_getRegisterFrame(STM32MCP_MOTOR_1_ID,STM32MCP_BUS_CURRENT_REG_ID);
     //avgBatteryVoltage_mV = batteryVoltageStartUp_mV;
     int8_t mTStartUp = (*ptr_MCUDArray).motorTemperature_Celcius; //15;                      // -> STM32MCP_getRegisterFrame(STM32MCP_MOTOR_1_ID,STM32MCP_BUS_MOTORTEMPERATURE_REG_ID);

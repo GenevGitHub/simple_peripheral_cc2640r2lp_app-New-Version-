@@ -25,19 +25,25 @@ extern "C"
 /*********************************************************************
  * CONSTANTS
  */
+// Speed limit protection selection
+// * Direct Law -> speed limit protection is deactivated
+// * Normal law -> speed limit protection is activated
+#define BRAKE_AND_THROTTLE_NORMALLAW                              1
+#define BRAKE_AND_THROTTLE_DIRECTLAW                              0
 
-#define NormalLaw                                                 1
-#define AlternateLaw                                              0
 // The parameters BRAKE_AND_THROTTLE_ADC_SAMPLING_PERIOD & BRAKE_AND_THROTTLE_SAMPLES control the sensitivity of the throttle input to motor output
-#define BRAKE_AND_THROTTLE_ADC_SAMPLING_PERIOD                    80   // 100: [time in mS]
-#define BRAKE_AND_THROTTLE_SAMPLES                                3     // 3 seems ideal, 5 is okay, 8 is too laggy
-#define BRAKE_AND_THROTTLE_QQ                                     0.5
+#define BRAKE_AND_THROTTLE_ADC_SAMPLING_PERIOD                    20   // 80: [time period in mS]
+#define BRAKE_AND_THROTTLE_SAMPLES                                3     // 3 samples seem ideal, 5 is okay, 8 is too laggy
+#define BRAKE_AND_THROTTLE_QQ                                     2
+#define BRAKE_AND_THROTTLE_SPEED_FACTOR                           0.95
+#define BRAKE_AND_THROTTLE_IQ_FACTOR                              5
+
 //Speed modes
 #define BRAKE_AND_THROTTLE_SPEED_MODE_AMBLE                       0x00
 #define BRAKE_AND_THROTTLE_SPEED_MODE_LEISURE                     0x01
 #define BRAKE_AND_THROTTLE_SPEED_MODE_SPORTS                      0x02
 
-#define BRAKE_AND_THROTTLE_MAXIMUMN_SPEED                         663       // 663 RPM = 25.4 Km/hr
+#define BRAKE_AND_THROTTLE_MAXIMUMN_SPEED                         674       // 674 RPM = 25.4 Km/hr
 
 //Speed mode TORQUEIQ reduction ratio
 #define BRAKE_AND_THROTTLE_SPEED_MODE_REDUCTION_RATIO_AMBLE       65        //64%   Pout = 216.75 W
@@ -45,9 +51,10 @@ extern "C"
 #define BRAKE_AND_THROTTLE_SPEED_MODE_REDUCTION_RATIO_SPORTS      100       //100%  Pout = 300 W
 
 //Speed mode maximum "powered" speed in RPM
-#define BRAKE_AND_THROTTLE_MAXSPEED_AMBLE                         270       // 270 RPM = 10.4 Km/hr
-#define BRAKE_AND_THROTTLE_MAXSPEED_LEISURE                       480       // 480 RPM = 18.4 Km/hr
-#define BRAKE_AND_THROTTLE_MAXSPEED_SPORTS                        663       // 663 RPM = 25.4 Km/hr
+#define BRAKE_AND_THROTTLE_MAXSPEED_AMBLE                         275       // 275 RPM = 10.4 Km/hr
+#define BRAKE_AND_THROTTLE_MAXSPEED_LEISURE                       488       // 488 RPM = 18.4 Km/hr
+#define BRAKE_AND_THROTTLE_MAXSPEED_SPORTS                        674       // 674 RPM = 25.4 Km/hr
+#define BRAKE_AND_THROTTLE_MINSPEED                               80        //  80 RPM = 3 Km/hr
 
 //Speed mode ramp rate (acceleration) in milliseconds
 #define BRAKE_AND_THROTTLE_RAMPRATE_AMBLE                         3000      // 4000
@@ -55,9 +62,6 @@ extern "C"
 #define BRAKE_AND_THROTTLE_RAMPRATE_SPORTS                        1500      // 2000
 
 //Speed mode Torque IQ value
-//#define BRAKE_AND_THROTTLE_TORQUEIQ_AMBLE                         10400     // IQ 10125 = 9.0 Amp
-//#define BRAKE_AND_THROTTLE_TORQUEIQ_LEISURE                       12800     // IQ 12600 = 11.2 Amp
-//#define BRAKE_AND_THROTTLE_TORQUEIQ_SPORTS                        16000     // IQ 15750 = 14.0 Amp
 #define BRAKE_AND_THROTTLE_TORQUEIQ_MAX                           16000     // IQ 16000 = 14.222 Amp
 
 //Hard braking definition   (What is Hard Braking? why is this necessary?)
@@ -122,7 +126,7 @@ typedef struct
  */
 static void brakeAndThrottle_normalLawControl();
 extern void brakeAndThrottle_motorControl(MCUD_t (*ptrMCUD));
-
+extern void brakeAndThrottle_motorControl_rpm(uint16_t *ptrBrakeAndThrottleRPM);
 extern void brakeAndThrottle_init();
 extern void brakeAndThrottle_start();
 extern void brakeAndThrottle_stop();
@@ -140,6 +144,8 @@ extern uint16_t brakeAndThrottle_getThrottlePercent();
 extern uint16_t brakeAndThrottle_getBrakePercent();
 
 extern void brakeAndThrottle_gapRoleChg(uint8_t flag);
+extern uint8_t brakeAndThrottle_getControlLaw();
+extern void brakeAndThrottle_setControlLaw(uint8_t newControlLaw);
 /*********************************************************************
 *********************************************************************/
 

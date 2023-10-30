@@ -159,6 +159,11 @@ void singleButton_processTimerOv()
     {
         buttonEvent = 0x05;
     }
+    // TOGGLE CONTROL LAW
+    else if (risingEdgeCount == 4 && fallingEdgeCount == 5)
+    {
+        buttonEvent = 0x06;
+    }
     // DO NOTHING
     else
     {

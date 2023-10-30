@@ -185,6 +185,13 @@ void periodicCommunication_STM32MCP_getRegisterFrame()
     //STM32MCP_getRegisterFrame(STM32MCP_MOTOR_1_ID, STM32MCP_HEATSINK_TEMPERATURE_REG_ID);
     //STM32MCP_getRegisterFrame(STM32MCP_MOTOR_1_ID, STM32MCP_MOTOR_TEMPERATURE_REG_ID);
 }
+void periodicCommunication_STM32MCP_getRegisterFrame_rpm()
+{
+    /*************************************************
+     *  Get RPM
+     *************************************************/
+    STM32MCP_getRegisterFrame(STM32MCP_MOTOR_1_ID, STM32MCP_SPEED_MEASURED_REG_ID);         // is speed in RPM
+}
 
 void periodicCommunication_hf_communication()
 {

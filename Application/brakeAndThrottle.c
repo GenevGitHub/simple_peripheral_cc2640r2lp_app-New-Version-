@@ -33,7 +33,7 @@ uint16_t    brakePercent;           // Actual brake applied in percentage
 uint16_t    brakeStatus = 0;
 uint16_t    brakeADCAvg;            // declared as global variable for debugging only
 uint16_t    throttleADCAvg;         // declared as global variable for debugging only
-uint8_t     ControlLaw = 0;         // ControlLaw can be NormalLaw (1) or AlternateLaw (0).  Controls speed limit
+uint8_t     ControlLaw = BRAKE_AND_THROTTLE_NORMALLAW; //BRAKE_AND_THROTTLE_DIRECTLAW;  // ControlLaw can be NormalLaw (1) or DirectLaw (0).  Controls speed limit
 /********************************************************************
  *  when brakeAndThrottle_errorMsg is true (=1),
  *  it generally means either (1) brake signal is not connected and/or (2) throttle signal is not connect
@@ -61,6 +61,8 @@ static uint8_t  brakeAndThrottleIndex = 0;
 static uint16_t brakeADCValues[BRAKE_AND_THROTTLE_SAMPLES];
 //static uint8_t  throttleIndex = 0;
 static uint16_t throttleADCValues[BRAKE_AND_THROTTLE_SAMPLES];
+static uint16_t throttleADC_movingAvg[BRAKE_AND_THROTTLE_SAMPLES];
+static uint16_t IQValue_array[BRAKE_AND_THROTTLE_SAMPLES];
 static uint16_t RPM_array[BRAKE_AND_THROTTLE_SAMPLES];
 
 /**********************************************************************
@@ -86,6 +88,7 @@ void brakeAndThrottle_init()
     {
         brakeADCValues[ii] = BRAKE_ADC_CALIBRATE_L;
         throttleADCValues[ii] = THROTTLE_ADC_CALIBRATE_L;
+        throttleADC_movingAvg[ii] = THROTTLE_ADC_CALIBRATE_L;
         RPM_array[ii] = 0;
     }
     ledControl_setSpeedMode(speedMode);  // update speed mode displayed on dash board
@@ -380,19 +383,20 @@ void brakeAndThrottle_convertion(brakeAndThrottle_adcManager_t *obj)
 }
 
 /*********************************************************************
- * @fun    brakeAndThrottle_motorControl
+ * @fun    brakeAndThrottle_motorControl_rpm
  *
- * @brief   Receiving the pointer for strut array MCUDArray
+ * @brief   Receiving the pointer for BrakeAndThrottleRPM from motorControl.c
  *
- * @param   ptrMCUD
+ * @param   ptrBrakeAndThrottleRPM
  *
  * @return  Nil
  *********************************************************************/
-MCUD_t (*ptr_brakeAndThrottle_MCUDArray);
-extern void brakeAndThrottle_motorControl(MCUD_t (*ptrMCUD))
+uint16_t *ptr_brakeAndThrottle_rpm;
+extern void brakeAndThrottle_motorControl_rpm(uint16_t *ptrBrakeAndThrottleRPM)
 {
-    ptr_brakeAndThrottle_MCUDArray = ptrMCUD;
+    ptr_brakeAndThrottle_rpm = ptrBrakeAndThrottleRPM;
 }
+
 /*********************************************************************
  * @fn      brakeAndThrottle_ADC_conversion
  *
@@ -402,10 +406,12 @@ extern void brakeAndThrottle_motorControl(MCUD_t (*ptrMCUD))
  * @param
  *********************************************************************/
 uint8_t brake_errorLog = 0;
-int16_t delta_adc = 0;         // declared globally for debugging
-int16_t delta_RPM = 0;         // declared globally for debugging
-uint16_t adc_temp = 0;          // declared globally for debugging
+//uint16_t IQValue_temp = 0;          // declared globally for debugging
 float tempTime = 0;             // for dummy data use only
+uint16_t RPM_temp;
+uint16_t IQ_max = 0;
+uint8_t brakeAndThrottleIndex_minus_1;
+uint8_t brakeAndThrottleIndex_minus_2;
 
 void brakeAndThrottle_ADC_conversion()
 {
@@ -422,12 +428,6 @@ void brakeAndThrottle_ADC_conversion()
     brakeADCValues[ brakeAndThrottleIndex ] = adc1Result;
     // ***** adc2Result is a holder of the throttle ADC reading
     brake_adc2Manager -> brakeAndThrottle_ADC_Convert( &adc2Result );
-    // ***** Normal Law: modulated adc2result  *********************
-    if (ControlLaw == NormalLaw)
-    {
-        brakeAndThrottle_normalLawControl();
-    }   // End Normal Law
-    // **************************************************************
     throttleADCValues[ brakeAndThrottleIndex ] = adc2Result;
 
     /*******************************************************************************************************************************
@@ -457,15 +457,10 @@ void brakeAndThrottle_ADC_conversion()
     //uint16_t
     brakeADCAvg = brakeADCTotal/BRAKE_AND_THROTTLE_SAMPLES;             // declared as global variable for debugging only
     //uint16_t
-    throttleADCAvg = throttleADCTotal/(BRAKE_AND_THROTTLE_SAMPLES + 1); // declared as global variable for debugging only.
+    throttleADC_movingAvg[ brakeAndThrottleIndex ] = throttleADCTotal/(BRAKE_AND_THROTTLE_SAMPLES + 1); // declared as global variable for debugging only.
+    //uint16_t
+    throttleADCAvg = throttleADC_movingAvg[brakeAndThrottleIndex]; // declared as global variable for debugging only.
     // ***** Note "+ 1" due to weight factor 2 is applied to the latest throttle ADC sample
-
-    // ***** Increments brakeAndThrottleIndex by 1
-    brakeAndThrottleIndex = brakeAndThrottleIndex++;
-    if (brakeAndThrottleIndex >= BRAKE_AND_THROTTLE_SAMPLES)
-    {
-        brakeAndThrottleIndex = 0;
-    }
 
     /*******************************************************************************************************************************
      *      Error Checking
@@ -494,10 +489,12 @@ void brakeAndThrottle_ADC_conversion()
     if((throttleADCAvg > THROTTLE_ADC_CALIBRATE_H) && (throttleADCAvg <= THROTTLE_ADC_THRESHOLD_H))
     {
         throttleADCAvg = THROTTLE_ADC_CALIBRATE_H;
+        throttleADC_movingAvg[ brakeAndThrottleIndex ] = throttleADCAvg;
     }
     if((throttleADCAvg < THROTTLE_ADC_CALIBRATE_L) && (throttleADCAvg >= THROTTLE_ADC_THRESHOLD_L))
     {
         throttleADCAvg = THROTTLE_ADC_CALIBRATE_L;
+        throttleADC_movingAvg[ brakeAndThrottleIndex ] = throttleADCAvg;
     }
     /*******************************************************************************************************************************
      *      Error Checking
@@ -558,7 +555,6 @@ void brakeAndThrottle_ADC_conversion()
     /********************************************************************************************************************************
      *  brakePercent is in percentage - has value between 0 - 100 %
      ********************************************************************************************************************************/
-    //uint16_t
     brakePercent = (uint16_t) ((brakeADCAvg - BRAKE_ADC_CALIBRATE_L) * 100 / (BRAKE_ADC_CALIBRATE_H - BRAKE_ADC_CALIBRATE_L));
 
     /********************** Brake Power Off Protect State Machine  *******************************************************************************
@@ -574,9 +570,6 @@ void brakeAndThrottle_ADC_conversion()
             {
                 brakeStatus = 0;
             }
-//            else {                                                                                                            // This condition is not necessary
-//                brakeStatus = 1;                                                                                              // Since brakeStatus is initially = 1
-//            }
         }
         else if ((brakeStatus == 0) && (brakePercent > BRAKEPERCENTTHRESHOLD)) {                                                // condition when brake is not initially pressed and rider pulls on the brake
             brakeStatus = 1;
@@ -590,7 +583,7 @@ void brakeAndThrottle_ADC_conversion()
         brakeStatus = 0;
     }
 
-    if (brakeStatus == 1) //Brake Pressed
+    if (brakeStatus == 1)               //Brake Pressed
     {
         STM32MCP_setEscooterControlDebugFrame(STM32MCP_ESCOOTER_BRAKE_PRESS);
         // send instruction to STM32 to activate brake light
@@ -605,18 +598,24 @@ void brakeAndThrottle_ADC_conversion()
     /********************************************************************************************************************************
      *  throttlePercent is in percentage - has value between 0 - 100 %
      ********************************************************************************************************************************/
-    //uint16_t
     throttlePercent = (uint16_t) ((throttleADCAvg - THROTTLE_ADC_CALIBRATE_L) * 100 / (THROTTLE_ADC_CALIBRATE_H - THROTTLE_ADC_CALIBRATE_L));
 
-    // Throttle Error Safety Protocol -> when throttle error detected, IQValue is set to zero
+    // ******* Get RPM from motor control Unit  ******************
+    periodicCommunication_STM32MCP_getRegisterFrame_rpm();
+    RPM_temp = (*ptr_brakeAndThrottle_rpm);
+    //RPM_temp = 200 * (float)sin(2 * (float) M_PI / 12 * tempTime) + 400;   // dummy data
+    //tempTime = tempTime + 0.01;      // dummy data
+
+    // ******* Throttle Error Safety Protocol -> when throttle error detected, IQValue is set to zero
     if (throttle_errorStatus == 0)
     {
-        if (brakeStatus == 1)
+        if ((brakeStatus == 1)|(RPM_temp < BRAKE_AND_THROTTLE_MINSPEED))    // brake must not be pulled or RPM must be above BRAKE_AND_THROTTLE_MINSPEED before power is delivered to the motor
         {
             IQValue = 0;
         }
         else
         {
+            IQ_max = BRAKE_AND_THROTTLE_TORQUEIQ_MAX / 100 * reductionRatio;
             IQValue = BRAKE_AND_THROTTLE_TORQUEIQ_MAX * reductionRatio * throttlePercent / 10000;
         }
     }
@@ -624,7 +623,40 @@ void brakeAndThrottle_ADC_conversion()
     {
         IQValue = 0;
     }
+    IQValue_array[ brakeAndThrottleIndex ] = IQValue;
 
+    // ***** Normal Law: modulated IQValue  *********************
+    if (ControlLaw == BRAKE_AND_THROTTLE_NORMALLAW)
+    {
+        brakeAndThrottle_normalLawControl();
+    }   // End Normal Law
+    // **************************************************************
+    IQValue_array[ brakeAndThrottleIndex ] = IQValue;
+
+    // Apply a cap to the maximum change in IQ permissible
+    if((IQValue - IQValue_array[ brakeAndThrottleIndex_minus_1 ]) * 1000 / BRAKE_AND_THROTTLE_ADC_SAMPLING_PERIOD >= IQ_max * BRAKE_AND_THROTTLE_IQ_FACTOR)
+    {
+        IQValue = IQValue_array[ brakeAndThrottleIndex_minus_1 ] + (IQ_max * BRAKE_AND_THROTTLE_IQ_FACTOR) * BRAKE_AND_THROTTLE_ADC_SAMPLING_PERIOD / 1000;
+    }
+    IQValue_array[ brakeAndThrottleIndex ] = IQValue;
+    // Calculate weighted moving average of IQ values
+    uint16_t    IQValueTotal = 0;
+    for (uint8_t index = 0; index < BRAKE_AND_THROTTLE_SAMPLES; index++)
+    {
+        uint8_t weightfactor;
+        if (index == brakeAndThrottleIndex)
+        {
+            weightfactor = 2;
+        }
+        else
+        {
+            weightfactor = 1;
+        }
+        IQValueTotal += weightfactor * IQValue_array[index];
+    }
+    // ***** Calculate weighted moving average values
+    IQValue = IQValueTotal / (BRAKE_AND_THROTTLE_SAMPLES + 1);             // declared as global variable for debugging only
+    IQValue_array[ brakeAndThrottleIndex ] = IQValue;
     /********************************************************************************************************************************
      * Send the throttle signal to STM32 Motor Controller
      ********************************************************************************************************************************/
@@ -648,13 +680,21 @@ void brakeAndThrottle_ADC_conversion()
 
     //Send brake percentage for Regen Brake....
     //Do it as you like
-
     if (gapRoleChanged == 1)
     {
         motorcontrol_setGatt(DASHBOARD_SERV_UUID, DASHBOARD_SPEED_MODE, DASHBOARD_SPEED_MODE_LEN, (uint8_t *) &speedMode);  //update speed mode on client (App)
         lightControl_gapRoleChg();
         gapRoleChanged = 0;
     }
+
+    IQValue_array[ brakeAndThrottleIndex ] = IQValue;
+    // ***** Increments brakeAndThrottleIndex by 1
+    brakeAndThrottleIndex = brakeAndThrottleIndex++;
+    if (brakeAndThrottleIndex >= BRAKE_AND_THROTTLE_SAMPLES)
+    {
+        brakeAndThrottleIndex = 0;
+    }
+
 }
 
 /*********************************************************************
@@ -668,9 +708,6 @@ void brakeAndThrottle_ADC_conversion()
  *********************************************************************/
 static void brakeAndThrottle_normalLawControl()
 {
-    uint8_t brakeAndThrottleIndex_minus_1;
-    uint8_t brakeAndThrottleIndex_minus_2;
-
     if (brakeAndThrottleIndex == 1)
     {
         brakeAndThrottleIndex_minus_1 = 0;
@@ -687,41 +724,35 @@ static void brakeAndThrottle_normalLawControl()
         brakeAndThrottleIndex_minus_2 = brakeAndThrottleIndex - 2;
     }
 
-    if (adc2Result >= THROTTLE_ADC_CALIBRATE_L)
+    RPM_array[ brakeAndThrottleIndex_minus_1 ] = RPM_temp;
+
+    if ( IQValue > 0 )
     {
-        // ******* Get RPM from motor control Unit  ******************
-        periodicCommunication_STM32MCP_getRegisterFrame();
-        //RPM_array[ brakeAndThrottleIndex_minus_1 ] = (*ptr_brakeAndThrottle_MCUDArray).speed_rpm;
-        RPM_array[ brakeAndThrottleIndex_minus_1 ] = 310 * (float)sin(2 * (float) M_PI / 3 * tempTime) + 390;   // dummy data
-        tempTime = tempTime + 0.1;      // dummy data
+        uint16_t IQValue_temp = 0;
 
-        //int16_t delta_adc = throttleADCValues[ brakeAndThrottleIndex_minus_1 ] - throttleADCValues[ brakeAndThrottleIndex_minus_2 ];
-        delta_adc = throttleADCValues[ brakeAndThrottleIndex_minus_1 ] - throttleADCValues[ brakeAndThrottleIndex_minus_2 ];
-        //int16_t delta_RPM = RPM_array[ brakeAndThrottleIndex_minus_1 ] - RPM_array[ brakeAndThrottleIndex_minus_2 ];
-        delta_RPM = RPM_array[ brakeAndThrottleIndex_minus_1 ] - RPM_array[ brakeAndThrottleIndex_minus_2 ];
-        //uint16_t adc_temp = 0;
-
-        if (RPM_array[brakeAndThrottleIndex_minus_1 ] >= allowableSpeed)
+        if ( RPM_temp > allowableSpeed ) // if speed greater than or equal to allowable speed
         {
-            if ((delta_RPM <= 0)|(delta_adc <= 0))
+            IQValue_temp = IQValue_array[ brakeAndThrottleIndex_minus_1 ] * allowableSpeed * BRAKE_AND_THROTTLE_SPEED_FACTOR / RPM_temp ; //when speed is greater than speed limit, IQ is
+            // reduced proportionally until speed is below the speed limit
+        }
+        else if ( RPM_temp < BRAKE_AND_THROTTLE_MINSPEED ) // this else-if routine is redundant -> it was checked previously
+        {
+            IQValue_temp = 0;
+        }
+        else    // if and when minSpeed <= RPM <= allowableSpeed
+        {
+            if ((IQValue_array[ brakeAndThrottleIndex ] - IQValue_array[ brakeAndThrottleIndex_minus_1 ]) >= 0)
             {
-                adc_temp = THROTTLE_ADC_CALIBRATE_L + (uint32_t) ((throttleADCValues[ brakeAndThrottleIndex_minus_1 ] - THROTTLE_ADC_CALIBRATE_L) * allowableSpeed) / RPM_array[ brakeAndThrottleIndex_minus_1 ];
-            }
-            else
-            {
-                adc_temp = throttleADCValues[ brakeAndThrottleIndex_minus_1 ] + (uint32_t) (delta_adc * (adc2Result - throttleADCValues[ brakeAndThrottleIndex_minus_1 ])) / delta_RPM;
+                double alpha = 1 - (float) (RPM_temp - BRAKE_AND_THROTTLE_MINSPEED) / (allowableSpeed - BRAKE_AND_THROTTLE_MINSPEED);
+                double ff = pow(alpha, BRAKE_AND_THROTTLE_QQ);
+                uint16_t delta_IQValue = (float) ff * ( IQValue_array[ brakeAndThrottleIndex ] - IQValue_array[ brakeAndThrottleIndex_minus_1 ] );
+                IQValue_temp = IQValue_array[ brakeAndThrottleIndex_minus_1 ] + delta_IQValue;
             }
         }
-        else
-        {
-            float yy = (1 - RPM_array[ brakeAndThrottleIndex_minus_1 ] / allowableSpeed);
-            float ff = pow(yy, BRAKE_AND_THROTTLE_QQ);
-            adc_temp = throttleADCValues[ brakeAndThrottleIndex_minus_1 ] + (float)(ff * (adc2Result - throttleADCValues[ brakeAndThrottleIndex_minus_1 ]));
-        }
 
-        if (adc2Result >= adc_temp)
+        if ( IQValue > IQValue_temp )
         {
-            adc2Result = adc_temp;
+            IQValue = IQValue_temp;
         }
     }
 }
@@ -732,4 +763,30 @@ static void brakeAndThrottle_normalLawControl()
 void brakeAndThrottle_gapRoleChg(uint8_t flag)
 {
     gapRoleChanged = flag;
+}
+
+/*********************************************************************
+ * @fn      brakeAndThrottle_getControlLaw
+ *
+ * @brief   call this function to retrieve the current control law
+ *
+ * @param   None
+ *
+ * @return  ControlLaw
+ *********************************************************************/
+extern uint8_t brakeAndThrottle_getControlLaw(){
+    return ControlLaw;
+}
+/*********************************************************************
+ * @fn      brakeAndThrottle_setControlLaw
+ *
+ * @brief   call this function to set Control Law
+ *
+ * @param   UnitSelectDash
+ *
+ * @return  none
+ *********************************************************************/
+extern void brakeAndThrottle_setControlLaw(uint8_t newControlLaw)
+{
+    ControlLaw = newControlLaw;
 }
