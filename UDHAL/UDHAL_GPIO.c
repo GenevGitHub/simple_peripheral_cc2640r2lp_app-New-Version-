@@ -13,13 +13,23 @@
 #include <ti/drivers/GPIO.h>
 #include "UDHAL/UDHAL_GPIO.h"
 #include "singleButton/singleButton.h"
-#include "Board.h"
+#include <Board.h>
+#include <ti/drivers/PIN.h>
+#include <ti/drivers/pin/PINCC26XX.h>
 /*********************************************************************
  * LOCAL VARIABLES
  */
 /*********************************************************************
  * LOCAL FUNCTIONS
  */
+/*
+PIN_Handle verify;
+PIN_State buttonState;
+PIN_Config singleButton[] = {
+     Board_GPIO_BUTTON0 | PIN_INPUT_EN | PIN_PULLUP | PIN_HYSTERESIS,
+     PIN_TERMINATE
+};
+*/
 static uint8_t UDHAL_GPIO_read(uint8_t index);
 static void UDHAL_GPIO_write(uint8_t index, uint8_t value);
 static void UDHAL_GPIO_InterruptFxn(uint_least8_t index);  //GPIO interrupt callback, change it to meet your device requirement
@@ -48,9 +58,10 @@ extern void UDHAL_GPIO_init()
  *
  * @return  None
  */
+//uint8_t pullUp = 0xFF;
 void UDHAL_GPIO_params_init()
 {
-    GPIO_setConfig(Board_GPIO_BUTTON0, GPIO_CFG_IN_PU | GPIO_CFG_IN_INT_BOTH_EDGES);    //
+    GPIO_setConfig(Board_GPIO_BUTTON0,  GPIO_CFG_IN_PU | GPIO_CFG_IN_INT_BOTH_EDGES);    //
     GPIO_setCallback(Board_GPIO_BUTTON0, UDHAL_GPIO_InterruptFxn);                      // GPIO Callback -> pin -> interrupt function
     GPIO_enableInt(Board_GPIO_BUTTON0);
 }
@@ -92,20 +103,21 @@ static void UDHAL_GPIO_write(uint8_t index, uint8_t value)
  *          1. Add the function singleButton_processButtonEvt(uint8_t logicLevel) here/
  *          2. Read the GPIO logic level and pass it to this function
  *
- * @param   none
+ * @param   index
  *
  *
  * @return  none
  */
-//uint8_t count = 0;
-uint8_t logicLevel;
+//uint8_t count = 0;    // for debugging
+//uint8_t logicLevel;   // placed outside for debugging
 static void UDHAL_GPIO_InterruptFxn(uint_least8_t index)
 {
 //   count++;
+//   uint8_t logicLevel;
    switch(index)
    {
    case Board_GPIO_BUTTON0:
-        logicLevel = UDHAL_GPIO_read(Board_GPIO_BUTTON0);
+        uint8_t logicLevel = UDHAL_GPIO_read(Board_GPIO_BUTTON0);
         singleButton_processButtonEvt(logicLevel);
         break;
    default:

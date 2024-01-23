@@ -35,6 +35,8 @@ extern "C"
  * FUNCTIONS
  */
 extern void UDHAL_TIM4_init();
+extern void UDHAL_TIM4_changeUARTStatus(uint8_t write);
+extern uint8_t UDHAL_TIM4_status();
 extern void UDHAL_TIM4_params_init();
 
 /*********************************************************************

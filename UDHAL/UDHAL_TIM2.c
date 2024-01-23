@@ -123,5 +123,6 @@ static void UDHAL_TIM2_OVClockFxn()
      *Losing heart-beat means the server side or client side's communication is disconnected. In this case, UART error occurs. For safety, the
      *system stops running until it is reset / rebooted. Users must ensure the UART wires i.e. Rx and Tx are connected properly.
      *  */
+    STM32MCP_setSystemControlConfigFrame(STM32MCP_HEARTBEAT);
     heartbeat++;
 }

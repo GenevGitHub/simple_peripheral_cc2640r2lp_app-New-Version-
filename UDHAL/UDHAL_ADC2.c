@@ -13,12 +13,13 @@
 #include <stdint.h>
 #include "UDHAL/UDHAL_ADC2.h"
 #include "brakeAndThrottle.h"
-#include "Board.h"
+#include "Application/ledControl.h"
+#include <Board.h>
 /*********************************************************************
  * LOCAL VARIABLES
  */
-static ADC_Handle adcHandle;
-static ADC_Params params;
+static ADC_Handle adc2Handle;
+static ADC_Params adc2Params;
 /*********************************************************************
  * LOCAL FUNCTIONS
  */
@@ -61,15 +62,13 @@ void UDHAL_ADC2_init()
  */
 void UDHAL_ADC2_params_init()
 {
-    ADC_Params_init(&params);
-    params.isProtected = true;
+    ADC_Params_init(&adc2Params);
+    adc2Params.isProtected = true;
 }
 /*********************************************************************
  * @fn      UDHAL_ADC2_Open
  *
- * @brief   To start the timer for timeout.
- *          This function will be used by STM32MCP flow retransmission.
- *          Put it into the STM32MCP_params_t structure to register as callback function
+ * @brief
  *
  * @param   None.
  *
@@ -77,14 +76,18 @@ void UDHAL_ADC2_params_init()
  */
 static void UDHAL_ADC2_Open()
 {
-    adcHandle = ADC_open(Board_ADC1, &params);
+    adc2Handle = ADC_open(Board_ADC1, &adc2Params);  //ADC1 = IOID24
+    if (!adc2Handle) {
+        /* error handling */
+        /* ADC failure is critical & dangerous to the basic operation as it signifies micro-controller failure
+         * Protocol -> shut down system
+         * It is likely a hardware failure */
+    }
 }
 /*********************************************************************
  * @fn      UDHAL_ADC2_Convert
  *
- * @brief   To start the timer for timeout.
- *          This function will be used by STM32MCP flow retransmission.
- *          Put it into the STM32MCP_params_t structure to register as callback function
+ * @brief
  *
  * @param   None.
  *
@@ -92,14 +95,17 @@ static void UDHAL_ADC2_Open()
  */
 static void UDHAL_ADC2_Convert(uint16_t *result)
 {
-    ADC_convert(adcHandle, result);
+    if (!adc2Handle) {
+        ledControl_ErrorPriority(ADC2_OPEN_NULL);
+    }
+    else {
+        ADC_convert(adc2Handle, result);
+    }
 }
 /*********************************************************************
  * @fn      UDHAL_ADC2_Close
  *
- * @brief   To stop the timer for flow control timeout.
- *          This function will be used by STM32MCP flow retransmission.
- *          Put it into the STM32MCP_params_t structure to register as callback function.
+ * @brief
  *
  * @param   None.
  *
@@ -107,5 +113,10 @@ static void UDHAL_ADC2_Convert(uint16_t *result)
  */
 static void UDHAL_ADC2_Close()
 {
-    ADC_close(adcHandle);
+    if (!adc2Handle) {
+
+    }
+    else {
+        ADC_close(adc2Handle);
+    }
 }

@@ -29,6 +29,34 @@ extern "C"
 //#define LEDCONTROL_INIT_TIME                            1500
 //#define LEDCONTROL_REFRESH_TIME                         120
 
+/*      error type                                error priority      Description                         error code displayed */
+// system Normal
+#define SYSTEM_NORMAL_PRIORITY                          0xFF    // 255: System normal
+// system fatal errors
+#define UART_OPEN_NULL                                  0x00    // 00:UART open failure                         (LED display error code 0F)
+#define PWM1_OPEN_NULL                                  0x00    // 00:buzzer PWM failure                        (LED display error code 0F)
+#define PWM2_OPEN_NULL                                  0x00    // 00:light PWM failure                         (LED display error code 0F)
+#define I2C_OPEN_NULL                                   0x00    // 00:I2C open failure affects light sensor and led display (LED display error code 0F - will not display since i2c failed)
+#define ADC1_OPEN_NULL                                  0x00    // 00:ADC1 open failure affects brake           (LED display error code 0F)
+#define ADC2_OPEN_NULL                                  0x00    // 00:ADC2 open failure affects throttle        (LED display error code 0F)
+#define OTHER_SYS_FATAL_ERROR                           0x00
+// Critical hardware errors
+#define BATTERY_VOLTAGE_ERROR_PRIORITY                  0x21    // 1: Battery error priority                    (LED display error code 1A)
+#define BATTERY_TEMP_ERROR_PRIORITY                     0x01    // 1: Battery error priority                    (LED display error code 1A)
+#define BMS_COMM_ERROR_PRIORITY                         0x02    // 2: BMS communication error priority          (LED display error code 1C)
+#define GATE_DRIVER_ERROR_PRIORITY                      0x03    // 3: Gate driver error priority                (LED display error code 2C)
+#define MOSFET_ERROR_PRIORITY                           0x04    // 4: MOSFET error priority                     (LED display error code 2E)
+#define PHASE_I_ERROR_PRIORITY                          0x05    // 5: Phase current error priority              (LED display error code 2A)
+#define CONTROLLER_TEMP_ERROR_PRIORITY                  0x06    // 6: Controller temperature error priority     (LED display error code 2F)
+#define HALL_SENSOR_ERROR_PRIORITY                      0x07    // 7: Hall sensor error priority                (LED display error code 3A)
+#define MOTOR_TEMP_ERROR_PRIORITY                       0x08    // 8: Motor temperature error priority          (LED display error code 3C)
+#define DASH_COMM_ERROR_PRIORITY                        0x09    // 9: Dashboard communication error priority    (LED display error code 0A)
+// Minor hardware errors
+#define BRAKE_ERROR_PRIORITY                            0x0A    // 10:Brake error priority                      (LED display error code 0E)
+#define THROTTLE_ERROR_PRIORITY                         0x0B    // 11:Throttle error priority                   (LED display error code 0C)
+// Warnings
+#define BATTERY_CRITICALLY_LOW_WARNING                  0x20    // 32:Battery level critically low warning
+
 /*********************************************************************
  * @Structure ledControl_LedDisplayManager_t
  *
@@ -61,7 +89,7 @@ extern void ledControl_registerLedDisplay( ledControl_ledDisplayManager_t *ledDi
  *
 */
 extern void ledControl_init( void );
-
+extern void ledControl_deinit(void);
 static void ledControl_taskFxn(UArg a0, UArg a1);
 
 extern void ledControl_setAllOn( void );                                // Led All On
@@ -76,14 +104,15 @@ extern void ledControl_setUnitSelectDash( uint8_t UnitSelectDash );     // Set U
 extern void ledControl_changeUnit();
 //extern void ledControl_setBLEStatus( uint8_t BLEStatus );               // Set BLE status
 extern void ledControl_changeBLE(uint16_t gpt_taskCounter);
-extern void ledControl_getError(uint8_t error_code);
-extern void ledControl_ErrorDisplay();
+extern void ledControl_ErrorPriority(uint8_t error_code);
+extern uint8_t ledControl_ErrorDisplay();
 extern void ledControl_setLightMode( uint8_t light_mode );           // Set light mode
 extern void ledControl_changeLightMode();
 extern void ledControl_setLightStatus( uint8_t light_status );          // Set Light Status
 extern void ledControl_changeLightStatus();
 extern void ledControl_setLEDPower( uint8_t ledPower );                 // Set LED Power Level / Brightness
 extern void ledControl_changeLEDPower();
+extern uint8_t ledControl_getError( void );
 
 typedef void (*IS31FL3236A_Function)(uint8_t status_buf, uint8_t brightness_buf);
 typedef enum {

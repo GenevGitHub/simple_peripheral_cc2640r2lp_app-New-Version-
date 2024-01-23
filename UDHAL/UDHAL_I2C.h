@@ -42,9 +42,10 @@ extern "C"
  * FUNCTIONS
  */
 extern void UDHAL_I2C_init(void);
+extern void UDHAL_I2C_Deinit(void);
 extern void UDHAL_I2C_params_init(void);
 extern uint8_t UDHAL_I2C_getOpenStatus(void);
-extern void UDHAL_I2C_CallbackFxn(I2C_Handle i2c_Handle, I2C_Transaction *i2c_Transaction, bool i2c_TransferStatus);
+//extern void UDHAL_I2C_CallbackFxn(I2C_Handle i2c_Handle, I2C_Transaction *i2c_Transaction, bool i2c_TransferStatus);
 
 /*********************************************************************
 *********************************************************************/

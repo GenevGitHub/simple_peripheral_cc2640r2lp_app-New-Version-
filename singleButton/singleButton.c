@@ -4,15 +4,17 @@
 
 @brief This file contains the Code of single button control
 
-
+@ single button timer is controlled by UDHAL_TIM3.c
 *****************************************************************************/
 
 /*********************************************************************
 * INCLUDES
 */
-
 #include "singleButton.h"
 #include "lightControl.h"
+#include "buzzerControl.h"
+#include "dataAnalysis.h"
+
 /*********************************************************************
 * LOCAL VARIABLES
 */
@@ -80,11 +82,20 @@ void singleButton_registerCBs(singleButtonCBs_t *singleButtoncb)
  *
  * @return  none
  */
+bool singleButton_buzzerStatus = 0;
+
 void singleButton_processButtonEvt(uint8_t logicLevel)
 {
     if(logicLevel == 0)
     {
         fallingEdgeCount++;
+        /* instruct buzzer to make a single beep on every falling edge */
+#ifdef CC2640R2_LAUNCHXL
+        singleButton_buzzerStatus = 1; // when buzzerStatus == 1, buzzer makes a single beep, 1 == short beep
+        buzzerControl_buttonHandler(singleButton_buzzerStatus);
+        dataAnalysis_singleButtonBuzzerStatus( singleButton_buzzerStatus );
+#endif
+
     }
     if(fallingEdgeCount == 0)    // Ignores the rising edge after a long press
     {
@@ -94,6 +105,11 @@ void singleButton_processButtonEvt(uint8_t logicLevel)
     if(logicLevel == 1)
     {
         risingEdgeCount++;
+#ifdef CC2640R2_LAUNCHXL
+        singleButton_buzzerStatus = 0; // single button will always be releases (end with a rising edge) after a press. Reset buzzer status to 0 on every release.
+        buzzerControl_buttonHandler(singleButton_buzzerStatus);
+        dataAnalysis_singleButtonBuzzerStatus( singleButton_buzzerStatus );
+#endif
     }
 
     switch(buttonState)
@@ -134,32 +150,32 @@ uint8_t buttonEvent = 0x00;
 void singleButton_processTimerOv()
 {
 //    singleButton_timerManager->timerStop();
-    // TOGGLE POWER ON/OFF
+    // TOGGLE POWER ON/OFF (1 long press)
     if (risingEdgeCount == 0 && fallingEdgeCount == 1)
     {
         buttonEvent = 0x01;
     }
-    // Change Light Mode
+    // Change Light Mode (1 short press)
     else if (risingEdgeCount == 1 && fallingEdgeCount == 1)
     {
         buttonEvent = 0x02;                             //callback -> lightControl_change();
     }
-    // TOGGLE BLE Advertising
+    // TOGGLE BLE Advertising (1 short + 1 long presses)
     else if (risingEdgeCount == 1 && fallingEdgeCount == 2)
     {
         buttonEvent = 0x03;
     }
-    // CHANGE SPEED MODE
+    // CHANGE SPEED MODE (2 short presses)
     else if (risingEdgeCount == 2 && fallingEdgeCount == 2)
     {
         buttonEvent = 0x04;
     }
-    // TOGGLE UNITS METRIC/IMPERIAL
+    // TOGGLE UNITS METRIC/IMPERIAL (3 short presses)
     else if (risingEdgeCount == 3 && fallingEdgeCount == 3)
     {
         buttonEvent = 0x05;
     }
-    // TOGGLE CONTROL LAW
+    // TOGGLE CONTROL LAW (4 short + 1 long presses)
     else if (risingEdgeCount == 4 && fallingEdgeCount == 5)
     {
         buttonEvent = 0x06;
@@ -169,6 +185,12 @@ void singleButton_processTimerOv()
     {
         buttonEvent = 0x00;
     }
+
+#ifdef CC2640R2_LAUNCHXL
+    /* reset buzzer to off here */
+    buzzerControl_buttonHandler(0);
+    dataAnalysis_singleButtonBuzzerStatus(0);
+#endif
 
     timerPeriod = SINGLE_BUTTON_TIMER_OV_TIME_LONG;     // resets to "SINGLE_BUTTON_TIMER_OV_TIME_LONG" after each overflow
     risingEdgeCount = 0;                                // reset to 0

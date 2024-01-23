@@ -22,13 +22,13 @@ extern "C"
  * CONSTANTS
  */
 /*********************************************************************/
-#define TIMER_INTERVAL              200  //
+//#define TIMER_INTERVAL              200  //
 
 // Task configuration
 #define GPT_TASK_PRIORITY           4
 
 #ifndef GPT_TASK_STACK_SIZE
-#define GPT_TASK_STACK_SIZE         360
+#define GPT_TASK_STACK_SIZE         416  //400 //360// Stack size must be multiples of 8
 #endif
 
 /* ********************************************************************
@@ -43,13 +43,18 @@ extern "C"
 /* ********************************************************************
  * API FUNCTIONS
  */
+void Power(int16_t status);
+
+void PWR_CTL(uint8_t PWR);
+
+bool PWR_OFF();
+
 extern void GPTimer_init();
 
 static void GPtimer_taskFxn(UArg a0, UArg a1);
 /* Task creation function for the general purpose timer */
 extern void GPtimer_createTask(void);
 
-//
 #ifdef __cplusplus
 }
 #endif

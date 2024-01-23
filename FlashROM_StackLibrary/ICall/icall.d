@@ -245,16 +245,17 @@ ICall/icall.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/devices/cc26
 ICall/icall.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/devices/cc26x0r2/driverlib/rf_ble_cmd.h
 ICall/icall.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/icall/inc/ble_dispatch.h
 ICall/icall.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/target/board.h
-ICall/icall.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/target/cc2640r2lp/cc2640r2lp_board.h
-ICall/icall.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/boards/CC2640R2_LAUNCHXL/Board.h
+ICall/icall.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/target/cc2640r2em/cc2640r2em_board.h
+ICall/icall.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/boards/CC2640R2_GENEV_5X5_ID/Board.h
 ICall/icall.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/ADC.h
 ICall/icall.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/ADCBuf.h
 ICall/icall.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/PWM.h
 ICall/icall.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/SPI.h
 ICall/icall.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/UART.h
+ICall/icall.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/I2C.h
 ICall/icall.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/Watchdog.h
 ICall/icall.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/Board.h
-ICall/icall.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/boards/CC2640R2_LAUNCHXL/CC2640R2_LAUNCHXL.h
+ICall/icall.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/boards/CC2640R2_GENEV_5X5_ID/CC2640R2_GENEV_5X5_ID.h
 ICall/icall.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/PIN.h
 ICall/icall.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/devices/cc26x0r2/driverlib/ioc.h
 ICall/icall.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/devices/cc26x0r2/inc/hw_types.h
@@ -795,9 +796,9 @@ C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/icall/inc/ble_dispat
 
 C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/target/board.h:
 
-C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/target/cc2640r2lp/cc2640r2lp_board.h:
+C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/target/cc2640r2em/cc2640r2em_board.h:
 
-C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/boards/CC2640R2_LAUNCHXL/Board.h:
+C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/boards/CC2640R2_GENEV_5X5_ID/Board.h:
 
 C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/ADC.h:
 
@@ -809,11 +810,13 @@ C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/SPI.h:
 
 C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/UART.h:
 
+C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/I2C.h:
+
 C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/Watchdog.h:
 
 C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/Board.h:
 
-C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/boards/CC2640R2_LAUNCHXL/CC2640R2_LAUNCHXL.h:
+C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/boards/CC2640R2_GENEV_5X5_ID/CC2640R2_GENEV_5X5_ID.h:
 
 C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/PIN.h:
 

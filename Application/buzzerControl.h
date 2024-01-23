@@ -28,32 +28,30 @@ extern "C"
 /*********************************************************************
 * CONSTANTS
 */
-// Battery low beeps starts after the following duration (in milliseconds)
-#define BUZZER_BATTERYLOW_BEEP_DURATION                50
+// constants for buzzerStatus
+#define BUZZER_NO_BEEP                              0x00
+#define BUZZER_SINGLE_SHORT_BEEP                    0x01
+#define BUZZER_SINGLE_LONG_BEEP                     0x02
+#define BUZZER_WARNING_BEEP                         0x03
 
-//  BUZZER repeat beeps at the following period (in milliseconds)
-#define BUZZER_BATTERYLOW_BEEP_PERIOD                  30000
+// Warning beeps starts after the following duration (in milliseconds)
+#define BUZZER_WARNING_FREQUENCY                    3200   //  BUZZER frequency
+#define BUZZER_WARNING_DUTYPERCENT                  5
+#define BUZZER_WARNING_BEEP_PERIOD                  60000  //  BUZZER repeat beeps at the following period (in milliseconds) - Values should be in multiples of PERIODIC_COMMUNICATION_HF_SAMPLING_TIME
+// singleButton beeps
+#define BUZZER_SINGLEBUTTON_FREQUENCY               4200
+#define BUZZER_SINGLEBUTTON_DUTYPERCENT             5
 
+/*********************************************************************
+ * MACROS
+ */
 
-typedef void (*buzzerControl_timerStart)(void);
-typedef void (*buzzerControl_timerStop)(void);
-typedef struct{
-    buzzerControl_timerStart timerStart;    // this is a function pointer
-    buzzerControl_timerStop timerStop;      // this is a function pointer
-}buzzerControl_timerManager_t;
-
-
-typedef void (*buzzerControlCB_t)(uint8_t messageID);
-typedef struct{
-    buzzerControlCB_t buzzerControlCB_t;    // this is a function pointer
-}buzzerControlCBs_t;
-
+/*********************************************************************
+ * FUNCTIONS
+ */
 extern void buzzerControl_init();
-extern void buzzerControl_registerTimer(buzzerControl_timerManager_t *deviceTimer);
-extern void buzzerControl_registerCBs(buzzerControlCBs_t *buzzerControlCBs);
-extern void buzzerControl_processTimerOV();
-extern void buzzerControl_Start( void );
-extern void buzzerControl_Stop( void );
+extern void buzzerControl_buttonHandler(uint8_t buttonStatus);
+extern void buzzerControl_errorHandle(uint8_t warningDutyPercent, uint16_t warningPeriod);
 
 #ifdef _cplusplus
 }

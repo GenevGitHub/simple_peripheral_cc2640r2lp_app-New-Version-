@@ -32,7 +32,7 @@ extern "C"
 #define BRAKE_AND_THROTTLE_DIRECTLAW                              0
 
 // The parameters BRAKE_AND_THROTTLE_ADC_SAMPLING_PERIOD & BRAKE_AND_THROTTLE_SAMPLES control the sensitivity of the throttle input to motor output
-#define BRAKE_AND_THROTTLE_ADC_SAMPLING_PERIOD                    20   // 80: [time period in mS]
+#define BRAKE_AND_THROTTLE_ADC_SAMPLING_PERIOD                    10   // 80: [time period in mS]
 #define BRAKE_AND_THROTTLE_SAMPLES                                3     // 3 samples seem ideal, 5 is okay, 8 is too laggy
 #define BRAKE_AND_THROTTLE_QQ                                     2
 #define BRAKE_AND_THROTTLE_SPEED_FACTOR                           0.95
@@ -46,8 +46,8 @@ extern "C"
 #define BRAKE_AND_THROTTLE_MAXIMUMN_SPEED                         674       // 674 RPM = 25.4 Km/hr
 
 //Speed mode TORQUEIQ reduction ratio
-#define BRAKE_AND_THROTTLE_SPEED_MODE_REDUCTION_RATIO_AMBLE       65        //64%   Pout = 216.75 W
-#define BRAKE_AND_THROTTLE_SPEED_MODE_REDUCTION_RATIO_LEISURE     80        //80%   Pout = 240 W
+#define BRAKE_AND_THROTTLE_SPEED_MODE_REDUCTION_RATIO_AMBLE       80        //80%   Pout = 240 W
+#define BRAKE_AND_THROTTLE_SPEED_MODE_REDUCTION_RATIO_LEISURE     90        //90%   Pout = 270 W
 #define BRAKE_AND_THROTTLE_SPEED_MODE_REDUCTION_RATIO_SPORTS      100       //100%  Pout = 300 W
 
 //Speed mode maximum "powered" speed in RPM
@@ -70,20 +70,20 @@ extern "C"
 #define BRAKEPERCENTTHRESHOLD                                     5
 #define THROTTLEPERCENTREDUCTION                                  0.3
 //Throttle calibration values = value range the throttle ADC is conditioned to be within
-#define THROTTLE_ADC_CALIBRATE_H                                  2350
+#define THROTTLE_ADC_CALIBRATE_H                                  2300
 #define THROTTLE_ADC_CALIBRATE_L                                  850
 
 //Throttle error thresholds = values that should not be possible under nominal operation
 #define THROTTLE_ADC_THRESHOLD_H                                  2700
-#define THROTTLE_ADC_THRESHOLD_L                                  600
+#define THROTTLE_ADC_THRESHOLD_L                                  500
 
 //Brake calibration values = value range the Brake ADC is conditioned to be within
-#define BRAKE_ADC_CALIBRATE_H                                     2350
-#define BRAKE_ADC_CALIBRATE_L                                     850
+#define BRAKE_ADC_CALIBRATE_H                                     2300
+#define BRAKE_ADC_CALIBRATE_L                                     800
 
 //Brake error thresholds = values that should not be possible under nominal operation
 #define BRAKE_ADC_THRESHOLD_H                                     2700
-#define BRAKE_ADC_THRESHOLD_L                                     600
+#define BRAKE_ADC_THRESHOLD_L                                     500
 
 //Error message
 #define BRAKE_AND_THROTTLE_NORMAL                                 0x00

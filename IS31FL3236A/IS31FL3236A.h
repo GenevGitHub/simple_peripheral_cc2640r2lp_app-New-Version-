@@ -46,7 +46,7 @@ extern "C"
 #define ZERO_ZERO_CUSTOM            0x00
 
 //PWM Brightness control
-#define PWM_CUSTOM                  0xCF // 0xE6 = 230, 0x8E = 200, 0xAF = 175, 0x80 = 128, 0x32 = 50 //255 STEPS
+#define PWM_CUSTOM                  0x80 // 0xE6 = 230, 0x8E = 200, 0xAF = 175, 0x80 = 128, 0x32 = 50 //255 STEPS Original PWM_CUSTOM: 0xCF
 #define PWM_LOW                     0x9F //0x20
 #define PWM_ZERO                    0x00
 
@@ -66,7 +66,7 @@ extern const uint8_t led_array[][2];
 #define I_MAX2_OUT                   0x03 //MAX/2
 #define I_MAX3_OUT                   0x05 //MAX/3
 #define I_MAX4_OUT                   0x07 //MAX/4
-#define I_OUT                        0x07
+#define I_OUT                        0x05
 
 //LED control register address
 

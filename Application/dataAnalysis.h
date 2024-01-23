@@ -58,16 +58,19 @@ extern "C"
 #define BATTERY_PERCENTAGE_INITIAL      100             // Remove this if calculated using start up voltage
 #define BATTERY_PERCENTAGE_LL           5               // battery low percentage at which buzzer alert starts
 #define BATTERY_PERCENTAGE_LH           8               // battery low percentage at which buzzer alert stops
-#define BATTERY_MAX_VOLTAGE             42000           // This could also be defined elsewhere
-#define BATTERY_MIN_VOLTAGE             30000           // the battery voltage assumed at 0% charged
-#define BATTERY_CRITICALLY_LOW          26000
-#define BATTERY_MAX_CAPACITY            355200          // mW-hr
+/* Battery specification parameters     40.6V           // 37.0V */
+#define BATTERY_CEILING_VOLTAGE         47000           //42700
+// if voltage is greater than BATTERY_CEILING_VOLTAGE -> error:  incorrect battery is installed
+#define BATTERY_MAX_VOLTAGE             46200           //42000
+#define BATTERY_MIN_VOLTAGE             33000           //30000           // the battery voltage assumed at 0% charged
+#define BATTERY_CRITICALLY_LOW          30001           //26000
+#define BATTERY_MAX_CAPACITY            390720          //355200          // mW-hr
 #define VOLTAGE_DROP_COEFFICIENT        0.269           // for Cest Power 37V 9.6Ah Battery pack Voltage drop empirical coefficient
-#define LEVEL45                         39600           // equivalent to 80%
-#define LEVEL34                         37560           // equivalent to 63%
-#define LEVEL23                         35400           // equivalent to 45%
-#define LEVEL12                         33360           // equivalent to 28%
-#define LEVEL01                         30000           // equivalent to  0%
+#define LEVEL45                         43560           //39600           // equivalent to 80%
+#define LEVEL34                         41316           //37560           // equivalent to 63%
+#define LEVEL23                         38940           //35400           // equivalent to 45%
+#define LEVEL12                         36696           //33360           // equivalent to 28%
+#define LEVEL01                         33000           //30000           // equivalent to  0%
 #define LEVEL45PERCENT                  80              // 80%
 #define LEVEL34PERCENT                  63              // 63%
 #define LEVEL23PERCENT                  45              // 45%
@@ -192,6 +195,9 @@ extern int8_t   computeMotorTemperature( void ); // in degrees Celsius
 extern void dataAnalysis_sampling(uint8_t x_hf, uint16_t STM32MCP_batteryVoltage, uint16_t STM32MCP_batteryCurrent,
                                   uint16_t STM32MCP_rpm, int8_t STM32MCP_heatsinkTemp, int8_t STM32MCP_motorTemp);
 extern uint8_t dataAnalysis_getInitSpeedMode(void);
+extern void dataAnalysis_errorStatus( uint8_t errorStatus );
+extern void dataAnalysis_singleButtonBuzzerStatus( uint8_t buzzerStatus );
+
 //
 #ifdef __cplusplus
 }

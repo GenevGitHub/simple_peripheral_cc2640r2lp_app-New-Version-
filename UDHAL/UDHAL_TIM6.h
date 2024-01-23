@@ -30,8 +30,9 @@ extern "C"
  * FUNCTIONS
  */
 extern void UDHAL_TIM6_init();
+extern void UDHAL_TIM6_changeReadStatus(uint8_t write);
+extern uint8_t UDHAL_TIM6_status();
 extern void UDHAL_TIM6_params_init();
-
 /*********************************************************************
 *********************************************************************/
 

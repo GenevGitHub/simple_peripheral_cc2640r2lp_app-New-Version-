@@ -34,16 +34,17 @@ ICallBLE/ble_user_config.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti
 ICallBLE/ble_user_config.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/devices/cc26x0r2/driverlib/rf_ble_cmd.h
 ICallBLE/ble_user_config.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/icall/inc/ble_dispatch.h
 ICallBLE/ble_user_config.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/target/board.h
-ICallBLE/ble_user_config.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/target/cc2640r2lp/cc2640r2lp_board.h
-ICallBLE/ble_user_config.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/boards/CC2640R2_LAUNCHXL/Board.h
+ICallBLE/ble_user_config.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/target/cc2640r2em/cc2640r2em_board.h
+ICallBLE/ble_user_config.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/boards/CC2640R2_GENEV_5X5_ID/Board.h
 ICallBLE/ble_user_config.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/ADC.h
 ICallBLE/ble_user_config.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/ADCBuf.h
 ICallBLE/ble_user_config.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/PWM.h
 ICallBLE/ble_user_config.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/SPI.h
 ICallBLE/ble_user_config.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/UART.h
+ICallBLE/ble_user_config.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/I2C.h
 ICallBLE/ble_user_config.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/Watchdog.h
 ICallBLE/ble_user_config.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/Board.h
-ICallBLE/ble_user_config.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/boards/CC2640R2_LAUNCHXL/CC2640R2_LAUNCHXL.h
+ICallBLE/ble_user_config.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/boards/CC2640R2_GENEV_5X5_ID/CC2640R2_GENEV_5X5_ID.h
 ICallBLE/ble_user_config.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/PIN.h
 ICallBLE/ble_user_config.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/devices/cc26x0r2/driverlib/ioc.h
 ICallBLE/ble_user_config.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/devices/cc26x0r2/inc/hw_types.h
@@ -222,9 +223,9 @@ C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/icall/inc/ble_dispat
 
 C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/target/board.h:
 
-C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/target/cc2640r2lp/cc2640r2lp_board.h:
+C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/target/cc2640r2em/cc2640r2em_board.h:
 
-C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/boards/CC2640R2_LAUNCHXL/Board.h:
+C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/boards/CC2640R2_GENEV_5X5_ID/Board.h:
 
 C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/ADC.h:
 
@@ -236,11 +237,13 @@ C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/SPI.h:
 
 C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/UART.h:
 
+C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/I2C.h:
+
 C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/Watchdog.h:
 
 C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/Board.h:
 
-C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/boards/CC2640R2_LAUNCHXL/CC2640R2_LAUNCHXL.h:
+C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/boards/CC2640R2_GENEV_5X5_ID/CC2640R2_GENEV_5X5_ID.h:
 
 C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/PIN.h:
 

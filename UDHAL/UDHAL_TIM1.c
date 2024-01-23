@@ -134,5 +134,7 @@ static void UDHAL_TIM1_timerStop()
  */
 static void UDHAL_TIM1_OVClockFxn()
 {
+#ifdef CC2640R2_GENEV_5X5_ID
     STM32MCP_retransmission();
+#endif
 }

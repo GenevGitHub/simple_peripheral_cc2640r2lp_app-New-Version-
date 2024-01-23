@@ -1,6 +1,6 @@
 /******************************************************************************
 
- @file  UDHAL_TIM.c
+ @file  UDHAL_TIM3.c
 
  @brief This library is used for singleButton.h to counter the button press duration
 

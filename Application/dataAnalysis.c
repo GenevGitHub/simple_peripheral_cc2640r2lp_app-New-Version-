@@ -39,6 +39,7 @@
 #include "periodicCommunication.h"
 #include "brakeAndThrottle.h"
 #include "lightControl.h"
+
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
@@ -52,44 +53,44 @@
 static uint16_t DATA_ANALYSIS_SAMPLING_TIME = PERIODIC_COMMUNICATION_HF_SAMPLING_TIME;
 
 // Simpson's 1/3 rule coefficients
-static uint8_t coefficient_array[DATA_ANALYSIS_POINTS] = {0};           // same size as DATA_ANALYSIS_POINTS
-static uint8_t (*ptrc)[DATA_ANALYSIS_POINTS] = &coefficient_array;
+static uint8_t  coefficient_array[DATA_ANALYSIS_POINTS] = {0};           // same size as DATA_ANALYSIS_POINTS
+static uint8_t  (*ptrc)[DATA_ANALYSIS_POINTS] = &coefficient_array;
 
-static uint8_t batteryStatus;
+static uint8_t  batteryStatus;
 //Default Unit Settings
-static uint8_t UnitSelectDash = SI_UNIT;                   // Keep the last units selected by user in memory, the same units is used on restart
-static uint8_t UnitSelectApp = SI_UNIT;                    // Mobile app allow user to select the desired display unit - the App units and Dash units are NOT linked
+static uint8_t  UnitSelectDash = SI_UNIT;                   // Keep the last units selected by user in memory, the same units is used on restart
+static uint8_t  UnitSelectApp = SI_UNIT;                    // Mobile app allow user to select the desired display unit - the App units and Dash units are NOT linked
 //
 static uint16_t rpm[DATA_ANALYSIS_POINTS] = {0};                        //revolutions per minute data collected every time interval
 static uint16_t speed_cmps[DATA_ANALYSIS_POINTS] = {0};                 //rpm is converted to cm per second (cm/s)
 static uint16_t batteryCurrent_mA[DATA_ANALYSIS_POINTS] = {0};          //battery current data collected at every hf communication interval
 static uint16_t batteryVoltage_mV[DATA_ANALYSIS_POINTS] = {0};          //battery voltage data collected at every hf communication interval
-static int8_t heatSinkTemperature_C[DATA_ANALYSIS_POINTS] = {0};        // temperature can be negative
-static int8_t motorTemperature_C[DATA_ANALYSIS_POINTS] = {0};           // temperature can be negative
+static int8_t   heatSinkTemperature_C[DATA_ANALYSIS_POINTS] = {0};        // temperature can be negative
+static int8_t   motorTemperature_C[DATA_ANALYSIS_POINTS] = {0};           // temperature can be negative
 static uint16_t (*ptrRpm)[DATA_ANALYSIS_POINTS] = &rpm;
 static uint16_t (*ptrSpeed)[DATA_ANALYSIS_POINTS] = &speed_cmps;
 static uint16_t (*ptrBatteryVoltage)[DATA_ANALYSIS_POINTS] = &batteryVoltage_mV;
 static uint16_t (*ptrBatteryCurrent)[DATA_ANALYSIS_POINTS] = &batteryCurrent_mA;
-static int8_t (*ptrhst)[DATA_ANALYSIS_POINTS] = &heatSinkTemperature_C;
-static int8_t (*ptrmt)[DATA_ANALYSIS_POINTS] = &motorTemperature_C;
+static int8_t   (*ptrhst)[DATA_ANALYSIS_POINTS] = &heatSinkTemperature_C;
+static int8_t   (*ptrmt)[DATA_ANALYSIS_POINTS] = &motorTemperature_C;
 //
 static uint16_t dA_Count = 1;
 static uint32_t UDDataCounter = 0;                  // At new, UDDataCounter = 0
 static uint16_t UDIndex;                            // the last UDIndex saved
 static uint16_t UDIndexPrev;
 
-static AD_t ADArray = {0};                            //Since this data set is temporary, array struct is not necesary.  ADArray data that are displayed on the mobile app.
-static AD_t (*ptrADArray) = &ADArray;                 // Provides a pointer option
+static AD_t     ADArray = {0};                            //Since this data set is temporary, array struct is not necesary.  ADArray data that are displayed on the mobile app.
+static AD_t     (*ptrADArray) = &ADArray;                 // Provides a pointer option
 
 static float lenConvFactorDash;
 
-static uint32_t avgBatteryVoltage_mV = 0;
-static int16_t  avgBatteryLevel = 0;
-static uint8_t batteryPercentage = BATTERY_PERCENTAGE_INITIAL;
-static uint8_t batteryLow = 0;
-static uint8_t speed_mode_init;
+static uint32_t avgBatteryVoltage_mV = BATTERY_MAX_VOLTAGE;
+static uint8_t  avgBatteryPercent = BATTERY_PERCENTAGE_INITIAL;
+//static uint8_t  batteryPercentage = BATTERY_PERCENTAGE_INITIAL;
+static bool     batteryLow = 0;
+static uint8_t  speed_mode_init;
 
-static uint8_t UDTriggerCounter = 0;
+static uint8_t  UDTriggerCounter = 0;
 static uint32_t ADDataCounter = 0;
 static uint32_t sumDeltaMileage_dm;                 // unit in decimeters.  This is the previous data on the total distance travelled
 static uint32_t sumDeltaPowerConsumed_mWh;          // unit in milli-W-hr.  This is the previous data on the total power consumption
@@ -235,19 +236,53 @@ extern void dataAnalysis_init()
     dataAnalysis_changeUnitSelectDash(UnitSelectDash);      // Send Unit Select to LED display
     ledControl_setSpeedMode( speed_mode_init );
     brakeAndThrottle_setSpeedMode( speed_mode_init );
-
-    if ((batteryLow == 0) && (batteryPercentage < BATTERY_PERCENTAGE_LL)){
+    avgBatteryPercent = ADArray.batteryPercentage;
+    if ((batteryLow == 0) && (ADArray.batteryPercentage < BATTERY_PERCENTAGE_LL)){
         batteryLow = 1;
-        //buzzerControl_Start();
     }
-    if ((batteryLow == 1) && (batteryPercentage > BATTERY_PERCENTAGE_LH)){
+    if ((batteryLow == 1) && (ADArray.batteryPercentage > BATTERY_PERCENTAGE_LH)){
         batteryLow = 0;
-        //buzzerControl_Stop();
     }
 
 }
+/***********************************************************************************************************
+ * @fn      dataAnalysis_singleButtonBuzzerStatus
+ *
+ * @brief   singleButton.c sends buzzer status to dataAnalysis.c
+ *
+ * @param   Nil
+ *
+ * @return  Nil
+******************************************************************************************************/
+uint8_t dataAnalysis_singleButtonBuzzerCode;
+extern void dataAnalysis_singleButtonBuzzerStatus( uint8_t buzzerStatus )
+{
+    dataAnalysis_singleButtonBuzzerCode = buzzerStatus;
+}
 
-
+/***********************************************************************************************************
+ * @fn      dataAnalysis_errorPriority
+ *
+ * @brief   ledControl.c sends error priority to dataAnalysis.c
+ *
+ * @param   Nil
+ *
+ * @return  Nil
+******************************************************************************************************/
+uint8_t dataAnalysis_errorPriority = SYSTEM_NORMAL_PRIORITY;
+extern void dataAnalysis_errorStatus( uint8_t errorStatus )
+{
+    dataAnalysis_errorPriority = errorStatus;
+}
+/***********************************************************************************************************
+ * @fn      dataAnalysis_getInitSpeedMode
+ *
+ * @brief   get initial speed mode
+ *
+ * @param   Nil
+ *
+ * @return  speed_mode_init
+******************************************************************************************************/
 extern uint8_t dataAnalysis_getInitSpeedMode(void)
 {
     return speed_mode_init;
@@ -350,6 +385,7 @@ extern void dataAnalysis_LEDSpeed(uint16_t xCounter)
  * @return  Nil
 ******************************************************************************************************/
 uint32_t deltaPowerConsumption_mWh, deltaMileage_dm;
+bool buzzerOn = 0;
 static void dataAnalyt()
 {
 //    uint32_t deltaPowerConsumption_mWh, deltaMileage_dm;
@@ -441,6 +477,8 @@ void data2UDArray()
  *
  * @return  Nil
 ******************************************************************************************************/
+uint8_t dataAnalysis_buzzerCounter = 0;
+uint8_t dataAnalysis_buzzerTrigger = BUZZER_WARNING_BEEP_PERIOD / PERIODIC_COMMUNICATION_HF_SAMPLING_TIME;
 extern void dataAnalysis_sampling(uint8_t x_hf, uint16_t STM32MCP_batteryVoltage, uint16_t STM32MCP_batteryCurrent,
                                   uint16_t STM32MCP_rpm, int8_t STM32MCP_heatsinkTemp, int8_t STM32MCP_motorTemp)
 {
@@ -461,6 +499,22 @@ extern void dataAnalysis_sampling(uint8_t x_hf, uint16_t STM32MCP_batteryVoltage
     dataAnalysis_LEDSpeed(dA_Count);       // covert speed to the selected dashboard unit (dashSpeed) then sent to led display
 
     dataAnalysis_Main();
+
+#ifdef CC2640R2_LAUNCHXL
+    if ((dataAnalysis_singleButtonBuzzerCode == 0) && (dataAnalysis_buzzerCounter == 0) && (dataAnalysis_errorPriority <= BATTERY_CRITICALLY_LOW_WARNING) && (buzzerOn == 0)){
+        buzzerControl_errorHandle(BUZZER_WARNING_DUTYPERCENT, BUZZER_WARNING_FREQUENCY);
+        buzzerOn = 1;
+    }
+    else if (buzzerOn == 1){
+        buzzerControl_errorHandle(0, BUZZER_WARNING_FREQUENCY);
+        buzzerOn = 0;
+    }
+
+    dataAnalysis_buzzerCounter++;
+    if (dataAnalysis_buzzerCounter >= dataAnalysis_buzzerTrigger){
+        dataAnalysis_buzzerCounter = 0;
+    }
+#endif
 }
 
 /*********************************************************************
@@ -481,22 +535,18 @@ static void dataAnalysis_Main()
         dataAnalyt();
         ledControl_setBatteryStatus(ADArray.batteryStatus);                     // Send battery status and errorCode to led display
         avgBatteryVoltage_mV = ADArray.avgBatteryVoltage_mV;                     // for debugging only
-        batteryPercentage = ADArray.batteryPercentage;                             // for debugging only
+        //batteryPercentage = ADArray.batteryPercentage;                             // for debugging only
 
         // send analytics data to App
         dataAnalysis_motorcontrol_setGatt();
         //batteryPercentage
-        if ((batteryLow == 0) && (batteryPercentage < BATTERY_PERCENTAGE_LL))
+        if ((batteryLow == 0) && (ADArray.batteryPercentage < BATTERY_PERCENTAGE_LL))
         {
             batteryLow = 1;
-            //if (timer9 is not "started") { buzzerControl_Start();}    // there are several conditions that may demand the buzzer timer to start and repeat
-            //Conditions include: (1) battery level low, (2) Power On/OFF, (3) Present of any error code
         }
-        if ((batteryLow == 1) && (batteryPercentage > BATTERY_PERCENTAGE_LH))
+        if ((batteryLow == 1) && (ADArray.batteryPercentage > BATTERY_PERCENTAGE_LH))
         {
             batteryLow = 0;
-            //if (no other conditions that demand timer9 start) { buzzerControl_Stop();}
-            //Conditions include: (1) battery level low, (2) Power On/OFF, (3) Present of any error code
         }
     }
     // The UDArray is used to store the history of total Power Consumed and total distance travelled data in memory.
@@ -512,7 +562,7 @@ static void dataAnalysis_Main()
 /***************************************************************************************************
  * @fn      dataAnalysis_motorcontrol_setGatt
  *
- * @brief   This function setGatt
+ * @brief   This function setGatt -> sends data to Mobile Application
  *
  * @param   Nil
  *
@@ -520,7 +570,9 @@ static void dataAnalysis_Main()
 ******************************************************************************************************/
 static uint8_t heatSinkOVTempState = 0;
 static uint8_t motorOVTempState = 0;
-static uint8_t dummyBatteryErrorCode = 0;
+static uint8_t dataAnalysis_batteryError = 0;
+//static bool dataAnalysis_batteryError = 0;  // checks for battery over-voltage (incorrect battery installed)
+
 static void dataAnalysis_motorcontrol_setGatt()
 {
     /******  Dashboard services
@@ -556,16 +608,15 @@ static void dataAnalysis_motorcontrol_setGatt()
     {
         //motorcontrol_setGatt(CONTROLLER_SERV_UUID, CONTROLLER_ERROR_CODE, CONTROLLER_ERROR_CODE_LEN, (uint8_t *) &heatSinkOVTempState);
     }
-    /*******  Battery services
-    *************************************/
+    /*************************************  Battery services   *************************************/
     //motorcontrol_setGatt(BATTERY_SERV_UUID, BATTERY_BATTERY_VOLTAGE, BATTERY_BATTERY_VOLTAGE_LEN, (uint8_t *) &ADArray.avgBatteryVoltage_mV);
     //motorcontrol_setGatt(BATTERY_SERV_UUID, BATTERY_BATTERY_LEVEL, BATTERY_BATTERY_LEVEL_LEN, (uint8_t *) &ADArray.batteryPercentage);
     //motorcontrol_setGatt(BATTERY_SERV_UUID, BATTERY_BATTERY_STATUS, BATTERY_BATTERY_STATUS_LEN, (uint8_t *) &ADArray.batteryStatus);
 
     //motorcontrol_setGatt(BATTERY_SERV_UUID, BATTERY_BATTERY_TEMPERATURE, BATTERY_BATTERY_TEMPERATURE_LEN, (uint8_t *) &ADArray.avgHeatSinkTemperature_C); // currently not available
 
-    //motorcontrol_setGatt(BATTERY_SERV_UUID, BATTERY_BATTERY_ERROR_CODE, BATTERY_BATTERY_ERROR_CODE_LEN, (uint8_t *) &dummyBatteryErrorCode);
-    dummyBatteryErrorCode++;
+    //motorcontrol_setGatt(BATTERY_SERV_UUID, BATTERY_BATTERY_ERROR_CODE, BATTERY_BATTERY_ERROR_CODE_LEN, (uint8_t *) &dataAnalysis_batteryError);
+    dataAnalysis_batteryError++;
 }
 
 /***************************************************************************************************
@@ -635,7 +686,8 @@ uint8_t computeAvgSpeed(uint32_t deltaMileage_dm)
 /**********************************************************************************************************
  * @fn      computeAverageHST
  *
- * @brief   This function calculates the average heat sink temperature over the given time interval in degrees celsius
+ * @brief   This function calculates the average heat sink (motor controller) temperature over the given
+ *          time interval in degrees celsius
  *
  * @param   Nil
  *
@@ -662,6 +714,7 @@ int8_t computeAvgHeatSinkTemperature()
     {
         heatSinkOVTempState = HEATSINK_TEMPERATURE_ABNORMAL;  // errorCode = HeatSink_OVTEMP_WARNING_CODE;
         // Action: Restrict speed mode to AMBLE mode or restrict IQ to 0 until temperature drop below the safe threshold
+        ledControl_ErrorPriority(CONTROLLER_TEMP_ERROR_PRIORITY);
     }
     else
     {
@@ -703,7 +756,7 @@ int8_t computeMotorTemperature()
     {
         motorOVTempState = MOTOR_TEMPERATURE_ABNORMAL;
         // Action: Restrict speed mode to AMBLE mode or restrict IQ to 0 until temperature drop below the safe threshold
-        ledControl_getError(8);
+        ledControl_ErrorPriority(MOTOR_TEMP_ERROR_PRIORITY);
     }
     else
     {
@@ -743,8 +796,14 @@ uint32_t computeAvgBatteryVoltage()
     if (avgBatteryVoltage_mV < BATTERY_CRITICALLY_LOW)
     {
         // battery level critically low -> power shut down
+        ledControl_ErrorPriority(BATTERY_CRITICALLY_LOW_WARNING);   // battery low buzzer alert
     }
-
+    if (avgBatteryVoltage_mV > BATTERY_CEILING_VOLTAGE)
+    {
+        /* battery over-voltage -> disable system */
+        dataAnalysis_batteryError = 1;
+        ledControl_ErrorPriority(BATTERY_VOLTAGE_ERROR_PRIORITY);   // battery low buzzer alert
+    }
     return avgBatteryVoltage_mV;   // Unit in mV
 }
 
@@ -753,36 +812,36 @@ uint32_t computeAvgBatteryVoltage()
  *
  * @brief   This function computes the battery percentage based on the average battery voltage.
  *
- * @param   avgBatteryVoltage
+ * @param   Nil
  *
- * @return  batteryPercentage = battery_battery_level in battery.h
+ * @return  avgBatteryPercent = battery_battery_level in battery.h
 ******************************************************************************************************/
 uint8_t computeBatteryPercentage()
 {
-    avgBatteryLevel = 0;
+    avgBatteryPercent = 0;
     int16_t     instantBatteryLevel = 0;
-    int16_t     sumBatteryLevel = 0;
-
+    uint16_t     sumBatteryLevel = 0;
     for(uint8_t ii = 0; ii < dA_Count; ii++)
     {
+        /* Calculates instantaneous percentage */
         instantBatteryLevel = ( batteryVoltage_mV[ii] - BATTERY_MIN_VOLTAGE) * 100 /((BATTERY_MAX_VOLTAGE - batteryCurrent_mA[ii] * VOLTAGE_DROP_COEFFICIENT) - BATTERY_MIN_VOLTAGE);
-        if(instantBatteryLevel > 100)
-        {
+        if (instantBatteryLevel > 100) {
             instantBatteryLevel = 100;              // battery % cannot be greater than 100%
+        }
+        else if (instantBatteryLevel < 0) {
+            instantBatteryLevel = 0;                // battery % cannot be less than 0%
         }
         sumBatteryLevel += instantBatteryLevel;
     }
-
     if (dA_Count < 1)   // dA_Count is always greater than or equal 1, hence it is not possible to get here -> just to guarantee division by 0 is never possible.
     {
-        avgBatteryLevel = 0;        // if dA_Count < 0, make avgBatteryLevel = 0.
+        avgBatteryPercent = 0;        // if dA_Count < 0, make avgBatteryPercent = 0.
         //errorCode = system error;
-        return avgBatteryLevel;   // Unit in mV
+        ledControl_ErrorPriority(OTHER_SYS_FATAL_ERROR);
+        return avgBatteryPercent;   // Unit in mV
     }
-
-    avgBatteryLevel = round((float) sumBatteryLevel / dA_Count);                      // output in %
-
-    return avgBatteryLevel;              //batteryPercentage_mV;
+    avgBatteryPercent = round((float) sumBatteryLevel / dA_Count);                      // output in %
+    return avgBatteryPercent;
 }
 
 /***************************************************************************************************
@@ -796,12 +855,14 @@ uint8_t computeBatteryPercentage()
 ******************************************************************************************************/
 uint8_t determineBatteryStatus()
 {
-    if (avgBatteryLevel > LEVEL45PERCENT) {batteryStatus = GLOWING_AQUA;}
-    else if (avgBatteryLevel <= LEVEL45PERCENT && avgBatteryLevel > LEVEL34PERCENT) {batteryStatus = GLOWING_GREEN;}
-    else if (avgBatteryLevel <= LEVEL34PERCENT && avgBatteryLevel > LEVEL23PERCENT) {batteryStatus = YELLOW;}
-    else if (avgBatteryLevel <= LEVEL23PERCENT && avgBatteryLevel > LEVEL12PERCENT) {batteryStatus = ORANGE;}
-    else if (avgBatteryLevel <= LEVEL12PERCENT && avgBatteryLevel > LEVEL01PERCENT) {batteryStatus = RED;}
-    else {batteryStatus = FLASHING_RED;}
+    if (avgBatteryPercent > LEVEL45PERCENT) {batteryStatus = GLOWING_AQUA;}
+    else if (avgBatteryPercent <= LEVEL45PERCENT && avgBatteryPercent > LEVEL34PERCENT) {batteryStatus = GLOWING_GREEN;}
+    else if (avgBatteryPercent <= LEVEL34PERCENT && avgBatteryPercent > LEVEL23PERCENT) {batteryStatus = YELLOW;}
+    else if (avgBatteryPercent <= LEVEL23PERCENT && avgBatteryPercent > LEVEL12PERCENT) {batteryStatus = ORANGE;}
+    else if (avgBatteryPercent <= LEVEL12PERCENT && avgBatteryPercent > LEVEL01PERCENT) {batteryStatus = RED;}
+    else {
+        batteryStatus = FLASHING_RED;
+    }
     ledControl_setBatteryStatus(batteryStatus);
     return batteryStatus;
 }

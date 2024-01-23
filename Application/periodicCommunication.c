@@ -32,7 +32,7 @@
  * LOCAL VARIABLES
  */
 static motorcontrol_timerManager_t *motorcontrol_hftimerManager;
-static motorcontrol_timerManager_t *motorcontrol_lftimerManager;
+//static motorcontrol_timerManager_t *motorcontrol_lftimerManager;
 static simplePeripheral_bleCBs_t *motorcontrol_BLE_GATT;
 static uint8_t state = PERIODIC_COMMUNICATION_DEACTIVATE;
 
@@ -54,7 +54,7 @@ void periodicCommunication_start()
     if(state == PERIODIC_COMMUNICATION_DEACTIVATE)
     {
         motorcontrol_hftimerManager->timerStart();
-        motorcontrol_lftimerManager->timerStart();
+//        motorcontrol_lftimerManager->timerStart();
         state = PERIODIC_COMMUNICATION_ACTIVATE;
     }
 }
@@ -73,7 +73,7 @@ void periodicCommunication_stop()
     if(state == PERIODIC_COMMUNICATION_ACTIVATE)
     {
         motorcontrol_hftimerManager->timerStop();
-        motorcontrol_lftimerManager->timerStop();
+//        motorcontrol_lftimerManager->timerStop();
         state = PERIODIC_COMMUNICATION_DEACTIVATE;
     }
 }
@@ -94,7 +94,7 @@ void periodicCommunication_toggle()
     if(state == PERIODIC_COMMUNICATION_DEACTIVATE)
     {
         motorcontrol_hftimerManager->timerStart();
-        motorcontrol_lftimerManager->timerStart();
+//        motorcontrol_lftimerManager->timerStart();
         state = PERIODIC_COMMUNICATION_ACTIVATE;
         //break;
     }
@@ -102,7 +102,7 @@ void periodicCommunication_toggle()
     else if(state == PERIODIC_COMMUNICATION_ACTIVATE)
     {
         motorcontrol_hftimerManager->timerStop();
-        motorcontrol_lftimerManager->timerStop();
+//        motorcontrol_lftimerManager->timerStop();
         state = PERIODIC_COMMUNICATION_DEACTIVATE;
         //break;
     }
@@ -131,10 +131,10 @@ void periodicCommunication_register_hfTimer(motorcontrol_timerManager_t *obj)
  *
  * @return  none
  *********************************************************************/
-void periodicCommunication_register_lfTimer(motorcontrol_timerManager_t *obj)
-{
-    motorcontrol_lftimerManager = obj;
-}
+//void periodicCommunication_register_lfTimer(motorcontrol_timerManager_t *obj)
+//{
+////    motorcontrol_lftimerManager = obj;
+//}
 /*********************************************************************
  * @fn      periodicCommunication_registerTimer
  *
@@ -179,11 +179,14 @@ void periodicCommunication_STM32MCP_getRegisterFrame()
      *  Get Heatsink Temperature
      *  Get Motor Temperature
      *************************************************/
+#ifdef CC2640R2_GENEV_5X5_ID
     STM32MCP_getRegisterFrame(STM32MCP_MOTOR_1_ID, STM32MCP_BUS_VOLTAGE_REG_ID);
     STM32MCP_getRegisterFrame(STM32MCP_MOTOR_1_ID, STM32MCP_TORQUE_MEASURED_REG_ID);       // Need to create a getRegisterFrame for battery current
     STM32MCP_getRegisterFrame(STM32MCP_MOTOR_1_ID, STM32MCP_SPEED_MEASURED_REG_ID);         // is speed in RPM
     //STM32MCP_getRegisterFrame(STM32MCP_MOTOR_1_ID, STM32MCP_HEATSINK_TEMPERATURE_REG_ID);
     //STM32MCP_getRegisterFrame(STM32MCP_MOTOR_1_ID, STM32MCP_MOTOR_TEMPERATURE_REG_ID);
+#endif
+
 }
 void periodicCommunication_STM32MCP_getRegisterFrame_rpm()
 {
@@ -240,12 +243,12 @@ void periodicCommunication_hf_communication()
  *
  * @return  none
  *********************************************************************/
-uint8_t x_lf;
-
-void periodicCommunication_lf_communication()
-{
-    x_lf++;
-}
+//uint8_t x_lf;
+//
+//void periodicCommunication_lf_communication()
+//{
+//    x_lf++;
+//}
 
 /*********************************************************************
  * @fn      periodicCommunication_getxhf
@@ -270,10 +273,10 @@ uint8_t periodicCommunication_getxhf()
  *
  * @return  x_lf
  *********************************************************************/
-uint8_t periodicCommunication_getxlf()
-{
-    return (x_lf);
-}
+//uint8_t periodicCommunication_getxlf()
+//{
+//    return (x_lf);
+//}
 
 /*********************************************************************
  * @fn      periodicCommunication_setGatt

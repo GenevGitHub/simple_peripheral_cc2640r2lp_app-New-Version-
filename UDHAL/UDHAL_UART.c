@@ -15,7 +15,7 @@
 #include <stdint.h>
 #include <ti/drivers/UART.h>
 #include "STM32MCP/STM32MCP.h"
-#include "Board.h"
+#include <Board.h>
 /*********************************************************************
  * LOCAL VARIABLES
  */
@@ -89,6 +89,9 @@ static void UDHAL_UART_open()
 {
     // Open the UART and initiate the first read
     UART_handle = UART_open(Board_UART0, &UART_params);
+    if (!UART_handle) {
+        /* error handling */
+    }
     UDHAL_UART_read(&receivedByte, 1);
 }
 /*********************************************************************
@@ -103,7 +106,7 @@ static void UDHAL_UART_open()
  */
 static void UDHAL_UART_write(uint8_t *message, uint8_t size)
 {
-    UART_write(UART_handle, message, size);
+     UART_write(UART_handle, message, size);
 }
 /*********************************************************************
  * @fn      UDHAL_UART_read

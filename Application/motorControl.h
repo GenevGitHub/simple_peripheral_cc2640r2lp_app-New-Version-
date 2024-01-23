@@ -17,7 +17,7 @@ extern "C"
 #include <ti/drivers/I2C.h>
 #include <ti/drivers/NVS.h>
 #include <ti/drivers/GPIO.h>
-
+#include <ti/sysbios/knl/Task.h>
 /*********************************************************************
 *  EXTERNAL VARIABLES
 */
@@ -26,7 +26,8 @@ extern "C"
  */
 #define SBP_MC_GATT_EVT                        0x0020
 #define SBP_MC_ADV_EVT                         0x0040
-
+#define PWR_MGNT_STACK_SIZE                    128
+#define PWR_MGNT_PRIORITY                      5
 //typedef
 // This set of data is stored in ram. It is used to store variables from Motor Controller Unit
 typedef struct mcuData{
@@ -44,12 +45,12 @@ typedef struct mcuData{
 /*********************************************************************
  * FUNCTIONS
  */
+extern uint8_t Boot();
 extern void motorcontrol_init(void);
 extern void motorcontrol_registerCB(simplePeripheral_bleCBs_t *obj);
 extern void motorcontrol_setGatt(uint16_t serviceUUID, uint8_t charteristics, uint8_t payloadLength, uint8_t* payload);
 extern void motorcontrol_speedModeChgCB(uint16_t torqueIQ, uint16_t allowableSpeed, uint16_t rampRate);
 extern void motorcontrol_dataAnalysis_sampling(uint8_t x_hf);
-
 /*********************************************************************
 *********************************************************************/
 

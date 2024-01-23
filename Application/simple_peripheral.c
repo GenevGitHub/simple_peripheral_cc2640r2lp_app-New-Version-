@@ -82,7 +82,7 @@
 
 #include "board_key.h"
 
-#include "board.h"
+#include <board.h>
 #include "simple_peripheral.h"
 #include "lightControl.h"
 #include "motorControl.h"
@@ -90,6 +90,14 @@
 #include "UDHAL/UDHAL.h"
 #include "STM32MCP/STM32MCP.h"
 #include "periodicCommunication.h"
+#include <UDHAL/UDHAL_PWM.h>
+#include "UDHAL/UDHAL_TIM6.h"
+#include "brakeAndThrottle.h"
+/*Hardware Driver*/
+#include <ti/devices/DeviceFamily.h>
+#include DeviceFamily_constructPath(inc/hw_prcm.h)
+#include DeviceFamily_constructPath(driverlib/sys_ctrl.h)
+#include <ti/devices/cc26x0r2/driverlib/cpu.h>
 /*********************************************************************
  * CONSTANTS
  */
@@ -132,7 +140,7 @@
 #define SBP_TASK_PRIORITY                     2
 
 #ifndef SBP_TASK_STACK_SIZE
-#define SBP_TASK_STACK_SIZE                   600  //(644)
+#define SBP_TASK_STACK_SIZE                   664  //(644)
 #endif
 
 // Application events
@@ -578,7 +586,6 @@ static void SimplePeripheral_init(void)
   HCI_LE_ReadLocalSupportedFeaturesCmd();
 #endif // !defined (USE_LL_CONN_PARAM_UPDATE)
 }
-
 /*********************************************************************
  * @fn      SimplePeripheral_taskFxn
  *
@@ -588,11 +595,10 @@ static void SimplePeripheral_init(void)
  *
  * @return  None.
  */
+uint8_t dllm = 0;
+uint8_t cls = 0;
 static void SimplePeripheral_taskFxn(UArg a0, UArg a1)
 {
-  /*Start booting process here !*/
-  /*Count for 1.5 seconds, otherwise, the system enters into sleep mode !*/
-
   SimplePeripheral_init();
   motorcontrol_init();
   motorcontrol_registerCB(&EnqueueMsgCB);
@@ -600,6 +606,17 @@ static void SimplePeripheral_taskFxn(UArg a0, UArg a1)
   // Application main loop
   for (;;)
   {
+    /*Monitor The Brake and Throttle Events
+     *If timer overflows, brakeAndThrottle event is triggered;
+     *
+     * */
+#ifdef CC2640R2_LAUNCHXL
+    if(UDHAL_TIM6_status() == 1)
+    {
+        brakeAndThrottle_ADC_conversion();
+    }
+#endif
+      //UDHAL_PWM1_setDutyAndPeriod(5, 4200);   // testing PWM
     uint32_t events;
 
     // Waits for an event to be posted associated with the calling thread.

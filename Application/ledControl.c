@@ -20,6 +20,7 @@
 #include "Dashboard.h"
 #include "Battery.h"
 #include "peripheral.h"
+#include "dataAnalysis.h"
 
 /*********************************************************************
 * LOCAL VARIABLES
@@ -64,7 +65,6 @@ void reset_led_driver()
     uint8_t writeBuf_reset[2] = {IS31FL3236A_RESET_REG, 0x00};
     ledControl_i2cTransferStatus = ledControl_ledDisplayManager -> ledControl_transfer(IS31FL3236A_ADDR, &writeBuf_reset, sizeof(writeBuf_reset), NULL, 0);
 }
-
 
 void turn_on_led_driver()
 {
@@ -1143,7 +1143,7 @@ IS31FL3236A_Function functionTable[FUNCTION_COUNT] = {
     IS31FL3236A_Leisure_Mode,
     IS31FL3236A_Amble_Mode,
     IS31FL3236A_Bluetooth_LED,
-    IS31FL3236A_Light_On,
+    IS31FL3236A_Light_On,               //5
     IS31FL3236A_Auto_Mode_pin,
     IS31FL3236A_Attention,
     IS31FL3236A_1_Bar,
@@ -1153,8 +1153,8 @@ IS31FL3236A_Function functionTable[FUNCTION_COUNT] = {
     IS31FL3236A_5_Bar,
     IS31FL3236A_kmph,
     IS31FL3236A_mph,
-    IS31FL3236A_Digit_1_PIN_44,
-    IS31FL3236A_Digit_1_PIN_3,
+    IS31FL3236A_Digit_1_PIN_44,         //15
+    IS31FL3236A_Digit_1_PIN_3,          //16
     IS31FL3236A_Digit_1_PIN_5,
     IS31FL3236A_Digit_1_PIN_30,
     IS31FL3236A_Digit_1_PIN_31,
@@ -1163,7 +1163,7 @@ IS31FL3236A_Function functionTable[FUNCTION_COUNT] = {
     IS31FL3236A_Digit_2_PIN_8,
     IS31FL3236A_Digit_2_PIN_9,
     IS31FL3236A_Digit_2_PIN_12,
-    IS31FL3236A_Digit_2_PIN_27,
+    IS31FL3236A_Digit_2_PIN_27,         //25
     IS31FL3236A_Digit_2_PIN_28,
     IS31FL3236A_Digit_2_PIN_29,
     IS31FL3236A_Digit_2_PIN_13,
@@ -1173,60 +1173,60 @@ IS31FL3236A_Function functionTable[FUNCTION_COUNT] = {
     IS31FL3236A_2_Bars,                 //32
     IS31FL3236A_1_Bars,                 //33
     IS31FL3236A_0_Bars,                 //34
-    IS31FL3236A_Digit_1_Number_0,
-    IS31FL3236A_Digit_1_Number_1,
-    IS31FL3236A_Digit_1_Number_2,
-    IS31FL3236A_Digit_1_Number_3,
-    IS31FL3236A_Digit_1_Number_4,
-    IS31FL3236A_Digit_1_Number_5,
-    IS31FL3236A_Digit_1_Number_6,
-    IS31FL3236A_Digit_1_Number_7,
-    IS31FL3236A_Digit_1_Number_8,
-    IS31FL3236A_Digit_1_Number_9,
-    IS31FL3236A_Digit_2_Number_0,
+    IS31FL3236A_Digit_1_Number_0,       //35
+    IS31FL3236A_Digit_1_Number_1,       //36
+    IS31FL3236A_Digit_1_Number_2,       //37
+    IS31FL3236A_Digit_1_Number_3,       //38
+    IS31FL3236A_Digit_1_Number_4,       //39
+    IS31FL3236A_Digit_1_Number_5,       //40
+    IS31FL3236A_Digit_1_Number_6,       //41
+    IS31FL3236A_Digit_1_Number_7,       //42
+    IS31FL3236A_Digit_1_Number_8,       //43
+    IS31FL3236A_Digit_1_Number_9,       //44
+    IS31FL3236A_Digit_2_Number_0,       //45
     IS31FL3236A_Digit_2_Number_1,
     IS31FL3236A_Digit_2_Number_2,
     IS31FL3236A_Digit_2_Number_3,
     IS31FL3236A_Digit_2_Number_4,
-    IS31FL3236A_Digit_2_Number_5,
+    IS31FL3236A_Digit_2_Number_5,       //50
     IS31FL3236A_Digit_2_Number_6,
     IS31FL3236A_Digit_2_Number_7,
     IS31FL3236A_Digit_2_Number_8,
     IS31FL3236A_Digit_2_Number_9,
-    IS31FL3236A_Digit_1_Number_A,
+    IS31FL3236A_Digit_1_Number_A,       //55
     IS31FL3236A_Digit_2_Number_A,
     IS31FL3236A_Digit_1_Number_C,
     IS31FL3236A_Digit_2_Number_C,
     IS31FL3236A_Digit_1_Number_E,
-    IS31FL3236A_Digit_2_Number_E,
+    IS31FL3236A_Digit_2_Number_E,       //60
     IS31FL3236A_Digit_1_Number_F,
     IS31FL3236A_Digit_2_Number_F,
     IS31FL3236A_Digit_1_Number_H,
     IS31FL3236A_Digit_2_Number_H,
-    IS31FL3236A_Digit_1_Number_J,
+    IS31FL3236A_Digit_1_Number_J,       //65
     IS31FL3236A_Digit_2_Number_J,
     IS31FL3236A_Digit_1_Number_L,
     IS31FL3236A_Digit_2_Number_L,
     IS31FL3236A_Digit_1_Number_P,
-    IS31FL3236A_Digit_2_Number_P,
+    IS31FL3236A_Digit_2_Number_P,       //70
     IS31FL3236A_Digit_1_Number_U,
     IS31FL3236A_Digit_2_Number_U,
     IS31FL3236A_Digit_1_Number_u,
     IS31FL3236A_Digit_2_Number_u,
-    IS31FL3236A_Digit_1_Number_n,
+    IS31FL3236A_Digit_1_Number_n,       //75
     IS31FL3236A_Digit_2_Number_n,
     IS31FL3236A_Digit_1_Number_b,
     IS31FL3236A_Digit_2_Number_b,
     IS31FL3236A_Digit_1_Number_c,
-    IS31FL3236A_Digit_2_Number_c,
+    IS31FL3236A_Digit_2_Number_c,       //80
     IS31FL3236A_Digit_1_Number_h,
     IS31FL3236A_Digit_2_Number_h,
     IS31FL3236A_Digit_1_Number_d,
     IS31FL3236A_Digit_2_Number_d,
-    IS31FL3236A_Digit_1_Number_q,
+    IS31FL3236A_Digit_1_Number_q,       //85
     IS31FL3236A_Digit_2_Number_q,
     IS31FL3236A_Digit_1_Number_,
-    IS31FL3236A_Digit_2_Number_,
+    IS31FL3236A_Digit_2_Number_,        //88
 };
 
 //Steps to call
@@ -1365,14 +1365,30 @@ void ledControl_init()
     ledPower_old = 0xFF;
     ledBrightness = PWM_CUSTOM;
     led_error_code_old = 0xFF;
-    led_error_priority = 0xFF;
+    led_error_priority = SYSTEM_NORMAL_PRIORITY;  // 0 is the most critical error priority - 254 is the least critical error priority - 255 is when everything is normal.
     ledBatteryStatus_old = 0xFF;
     battery_bar1_status = 1;
     BLE_flash_status = 1;
 
-//    ledControl_setAllOn();
+    //ledControl_setAllOn();
 
 
+}
+
+/*********************************************************************
+ * @fn      ledControl_deinit
+ *
+ * @brief   It is used to initialize the library
+ *
+ * @param   none
+ *
+ * @return  none
+ *********************************************************************/
+void ledControl_deinit()
+{
+    //reset_led_driver();
+    //disable_channels();
+    turn_off_led_driver();
 }
 
 /*******************      Basic Operation       **********************
@@ -1401,7 +1417,7 @@ void ledControl_init()
  *********************************************************************/
 void ledControl_setAllOn()
 {
-    // I2C to command lit all LED on Dashboard
+    /* I2C to command lit all LED on Dashboard */
 //    ledControl_i2c2Display( 0, NULL );
     if (led_allOn == 0)
     {
@@ -1419,7 +1435,7 @@ void ledControl_setAllOn()
  * @return  Nil
  *********************************************************************/
 void ledControl_setAllOff(){
-    // I2C to command turn off all LED on Dashboard
+    /* I2C to command turn off all LED on Dashboard */
     LED_Turn_OFF_ALL();
 
 }
@@ -1434,7 +1450,7 @@ void ledControl_setAllOff(){
  * @return  none
  *********************************************************************/
 void ledControl_setDashSpeed(uint8_t dashSpeed){
-    // I2C command to set Speed Indicator
+    /* I2C command to set Speed Indicator */
     ledSpeed = dashSpeed;
 }
 
@@ -1449,9 +1465,9 @@ void ledControl_setDashSpeed(uint8_t dashSpeed){
  *********************************************************************/
 void ledControl_changeDashSpeed()
 {
-    if (led_error_code_old == 0xFF)
+    if (led_error_code_old >= BATTERY_CRITICALLY_LOW_WARNING) //((led_error_code_old == SYSTEM_NORMAL_PRIORITY) || (led_error_code_old >= BATTERY_CRITICALLY_LOW_WARNING))
     {
-        if(ledSpeed_old != ledSpeed || ledBrightness!=ledBrightness_old)
+        if(ledSpeed_old != ledSpeed || ledBrightness != ledBrightness_old)
         {
             int dashspeed_unit;
             int dashspeed_ten;
@@ -1480,7 +1496,7 @@ void ledControl_changeDashSpeed()
  *********************************************************************/
 void ledControl_setBatteryStatus(uint8_t batteryStatus)
 {
-    // I2C command to set Battery Status
+    /* I2C command to set Battery Status */
     ledBatteryStatus = batteryStatus;
 //    ledBatteryStatus = 0;
 
@@ -1497,7 +1513,7 @@ void ledControl_setBatteryStatus(uint8_t batteryStatus)
  *********************************************************************/
 void ledControl_changeBatteryStatus(uint16_t gpt_taskCounter)
 {
-    //Enables flashing when battery status is low (batteryStatus = 0)
+    /*  Enables flashing when battery status is critically low (batteryStatus = 0) */
     if ((ledBatteryStatus == 0) && ((gpt_taskCounter % 2) == 1))
     {
         if(battery_bar1_status == 1)
@@ -1551,7 +1567,7 @@ void ledControl_changeBatteryStatus(uint16_t gpt_taskCounter)
  *********************************************************************/
 void ledControl_setSpeedMode(uint8_t speedMode)
 {
-    // I2C command to set Speed Mode Status
+    /*  I2C command to set Speed Mode Status */
     ledSpeedMode = speedMode;
 }
 
@@ -1566,9 +1582,9 @@ void ledControl_setSpeedMode(uint8_t speedMode)
  *********************************************************************/
 void ledControl_changeSpeedMode()
 {
-    if ( ledSpeedModeSelect_old != ledSpeedMode || ledBrightness!=ledBrightness_old )
+    if ( ledSpeedModeSelect_old != ledSpeedMode || ledBrightness != ledBrightness_old )
     {
-        // change speed mode
+        /*  change speed mode    */
         if(ledSpeedMode == 0){
             functionTable[3](I_OUT,ledBrightness);
         }
@@ -1611,7 +1627,7 @@ void ledControl_changeUnit()
 {
     if ( ledUnitSelect_old != ledUnitSelectDash || ledBrightness!=ledBrightness_old )
     {
-        // change unit
+        /*  change unit  */
         if(ledUnitSelectDash==0){
             functionTable[14](I_OUT,ledBrightness);
         }
@@ -1681,7 +1697,7 @@ void ledControl_changeBLE(uint16_t gpt_taskCounter)
 }
 
 /*********************************************************************
- * @fn      ledControl_getError
+ * @fn      ledControl_ErrorPriority
  *
  * @brief   this function is called by other functions to sort error priority
  *
@@ -1689,88 +1705,100 @@ void ledControl_changeBLE(uint16_t gpt_taskCounter)
  *
  * @return  none
  *********************************************************************/
-void ledControl_getError(uint8_t error_priority)
+void ledControl_ErrorPriority(uint8_t error_priority)
 {
+    /*  stores the most critical error priority */
     if(error_priority < led_error_code_old){
         led_error_priority = error_priority;
+        dataAnalysis_errorStatus( led_error_priority );
     }
 }
 
 /*********************************************************************
  * @fn      ledControl_ErrorDisplay
  *
- * @brief   call this function to display error codes on Digit 1 and Digit 2 of LED display
+ * @brief   call this function to display error codes on Digit 1 and Digit 2 of LED display and warning icon of LED display
  *
  * @param   None
  *
  * @return  None
  *********************************************************************/
-void ledControl_ErrorDisplay()
+uint8_t ledControl_ErrorDisplay()
 {
-    if(ledBrightness!=ledBrightness_old || led_error_priority != led_error_code_old){
-        if(led_error_priority==1)                 // Battery overtemp error code
+    if(ledBrightness != ledBrightness_old || led_error_priority != led_error_code_old){
+        /******************* Led display 2 digit error code **********************/
+        if((led_error_priority == UART_OPEN_NULL) || (led_error_priority == ADC1_OPEN_NULL)||
+                (led_error_priority == ADC2_OPEN_NULL) || (led_error_priority == PWM1_OPEN_NULL) ||
+                (led_error_priority == PWM2_OPEN_NULL) || (led_error_priority == I2C_OPEN_NULL))            // UART/ADC/PWM/I2C error code = 0F
+        {
+            functionTable[35](I_OUT,ledBrightness);
+            functionTable[62](I_OUT,ledBrightness);
+        }
+        else if(led_error_priority == BATTERY_TEMP_ERROR_PRIORITY)                 // Battery over-temperature error code = 1A
         {
             functionTable[36](I_OUT,ledBrightness);
             functionTable[56](I_OUT,ledBrightness);
         }
-        else if(led_error_priority==2)            // BMS Communication error code
+        else if(led_error_priority == BMS_COMM_ERROR_PRIORITY)            // BMS Communication error code = 1C
         {
             functionTable[36](I_OUT,ledBrightness);
             functionTable[58](I_OUT,ledBrightness);
         }
-        else if(led_error_priority==3)            // MCU Gate Driver error code
+        else if(led_error_priority == GATE_DRIVER_ERROR_PRIORITY)            // MCU Gate Driver error code = 2C
         {
             functionTable[37](I_OUT,ledBrightness);
             functionTable[58](I_OUT,ledBrightness);
         }
-        else if(led_error_priority==4)            // MOSFET error code
+        else if(led_error_priority == MOSFET_ERROR_PRIORITY)            // MOSFET error code = 2E
         {
             functionTable[37](I_OUT,ledBrightness);
             functionTable[60](I_OUT,ledBrightness);
         }
-        else if(led_error_priority==5)            // MCU abnormal phase current error code
+        else if(led_error_priority == PHASE_I_ERROR_PRIORITY)            // MCU abnormal phase current error code = 2A
         {
             functionTable[37](I_OUT,ledBrightness);
             functionTable[56](I_OUT,ledBrightness);
         }
-        else if(led_error_priority==6)           // MCU overtemp error code
+        else if(led_error_priority == CONTROLLER_TEMP_ERROR_PRIORITY)           // MCU over-temperature error code = 2F
         {
             functionTable[37](I_OUT,ledBrightness);
             functionTable[62](I_OUT,ledBrightness);
         }
-        else if(led_error_priority==7)            // Motor Hall Sensor error code
+        else if(led_error_priority == HALL_SENSOR_ERROR_PRIORITY)            // Motor Hall Sensor error code = 3A
         {
             functionTable[38](I_OUT,ledBrightness);
             functionTable[56](I_OUT,ledBrightness);
         }
-        else if(led_error_priority==8)            // Motor overtemp eror code
+        else if(led_error_priority == MOTOR_TEMP_ERROR_PRIORITY)            // Motor over-temperature error code = 3C
         {
             functionTable[38](I_OUT,ledBrightness);
             functionTable[58](I_OUT,ledBrightness);
         }
-        else if(led_error_priority==9)            // Dashboard commincation error code
+        else if(led_error_priority == DASH_COMM_ERROR_PRIORITY)            // Dash-board communication error code = 0A
         {
             functionTable[35](I_OUT,ledBrightness);
             functionTable[56](I_OUT,ledBrightness);
         }
-        else if(led_error_priority==10)            // Brake throttle error code
+        else if(led_error_priority == BRAKE_ERROR_PRIORITY)           // Brake throttle error code = 0E
         {
             functionTable[35](I_OUT,ledBrightness);
             functionTable[60](I_OUT,ledBrightness);
         }
-        else if(led_error_priority==11)            // Throttle error code
+        else if(led_error_priority == THROTTLE_ERROR_PRIORITY)            // Throttle error code = 0C
         {
             functionTable[35](I_OUT,ledBrightness);
             functionTable[58](I_OUT,ledBrightness);
         }
-
-        if (led_error_priority != 0xFF)
+        /*********** led display warning light icon ******************/
+        if (led_error_priority < BATTERY_CRITICALLY_LOW_WARNING) // if led_error_priority is less than 0x20 (32), warning light on
         {
             functionTable[7](I_OUT,ledBrightness);
         }
 
         led_error_code_old = led_error_priority;
+
     }
+    return (led_error_priority);
 }
 
 /*********************************************************************
@@ -1784,7 +1812,7 @@ void ledControl_ErrorDisplay()
  *********************************************************************/
 void ledControl_setLightMode(uint8_t LED_light_mode)
 {
-    // I2C command to set Light Mode
+    /*  I2C command to set Light Mode    */
     ledLightMode = LED_light_mode;
 }
 
@@ -1799,27 +1827,26 @@ void ledControl_setLightMode(uint8_t LED_light_mode)
  *********************************************************************/
 void ledControl_changeLightMode()
 {
-    if ( ledLightMode_old != ledLightMode || ledBrightness!=ledBrightness_old )
+    if ((ledLightMode_old != ledLightMode) || (ledBrightness != ledBrightness_old))
     {
         // change Light mode
         if(ledLightMode==0)
         {
-            functionTable[5](I_OUT,PWM_ZERO);
-            functionTable[6](I_OUT,PWM_ZERO);
+            functionTable[5](I_OUT,PWM_ZERO);       // light icon off
+            functionTable[6](I_OUT,PWM_ZERO);       // auto icon off
         }
         else if(ledLightMode==1)
         {
-            functionTable[5](I_OUT,ledBrightness);
+            functionTable[5](I_OUT,ledBrightness);  // light icon on
 //            functionTable[6](I_OUT,PWM_ZERO);
         }
         else
         {
-            functionTable[5](I_OUT,PWM_ZERO);
-            functionTable[6](I_OUT,ledBrightness);
+            functionTable[5](I_OUT,ledBrightness);  // light icon on
+            functionTable[6](I_OUT,ledBrightness);  // auto icon on
         }
 
         ledLightMode_old = ledLightMode;
-
     }
 }
 /*********************************************************************
@@ -1833,7 +1860,7 @@ void ledControl_changeLightMode()
  *********************************************************************/
 void ledControl_setLightStatus(uint8_t light_status)
 {
-    // I2C command to set Light Status
+    /*  I2C command to set Light Status  */
     ledLightStatus = light_status;
 }
 
@@ -1850,7 +1877,7 @@ void ledControl_changeLightStatus()
 {
     if ( ledLightStatus_old != ledLightStatus  || ledBrightness!=ledBrightness_old)
     {
-        // change Light status
+        /*  change Light status  */
         if(ledLightStatus==0)
         {
             functionTable[5](I_OUT,PWM_ZERO);
@@ -1877,4 +1904,18 @@ void ledControl_changeLightStatus()
 void ledControl_registerLedDisplay( ledControl_ledDisplayManager_t *ledDisplayI2C )
 {
     ledControl_ledDisplayManager = ledDisplayI2C;
+}
+
+/*********************************************************************
+ * @fn      ledControl_getError
+ *
+ * @brief   this function is called by other functions to get error status
+ *
+ * @param   none
+ *
+ * @return  none
+ *********************************************************************/
+uint8_t ledControl_getError( void )
+{
+    return led_error_priority;
 }

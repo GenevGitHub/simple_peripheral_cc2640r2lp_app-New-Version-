@@ -27,7 +27,7 @@ extern "C"
  * CONSTANTS
  */
 //Constants for timing duration
-#define SINGLE_BUTTON_TIMER_OV_TIME_LONG           1500  //Time expressed in ms, overflow time interval for single long press
+#define SINGLE_BUTTON_TIMER_OV_TIME_LONG           1000  //Time expressed in ms, overflow time interval for single long press
 #define SINGLE_BUTTON_TIMER_OV_TIME_SHORT          500   //Time expressed in ms, overflow time interval for short press
 
 //Button state
@@ -42,6 +42,7 @@ extern "C"
 #define SINGLE_BUTTON_TREBLE_SHORT_PRESS_MSG       0x05
 #define SINGLE_BUTTON_QUADRUPLE_SHORT_PRESS_MSG    0x06
 #define SINGLE_BUTTON_UNDEFINED_MSG                0x00
+
 /*********************************************************************
  * MACROS
  */

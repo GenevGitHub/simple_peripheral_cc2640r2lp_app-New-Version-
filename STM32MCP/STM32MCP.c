@@ -13,7 +13,8 @@
  */
 #include <stdlib.h>
 #include "STM32MCP/STM32MCP.h"
-#include "Board.h"
+#include "Application/ledControl.h"
+#include <Board.h>
 /*********************************************************************
  * LOCAL VARIABLES
  */
@@ -163,7 +164,10 @@ void STM32MCP_init()
     rxObj->payloadLength = 0xFF;
     rxObj->rxMsgBuf = (uint8_t*)malloc(sizeof(uint8_t)*STM32MCP_RX_MSG_BUFF_LENGTH);
     STM32MCP_uartManager->uartOpen();
+
+#ifdef CC2640R2_GENEV_5X5_ID
     STM32MCP_heartbeatManager->timerStart();
+#endif
 }
 /*********************************************************************
  * @fn      STM32MCP_registerCBs
@@ -230,7 +234,9 @@ void STM32MCP_startCommunication()
 {
     if(communicationState == STM32MCP_COMMUNICATION_DEACTIVE)
     {
+#ifdef CC2640R2_GENEV_5X5_ID
         communicationState = STM32MCP_COMMUNICATION_ACTIVE;
+#endif
     }
 }
 /*********************************************************************
@@ -249,6 +255,9 @@ void STM32MCP_closeCommunication()
         communicationState = STM32MCP_COMMUNICATION_DEACTIVE;
         STM32MCP_emptyQueue();
         STM32MCP_timerManager->timerStop();
+#ifdef CC2640R2_GENEV_5X5_ID
+    STM32MCP_heartbeatManager->timerStop();
+#endif
     }
 }
 /*********************************************************************
@@ -617,7 +626,9 @@ void STM32MCP_setSystemControlConfigFrame(uint8_t sysCmdId)
        txFrame[1] = STM32MCP_SET_SYSTEM_CONTROL_CONFIG_PAYLOAD_LENGTH;
        txFrame[2] = sysCmdId;
        txFrame[3] = STM32MCP_calChecksum(txFrame, 3);
+
        //Insert it into the queue
+
        if(STM32MCP_queueIsEmpty())
        {
            STM32MCP_timerManager->timerStart();
@@ -628,6 +639,7 @@ void STM32MCP_setSystemControlConfigFrame(uint8_t sysCmdId)
        {
            STM32MCP_enqueueMsg(txFrame, 4);
        }
+
 }
 /*********************************************************************
  * @fn      STM32MCP_setEscooterControlDebugFrame
@@ -743,6 +755,27 @@ void STM32MCP_setDynamicCurrent(int16_t allowableSpeed, int16_t IQValue)
 
     }
 }
+
+/*********************************************************************
+ * @fn      STM32MCP_EscooterShutdown
+ *
+ * @brief   Sends shutdown command to turn off Motor Controller
+ *
+ * @param   sysCmdId: STM32MCP_POWER_OFF ( 0x00 )
+ *
+ * @return  None
+ */
+void STM32MCP_EscooterShutdown(uint8_t sysCmdId)
+{
+    //Insert into packet
+    uint8_t *txFrame = (uint8_t *) malloc(sizeof(uint8_t) * (STM32MCP_SET_SYSTEM_CONTROL_CONFIG_PAYLOAD_LENGTH + 3));
+    txFrame[0] = STM32MCP_MOTOR_1_ID | STM32MCP_SET_SYSTEM_CONTROL_CONFIG_FRAME_ID;
+    txFrame[1] = STM32MCP_SET_SYSTEM_CONTROL_CONFIG_PAYLOAD_LENGTH;
+    txFrame[2] = sysCmdId;
+    txFrame[3] = STM32MCP_calChecksum(txFrame, 3);
+    STM32MCP_uartManager->uartWrite(txFrame, 4);
+}
+
 /*********************************************************************
  * @fn      STM32MCP_setRegisterAttribute
  *
@@ -869,14 +902,14 @@ void STM32MCP_flowControlHandler(uint8_t receivedByte)
                        STM32MCP_CBs->rxMsgCb(rxObj->rxMsgBuf,STM32MCP_headPtr);
                        //Next transmission
                        STM32MCP_dequeueMsg();
-                       GPIO_toggle(Board_GPIO_LED1);
+                       //GPIO_toggle(Board_GPIO_LED1);
                        if(!STM32MCP_queueIsEmpty())
                        {
                            STM32MCP_timerManager->timerStart();
                            if(STM32MCP_headPtr != NULL)
                            {
                                STM32MCP_uartManager->uartWrite(STM32MCP_headPtr->txMsg, STM32MCP_headPtr->size);
-                               GPIO_toggle(Board_GPIO_LED1);
+                               //GPIO_toggle(Board_GPIO_LED1);
                            }
                            retransmissionCount = 0;
                        }
@@ -923,6 +956,7 @@ void STM32MCP_retransmission()
         {
             STM32MCP_CBs->exMsgCb(STM32MCP_EXCEED_MAXIMUM_RETRANSMISSION_ALLOWANCE); //Exception Handling
             //STM32MCP_closeCommunication(); //Disconnect UART Communication --> No Longer sends any data to the motor controller
+            //ledControl_ErrorPriority(0x09);
         }
     }
 }

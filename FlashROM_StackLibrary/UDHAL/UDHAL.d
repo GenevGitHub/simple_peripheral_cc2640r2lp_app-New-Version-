@@ -19,8 +19,8 @@ UDHAL/UDHAL.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/I2C.
 UDHAL/UDHAL.obj: C:/ti/ti-cgt-arm_18.12.5.LTS/include/stddef.h
 UDHAL/UDHAL.obj: C:/Users/Public/Documents/TI-workspace/simple_peripheral_cc2640r2lp_app/UDHAL/UDHAL_NVSINT.h
 UDHAL/UDHAL.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/target/Board.h
-UDHAL/UDHAL.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/target/cc2640r2lp/cc2640r2lp_board.h
-UDHAL/UDHAL.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/boards/CC2640R2_LAUNCHXL/Board.h
+UDHAL/UDHAL.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/target/cc2640r2em/cc2640r2em_board.h
+UDHAL/UDHAL.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/boards/CC2640R2_GENEV_5X5_ID/Board.h
 UDHAL/UDHAL.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/ADC.h
 UDHAL/UDHAL.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/ADCBuf.h
 UDHAL/UDHAL.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/PWM.h
@@ -28,7 +28,7 @@ UDHAL/UDHAL.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/SPI.
 UDHAL/UDHAL.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/UART.h
 UDHAL/UDHAL.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/Watchdog.h
 UDHAL/UDHAL.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/Board.h
-UDHAL/UDHAL.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/boards/CC2640R2_LAUNCHXL/CC2640R2_LAUNCHXL.h
+UDHAL/UDHAL.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/boards/CC2640R2_GENEV_5X5_ID/CC2640R2_GENEV_5X5_ID.h
 UDHAL/UDHAL.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/PIN.h
 UDHAL/UDHAL.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/devices/cc26x0r2/driverlib/ioc.h
 UDHAL/UDHAL.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/devices/cc26x0r2/inc/hw_types.h
@@ -154,13 +154,40 @@ UDHAL/UDHAL.obj: C:/ti/xdctools_3_51_03_28_core/packages/xdc/runtime/IInstance.h
 UDHAL/UDHAL.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/kernel/tirtos/packages/ti/sysbios/interfaces/ITimer.h
 UDHAL/UDHAL.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/kernel/tirtos/packages/ti/sysbios/knl/package/Clock_TimerProxy.h
 UDHAL/UDHAL.obj: C:/ti/xdctools_3_51_03_28_core/packages/xdc/runtime/Error.h
-UDHAL/UDHAL.obj: C:/Users/Public/Documents/TI-workspace/simple_peripheral_cc2640r2lp_app/UDHAL/UDHAL_TIM5.h
 UDHAL/UDHAL.obj: C:/Users/Public/Documents/TI-workspace/simple_peripheral_cc2640r2lp_app/UDHAL/UDHAL_TIM6.h
-UDHAL/UDHAL.obj: C:/Users/Public/Documents/TI-workspace/simple_peripheral_cc2640r2lp_app/UDHAL/UDHAL_TIM9.h
 UDHAL/UDHAL.obj: C:/Users/Public/Documents/TI-workspace/simple_peripheral_cc2640r2lp_app/UDHAL/UDHAL_ADC1.h
 UDHAL/UDHAL.obj: C:/Users/Public/Documents/TI-workspace/simple_peripheral_cc2640r2lp_app/UDHAL/UDHAL_ADC2.h
 UDHAL/UDHAL.obj: C:/Users/Public/Documents/TI-workspace/simple_peripheral_cc2640r2lp_app/UDHAL/UDHAL_UART.h
 UDHAL/UDHAL.obj: C:/Users/Public/Documents/TI-workspace/simple_peripheral_cc2640r2lp_app/UDHAL/UDHAL_GPIO.h
+UDHAL/UDHAL.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/devices/DeviceFamily.h
+UDHAL/UDHAL.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/devices/cc26x0r2/inc/hw_prcm.h
+UDHAL/UDHAL.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/devices/cc26x0r2/driverlib/sys_ctrl.h
+UDHAL/UDHAL.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/devices/cc26x0r2/inc/hw_sysctl.h
+UDHAL/UDHAL.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/devices/cc26x0r2/inc/hw_aon_wuc.h
+UDHAL/UDHAL.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/devices/cc26x0r2/inc/hw_aux_wuc.h
+UDHAL/UDHAL.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/devices/cc26x0r2/inc/hw_aon_ioc.h
+UDHAL/UDHAL.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/devices/cc26x0r2/inc/hw_ddi_0_osc.h
+UDHAL/UDHAL.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/devices/cc26x0r2/inc/hw_rfc_pwr.h
+UDHAL/UDHAL.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/devices/cc26x0r2/inc/hw_adi_3_refsys.h
+UDHAL/UDHAL.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/devices/cc26x0r2/inc/hw_aon_sysctl.h
+UDHAL/UDHAL.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/devices/cc26x0r2/inc/hw_aon_rtc.h
+UDHAL/UDHAL.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/devices/cc26x0r2/inc/hw_fcfg1.h
+UDHAL/UDHAL.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/devices/cc26x0r2/driverlib/pwr_ctrl.h
+UDHAL/UDHAL.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/devices/cc26x0r2/inc/hw_adi_2_refsys.h
+UDHAL/UDHAL.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/devices/cc26x0r2/driverlib/osc.h
+UDHAL/UDHAL.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/devices/cc26x0r2/inc/hw_ddi.h
+UDHAL/UDHAL.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/devices/cc26x0r2/driverlib/ddi.h
+UDHAL/UDHAL.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/devices/cc26x0r2/inc/hw_aux_smph.h
+UDHAL/UDHAL.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/devices/cc26x0r2/driverlib/prcm.h
+UDHAL/UDHAL.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/devices/cc26x0r2/driverlib/aon_ioc.h
+UDHAL/UDHAL.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/devices/cc26x0r2/driverlib/adi.h
+UDHAL/UDHAL.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/devices/cc26x0r2/inc/hw_uart.h
+UDHAL/UDHAL.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/devices/cc26x0r2/inc/hw_adi.h
+UDHAL/UDHAL.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/devices/cc26x0r2/driverlib/aux_wuc.h
+UDHAL/UDHAL.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/devices/cc26x0r2/driverlib/aon_wuc.h
+UDHAL/UDHAL.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/devices/cc26x0r2/driverlib/vims.h
+UDHAL/UDHAL.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/devices/cc26x0r2/inc/hw_vims.h
+UDHAL/UDHAL.obj: C:/Users/Public/Documents/TI-workspace/simple_peripheral_cc2640r2lp_app/UDHAL/UDHAL_PWM.h
 
 ../UDHAL/UDHAL.c:
 
@@ -200,9 +227,9 @@ C:/Users/Public/Documents/TI-workspace/simple_peripheral_cc2640r2lp_app/UDHAL/UD
 
 C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/target/Board.h:
 
-C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/target/cc2640r2lp/cc2640r2lp_board.h:
+C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/target/cc2640r2em/cc2640r2em_board.h:
 
-C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/boards/CC2640R2_LAUNCHXL/Board.h:
+C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/boards/CC2640R2_GENEV_5X5_ID/Board.h:
 
 C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/ADC.h:
 
@@ -218,7 +245,7 @@ C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/Watchdog.h:
 
 C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/Board.h:
 
-C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/boards/CC2640R2_LAUNCHXL/CC2640R2_LAUNCHXL.h:
+C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/boards/CC2640R2_GENEV_5X5_ID/CC2640R2_GENEV_5X5_ID.h:
 
 C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/PIN.h:
 
@@ -470,11 +497,7 @@ C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/kernel/tirtos/packages/ti/sysbios/knl/p
 
 C:/ti/xdctools_3_51_03_28_core/packages/xdc/runtime/Error.h:
 
-C:/Users/Public/Documents/TI-workspace/simple_peripheral_cc2640r2lp_app/UDHAL/UDHAL_TIM5.h:
-
 C:/Users/Public/Documents/TI-workspace/simple_peripheral_cc2640r2lp_app/UDHAL/UDHAL_TIM6.h:
-
-C:/Users/Public/Documents/TI-workspace/simple_peripheral_cc2640r2lp_app/UDHAL/UDHAL_TIM9.h:
 
 C:/Users/Public/Documents/TI-workspace/simple_peripheral_cc2640r2lp_app/UDHAL/UDHAL_ADC1.h:
 
@@ -483,4 +506,62 @@ C:/Users/Public/Documents/TI-workspace/simple_peripheral_cc2640r2lp_app/UDHAL/UD
 C:/Users/Public/Documents/TI-workspace/simple_peripheral_cc2640r2lp_app/UDHAL/UDHAL_UART.h:
 
 C:/Users/Public/Documents/TI-workspace/simple_peripheral_cc2640r2lp_app/UDHAL/UDHAL_GPIO.h:
+
+C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/devices/DeviceFamily.h:
+
+C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/devices/cc26x0r2/inc/hw_prcm.h:
+
+C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/devices/cc26x0r2/driverlib/sys_ctrl.h:
+
+C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/devices/cc26x0r2/inc/hw_sysctl.h:
+
+C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/devices/cc26x0r2/inc/hw_aon_wuc.h:
+
+C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/devices/cc26x0r2/inc/hw_aux_wuc.h:
+
+C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/devices/cc26x0r2/inc/hw_aon_ioc.h:
+
+C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/devices/cc26x0r2/inc/hw_ddi_0_osc.h:
+
+C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/devices/cc26x0r2/inc/hw_rfc_pwr.h:
+
+C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/devices/cc26x0r2/inc/hw_adi_3_refsys.h:
+
+C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/devices/cc26x0r2/inc/hw_aon_sysctl.h:
+
+C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/devices/cc26x0r2/inc/hw_aon_rtc.h:
+
+C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/devices/cc26x0r2/inc/hw_fcfg1.h:
+
+C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/devices/cc26x0r2/driverlib/pwr_ctrl.h:
+
+C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/devices/cc26x0r2/inc/hw_adi_2_refsys.h:
+
+C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/devices/cc26x0r2/driverlib/osc.h:
+
+C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/devices/cc26x0r2/inc/hw_ddi.h:
+
+C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/devices/cc26x0r2/driverlib/ddi.h:
+
+C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/devices/cc26x0r2/inc/hw_aux_smph.h:
+
+C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/devices/cc26x0r2/driverlib/prcm.h:
+
+C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/devices/cc26x0r2/driverlib/aon_ioc.h:
+
+C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/devices/cc26x0r2/driverlib/adi.h:
+
+C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/devices/cc26x0r2/inc/hw_uart.h:
+
+C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/devices/cc26x0r2/inc/hw_adi.h:
+
+C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/devices/cc26x0r2/driverlib/aux_wuc.h:
+
+C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/devices/cc26x0r2/driverlib/aon_wuc.h:
+
+C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/devices/cc26x0r2/driverlib/vims.h:
+
+C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/devices/cc26x0r2/inc/hw_vims.h:
+
+C:/Users/Public/Documents/TI-workspace/simple_peripheral_cc2640r2lp_app/UDHAL/UDHAL_PWM.h:
 

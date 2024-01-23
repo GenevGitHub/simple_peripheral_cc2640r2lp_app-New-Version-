@@ -16,10 +16,13 @@
 #include "periodicCommunication.h"
 #include "lightControl.h"
 #include "STM32MCP/STM32MCP.h"
+#include "UDHAL/UDHAL_TIM6.h"
 #include <stdint.h>
 /*********************************************************************
  * CONSTANTS
  */
+#undef  ESCOOTER_RUN
+#define ESCOOTER_DEBUG 1
 /*********************************************************************
  * GLOBAL VARIABLES
  */
@@ -31,9 +34,9 @@ uint16_t    throttlePercent0;
 uint16_t    IQValue;                // Iq value command sent to STM32 / motor Controller
 uint16_t    brakePercent;           // Actual brake applied in percentage
 uint16_t    brakeStatus = 0;
-uint16_t    brakeADCAvg;            // declared as global variable for debugging only
-uint16_t    throttleADCAvg;         // declared as global variable for debugging only
-uint8_t     ControlLaw = BRAKE_AND_THROTTLE_NORMALLAW; //BRAKE_AND_THROTTLE_DIRECTLAW;  // ControlLaw can be NormalLaw (1) or DirectLaw (0).  Controls speed limit
+//uint16_t    brakeADCAvg;            // declared as global variable for debugging only
+//uint16_t    throttleADCAvg;         // declared as global variable for debugging only
+uint8_t     ControlLaw = BRAKE_AND_THROTTLE_DIRECTLAW; // BRAKE_AND_THROTTLE_NORMALLAW; //  // ControlLaw can be NormalLaw (1) or DirectLaw (0).  Controls speed limit
 /********************************************************************
  *  when brakeAndThrottle_errorMsg is true (=1),
  *  it generally means either (1) brake signal is not connected and/or (2) throttle signal is not connect
@@ -406,16 +409,16 @@ extern void brakeAndThrottle_motorControl_rpm(uint16_t *ptrBrakeAndThrottleRPM)
  * @param
  *********************************************************************/
 uint8_t brake_errorLog = 0;
-//uint16_t IQValue_temp = 0;          // declared globally for debugging
 float tempTime = 0;             // for dummy data use only
 uint16_t RPM_temp;
 uint16_t IQ_max = 0;
 uint8_t brakeAndThrottleIndex_minus_1;
 uint8_t brakeAndThrottleIndex_minus_2;
-
+uint16_t raw_ADC=0;
+uint8_t  throttle_error_count = 0;
 void brakeAndThrottle_ADC_conversion()
 {
-    STM32MCP_setSystemControlConfigFrame(STM32MCP_HEARTBEAT);
+    //STM32MCP_setSystemControlConfigFrame(STM32MCP_HEARTBEAT);
 
     /*******************************************************************************************************************************
      *      get brake ADC measurement
@@ -429,13 +432,12 @@ void brakeAndThrottle_ADC_conversion()
     // ***** adc2Result is a holder of the throttle ADC reading
     brake_adc2Manager -> brakeAndThrottle_ADC_Convert( &adc2Result );
     throttleADCValues[ brakeAndThrottleIndex ] = adc2Result;
-
     /*******************************************************************************************************************************
      *      the sampling interval is defined by "BRAKE_AND_THROTTLE_ADC_SAMPLING_PERIOD"
      *      the number of samples is defined by "BRAKE_AND_THROTTLE_SAMPLES"
      *      Sum the most recent "BRAKE_AND_THROTTLE_SAMPLES" number of data points, and
      *      calculate weighted moving average brake and throttle ADC values
-     *      Weight factor of 2 is applied to the latest throttle sample, all other samples have weight factor of 1
+     *      Weight factor of 2 is applied to the newest throttle sample, all other samples have weight factor of 1
      *******************************************************************************************************************************/
     uint16_t    brakeADCTotal = 0;
     uint16_t    throttleADCTotal = 0;
@@ -454,14 +456,17 @@ void brakeAndThrottle_ADC_conversion()
         throttleADCTotal += weightfactor * throttleADCValues[index];
     }
     // ***** Calculate weighted moving average values
-    //uint16_t
-    brakeADCAvg = brakeADCTotal/BRAKE_AND_THROTTLE_SAMPLES;             // declared as global variable for debugging only
-    //uint16_t
-    throttleADC_movingAvg[ brakeAndThrottleIndex ] = throttleADCTotal/(BRAKE_AND_THROTTLE_SAMPLES + 1); // declared as global variable for debugging only.
-    //uint16_t
-    throttleADCAvg = throttleADC_movingAvg[brakeAndThrottleIndex]; // declared as global variable for debugging only.
-    // ***** Note "+ 1" due to weight factor 2 is applied to the latest throttle ADC sample
+    uint16_t    brakeADCAvg = brakeADCTotal/BRAKE_AND_THROTTLE_SAMPLES;             // declared as global variable for debugging only
 
+    throttleADC_movingAvg[ brakeAndThrottleIndex ] = throttleADCTotal/(BRAKE_AND_THROTTLE_SAMPLES + 1);
+    /*****   Note "+ 1" due to weight factor 2 is applied to the newest throttle ADC sample  */
+
+    uint16_t    throttleADCAvg = throttleADC_movingAvg[brakeAndThrottleIndex];
+
+    if( (throttleADCAvg > THROTTLE_ADC_THRESHOLD_L) || throttle_error_count > 0)
+    {
+        throttle_error_count = 0;
+    }
     /*******************************************************************************************************************************
      *      Error Checking
      *      Check whether throttle ADC reading is logical, if illogical, brakeAndThrottle_errorMsg = error (!=0)
@@ -471,16 +476,29 @@ void brakeAndThrottle_ADC_conversion()
      *******************************************************************************************************************************/
     if (throttleADCAvg < THROTTLE_ADC_THRESHOLD_L)
     {
+        throttle_error_count++;
+        if(throttle_error_count >= 5)
+        {
+            throttle_errorStatus = 1;
+            // if throttle errorStatus = 1 -> disable throttle input and zero Iq command to Motor Controller Unit
+            ledControl_ErrorPriority(THROTTLE_ERROR_PRIORITY);   // throttle error priority = 11
+        }
+        /*
         throttle_errorStatus = 1;
         // if throttle errorStatus = 1 -> disable throttle input and zero Iq command to Motor Controller Unit
-        ledControl_getError(11);
+        ledControl_ErrorPriority(THROTTLE_ERROR_PRIORITY);   // throttle error priority = 11
+        */
 
     }
     if (throttleADCAvg > THROTTLE_ADC_THRESHOLD_H)
     {
-        throttle_errorStatus = 1;
-        // if throttle errorStatus = 1 -> disable throttle input and zero Iq command to Motor Controller Unit
-        ledControl_getError(11);
+        throttle_error_count++;
+        if(throttle_error_count >= 5)
+        {
+            throttle_errorStatus = 1;
+            // if throttle errorStatus = 1 -> disable throttle input and zero Iq command to Motor Controller Unit
+            ledControl_ErrorPriority(THROTTLE_ERROR_PRIORITY);   // throttle error priority = 11
+        }
     }
     /*******************************************************************************************************************************
      *      Throttle Signal Calibration
@@ -517,7 +535,7 @@ void brakeAndThrottle_ADC_conversion()
             brake_errorLog = 0;
             /*Send error code to the Motor Controller*/
         }
-        ledControl_getError(10);
+        ledControl_ErrorPriority(BRAKE_ERROR_PRIORITY);   // brake error priority = 10
         /*Send error code to the Motor Controller*/
     }
 
@@ -535,7 +553,7 @@ void brakeAndThrottle_ADC_conversion()
             brake_errorLog = 0;
             /*Send error code to the Motor Controller*/
         }
-        ledControl_getError(10);
+        ledControl_ErrorPriority(BRAKE_ERROR_PRIORITY);   // brake error priority = 10
         /*Send error code to the Motor Controller*/
     }
 
@@ -585,9 +603,11 @@ void brakeAndThrottle_ADC_conversion()
 
     if (brakeStatus == 1)               //Brake Pressed
     {
+#ifdef CC2640R2_GENEV_5X5_ID
         STM32MCP_setEscooterControlDebugFrame(STM32MCP_ESCOOTER_BRAKE_PRESS);
         // send instruction to STM32 to activate brake light
         // for regen-brake, send brakePercent to STM32
+#endif
     }
     else //Brake Released
     {
@@ -602,19 +622,32 @@ void brakeAndThrottle_ADC_conversion()
 
     // ******* Get RPM from motor control Unit  ******************
     periodicCommunication_STM32MCP_getRegisterFrame_rpm();
-    RPM_temp = (*ptr_brakeAndThrottle_rpm);
+    RPM_temp = (*ptr_brakeAndThrottle_rpm);                   // actual motor data from MCU
     //RPM_temp = 200 * (float)sin(2 * (float) M_PI / 12 * tempTime) + 400;   // dummy data
     //tempTime = tempTime + 0.01;      // dummy data
 
     // ******* Throttle Error Safety Protocol -> when throttle error detected, IQValue is set to zero
     if (throttle_errorStatus == 0)
     {
-        if ((brakeStatus == 1)|(RPM_temp < BRAKE_AND_THROTTLE_MINSPEED))    // brake must not be pulled or RPM must be above BRAKE_AND_THROTTLE_MINSPEED before power is delivered to the motor
+        if ((brakeStatus == 1)||(RPM_temp < BRAKE_AND_THROTTLE_MINSPEED))    // brake must not be pulled or RPM must be above BRAKE_AND_THROTTLE_MINSPEED before power is delivered to the motor
         {
+            /*The E-Scooter Stops*/
+            /*DRIVE_START = 0 --> Then we don't need to send dynamic Iq messages to the motor controller in order to relieve the UART loads*/
+#ifdef ESCOOTER_RUN
             IQValue = 0;
+#endif
+
+#ifdef ESCOOTER_DEBUG
+            /*The E-Scooter Starts*/
+            /*DRIVE_START = 1 --> The We could send dynamic Iq messages to the motor controller */
+            IQ_max = BRAKE_AND_THROTTLE_TORQUEIQ_MAX / 100 * reductionRatio;
+            IQValue = BRAKE_AND_THROTTLE_TORQUEIQ_MAX * reductionRatio * throttlePercent / 10000;
+#endif
         }
         else
         {
+            /*The E-Scooter Starts*/
+            /*DRIVE_START = 1 --> The We could send dynamic Iq messages to the motor controller */
             IQ_max = BRAKE_AND_THROTTLE_TORQUEIQ_MAX / 100 * reductionRatio;
             IQValue = BRAKE_AND_THROTTLE_TORQUEIQ_MAX * reductionRatio * throttlePercent / 10000;
         }
@@ -655,13 +688,18 @@ void brakeAndThrottle_ADC_conversion()
         IQValueTotal += weightfactor * IQValue_array[index];
     }
     // ***** Calculate weighted moving average values
-    IQValue = IQValueTotal / (BRAKE_AND_THROTTLE_SAMPLES + 1);             // declared as global variable for debugging only
+    IQValue = IQValueTotal / (BRAKE_AND_THROTTLE_SAMPLES + 1);
     IQValue_array[ brakeAndThrottleIndex ] = IQValue;
     /********************************************************************************************************************************
      * Send the throttle signal to STM32 Motor Controller
      ********************************************************************************************************************************/
     // in "brakeAndThrottle_CB(allowableSpeed, IQValue, brakeAndThrottle_errorMsg)", brakeAndThrottle_errorMsg is sent to the motor control unit for error handling if necessary.
+    // Add one more conditions in order to fed the power into the motor controller
+    // if DRIVE_START == 1 -> then run the command for dynamic Iq, otherwise: ignore it!
+#ifdef CC2640R2_GENEV_5X5_ID
     brakeAndThrottle_CBs -> brakeAndThrottle_CB(allowableSpeed, IQValue, brakeAndThrottle_errorMsg);
+#endif
+
     /********************************************************************************************************************************
      *      The following is a safety critical routine/condition
      *      Firmware only allows speed mode change when throttle is not pressed concurrently/fully released
@@ -755,6 +793,9 @@ static void brakeAndThrottle_normalLawControl()
             IQValue = IQValue_temp;
         }
     }
+#ifdef CC2640R2_LAUNVHXL
+    UDHAL_TIM6_changeReadStatus(0);
+#endif
 }
 
 /******************************************************

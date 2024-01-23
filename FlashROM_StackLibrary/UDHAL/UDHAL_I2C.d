@@ -16,8 +16,8 @@ UDHAL/UDHAL_I2C.obj: C:/ti/ti-cgt-arm_18.12.5.LTS/include/stddef.h
 UDHAL/UDHAL_I2C.obj: C:/ti/ti-cgt-arm_18.12.5.LTS/include/_ti_config.h
 UDHAL/UDHAL_I2C.obj: C:/ti/ti-cgt-arm_18.12.5.LTS/include/linkage.h
 UDHAL/UDHAL_I2C.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/target/Board.h
-UDHAL/UDHAL_I2C.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/target/cc2640r2lp/cc2640r2lp_board.h
-UDHAL/UDHAL_I2C.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/boards/CC2640R2_LAUNCHXL/Board.h
+UDHAL/UDHAL_I2C.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/target/cc2640r2em/cc2640r2em_board.h
+UDHAL/UDHAL_I2C.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/boards/CC2640R2_GENEV_5X5_ID/Board.h
 UDHAL/UDHAL_I2C.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/ADC.h
 UDHAL/UDHAL_I2C.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/ADCBuf.h
 UDHAL/UDHAL_I2C.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/PWM.h
@@ -25,7 +25,7 @@ UDHAL/UDHAL_I2C.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/
 UDHAL/UDHAL_I2C.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/UART.h
 UDHAL/UDHAL_I2C.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/Watchdog.h
 UDHAL/UDHAL_I2C.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/Board.h
-UDHAL/UDHAL_I2C.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/boards/CC2640R2_LAUNCHXL/CC2640R2_LAUNCHXL.h
+UDHAL/UDHAL_I2C.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/boards/CC2640R2_GENEV_5X5_ID/CC2640R2_GENEV_5X5_ID.h
 UDHAL/UDHAL_I2C.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/PIN.h
 UDHAL/UDHAL_I2C.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/devices/cc26x0r2/driverlib/ioc.h
 UDHAL/UDHAL_I2C.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/devices/cc26x0r2/inc/hw_types.h
@@ -209,9 +209,9 @@ C:/ti/ti-cgt-arm_18.12.5.LTS/include/linkage.h:
 
 C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/target/Board.h:
 
-C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/target/cc2640r2lp/cc2640r2lp_board.h:
+C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/target/cc2640r2em/cc2640r2em_board.h:
 
-C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/boards/CC2640R2_LAUNCHXL/Board.h:
+C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/boards/CC2640R2_GENEV_5X5_ID/Board.h:
 
 C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/ADC.h:
 
@@ -227,7 +227,7 @@ C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/Watchdog.h:
 
 C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/Board.h:
 
-C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/boards/CC2640R2_LAUNCHXL/CC2640R2_LAUNCHXL.h:
+C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/boards/CC2640R2_GENEV_5X5_ID/CC2640R2_GENEV_5X5_ID.h:
 
 C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/PIN.h:
 

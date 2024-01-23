@@ -48,6 +48,9 @@ extern "C"
 #define LIGHT_STATUS_ON                                 0x01
 #define LIGHT_STATUS_INITIAL                            LIGHT_STATUS_OFF
 
+#define LIGHT_PWM_PERIOD                                1000    // 1000 microsecond => 1kHz
+#define LIGHT_PWM_DUTY                                  500     //  500 microsecond => 2kHz
+
 #define LIGHTCONTROL_TASK_PRIORITY                      4
 
 #ifndef LIGHTCONTROL_TASK_STACK_SIZE
@@ -83,7 +86,9 @@ extern uint8_t lightControl_lightModeChange( void );
 extern void lightControl_motorControl_lightStatusChg( void );
 extern uint8_t lightControl_getLightMode( void );
 extern uint8_t lightControl_getLightStatus( void );
-
+static void lightControl_pwmOpen( void );
+extern void lightControl_pwmClose( void );
+static void lightControl_setDutyAndPeriod(uint16_t pwm_Duty, uint16_t pwm_Period);
 extern void lightControl_gapRoleChg();
 /*********************************************************************
 *********************************************************************/

@@ -56,6 +56,7 @@
 #include <ti/sysbios/knl/Clock.h>
 #include <ti/display/Display.h>
 #include <ti/drivers/NVS.h>
+#include <ti/drivers/nvs/NVSCC26XX.h>
 #include <icall.h>
 #include "hal_assert.h"
 #include "bcomdef.h"
@@ -66,11 +67,10 @@
 #include "lightControl.h"
 #include "ledControl.h"
 #include "generalPurposeTimer.h"
-
+#include <ti/drivers/PWM.h>
 /* Header files required to enable instruction fetch cache */
 #include <inc/hw_memmap.h>
 #include <driverlib/vims.h>
-
 #ifndef USE_DEFAULT_USER_CFG
 
 #include "ble_user_config.h"
@@ -210,9 +210,9 @@ int main()
   user0Cfg.appServiceInfo->timerTickPeriod = Clock_tickPeriod;
   user0Cfg.appServiceInfo->timerMaxMillisecond  = ICall_getMaxMSecs();
 #endif  /* ICALL_JT */
-
+//  NVS_init();
 //  UDHAL_NVSINT_init();
-
+  //PWM_init();
   /* Initialize ICall module */
   ICall_init();
 
@@ -221,8 +221,10 @@ int main()
 
   /* Kick off profile - Priority 3 */
   GAPRole_createTask();
+
   /* Priority 2 */
   SimplePeripheral_createTask();
+
   /* Priority 4 */
   GPtimer_createTask();
 

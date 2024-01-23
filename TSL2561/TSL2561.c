@@ -16,7 +16,6 @@ static uint8_t          tInt;
 static uint16_t         calibrationFactorx1000;
 
 static uint8_t          TSL2561_i2cTransferStatus;      // initially set to 1
-
 uint16_t                raw_channel0;
 uint16_t                raw_channel1;
 
@@ -32,6 +31,8 @@ static uint32_t         TSL2561_calculateLux();
  *
  * Return:      None
 *********************************************************************/
+uint8_t i2cSuccess = 0xFF;
+uint8_t i2cset = 0xFF;
 void TSL2561_init()
 {
     /***************** Step 1:  Power On TSL2561: Command Register = 0x80 **********
@@ -47,6 +48,7 @@ void TSL2561_init()
     // make sure i2c transfer is successful
     /********** Step 2:  Set Timing Registration on TLS2561 sensor = 0x81 **********
      */
+    i2cSuccess = TSL2561_i2cTransferStatus;
     if (TSL2561_i2cTransferStatus == 1)
     {
         TSL2561_setTimingRegister();

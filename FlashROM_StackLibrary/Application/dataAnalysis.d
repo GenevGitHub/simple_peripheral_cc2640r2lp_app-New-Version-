@@ -154,6 +154,7 @@ Application/dataAnalysis.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti
 Application/dataAnalysis.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/I2C.h
 Application/dataAnalysis.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/NVS.h
 Application/dataAnalysis.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/GPIO.h
+Application/dataAnalysis.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/kernel/tirtos/packages/ti/sysbios/knl/Task.h
 Application/dataAnalysis.obj: ../Application/buzzerControl.h
 Application/dataAnalysis.obj: ../Application/ledControl.h
 Application/dataAnalysis.obj: C:/ti/ti-cgt-arm_18.12.5.LTS/include/stdlib.h
@@ -484,6 +485,8 @@ C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/I2C.h:
 C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/NVS.h:
 
 C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/GPIO.h:
+
+C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/kernel/tirtos/packages/ti/sysbios/knl/Task.h:
 
 ../Application/buzzerControl.h:
 

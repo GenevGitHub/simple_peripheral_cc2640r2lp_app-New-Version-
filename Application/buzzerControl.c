@@ -11,14 +11,20 @@
 * INCLUDES
 */
 #include <stdlib.h>
-
+/* Driver Header files */
+#include <ti/drivers/PWM.h>
+/* Example/Board Header files */
+#include <Board.h>
+#include <UDHAL/UDHAL_PWM.h>
+#include "ledControl.h"
 #include "dataAnalysis.h"
 #include "buzzerControl.h"
+#include "singleButton/singleButton.h"
 /*********************************************************************
 * LOCAL VARIABLES
 */
-static buzzerControl_timerManager_t *buzzerControl_timerManager;
-static buzzerControlCBs_t *buzzer_CBs;
+//static buzzerControl_timerManager_t *buzzerControl_timerManager;
+//static buzzerControlCBs_t *buzzer_CBs;
 /*********************************************************************
 * LOCAL FUNCTIONS
 */
@@ -32,76 +38,52 @@ static buzzerControlCBs_t *buzzer_CBs;
  *
  * @return  none
  */
+//uint8_t   buzzerControl_pwmOpenStatus = 0;
+
 void buzzerControl_init()
 {
-    //GPIO_setConfig(Board_GPIO_BUZZER, GPIO_CFG_OUT_STD | GPIO_CFG_OUT_LOW);
+
 }
+
 /*********************************************************************
- * @fn      buzzerControl_registerClock
+ * @fn      buzzerControl_buttonHandler
  *
- * @brief   It is used to process the button click time when the button is pressed
+ * @brief   buzzer execution when single button is pressed
  *
- * @param   deviceTimer
+ * @param   buttonStatus
  *
  * @return  none
  */
-void buzzerControl_registerTimer(buzzerControl_timerManager_t *buzzerControlTimer)
+uint8_t buzzerStart = 0;
+uint8_t buzzerControl_buttonStatus = 0;
+void buzzerControl_buttonHandler(uint8_t buttonStatus)
 {
-    buzzerControl_timerManager = buzzerControlTimer;
+    /* Start buzzer if Buzzer is OFF */
+    buzzerControl_buttonStatus = buttonStatus; // if buzzerControl_buttonStatus is not 0, sound the buzzer
+    if ((buzzerControl_buttonStatus != 0) && (buzzerStart == 0)){
+        UDHAL_PWM1_setDutyAndPeriod(BUZZER_SINGLEBUTTON_DUTYPERCENT, BUZZER_SINGLEBUTTON_FREQUENCY);
+        buzzerStart = 2;                   // buzzerStart = 2 means buzzer is activated due to falling edge of single button press
+    }
+    /* Stop buzzer if buzzer is ON */
+    if (buzzerControl_buttonStatus == 0){
+        if (buzzerStart >= 2){
+            UDHAL_PWM1_setDutyAndPeriod(0, BUZZER_SINGLEBUTTON_FREQUENCY);   // set duty to 0
+            buzzerStart = 0;
+        }
+    }
+
 }
+
 /*********************************************************************
- * @fn      buzzerControl_registerCBs
+ * @fn      buzzerControl_errorHandler
  *
- * @brief   It informs the application if ......
+ * @brief   buzzer execution when system error is present
  *
- * @param   buzzerControlCBs    A set of function pointer that informs the application if .....
+ * @param   warningDutyPercent, warningPeriod
  *
  * @return  none
  */
-void buzzerControl_registerCBs(buzzerControlCBs_t *buzzerControlCBs)
+void buzzerControl_errorHandle(uint8_t warningDutyPercent, uint16_t warningPeriod)
 {
-    buzzer_CBs = buzzerControlCBs;
-}
-/*********************************************************************
- * @fn      buzzerControl_Start
- *
- * @brief   Start buzzer
- *
- * @param   none
- *
- * @return  none
- */
-void buzzerControl_Start()
-{
-    //if avgBatteryVoltage is less than specified value, start timer 9
-    buzzerControl_timerManager -> timerStart();
-}
-/*********************************************************************
- * @fn      buzzerControl_Stop
- *
- * @brief   Stop buzzer
- *
- * @param   none
- *
- * @return  none
- */
-void buzzerControl_Stop()
-{
-    //if avgBatteryVoltage is greater than specified value, stop timer 9
-    buzzerControl_timerManager -> timerStop();
-}
-/*********************************************************************
- * @fn      buzzerControl_processTimerOV
- *
- * @brief   execute timer overflow
- *
- * @param   nona
- *
- * @return  none
- */
-void buzzerControl_processTimerOV()
-{
-    // When timer9  overflows, this func is called to instruct buzzerControl to make a short beep
-    // Insert code to instruct buzzerControl to make a short beep here
-    buzzerControl_Start();  // then, repeat timer until timerStop is activated
+    UDHAL_PWM1_setDutyAndPeriod(warningDutyPercent, warningPeriod);
 }

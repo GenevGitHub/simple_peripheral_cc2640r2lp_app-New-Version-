@@ -32,7 +32,7 @@ extern "C"
 #define DATA_ANALYSIS_POINTS                         17     //13     // Must satisfy the equation:  (DATA_ANALYSIS_POINTS - 1) x DATA_ANALYSIS_SAMPLING_TIME = (21 - 1) * 400 ms = 8000 ms
                                                             // Must satisfy the equation:  (DATA_ANALYSIS_POINTS - 1) x DATA_ANALYSIS_SAMPLING_TIME = (13 - 1) * 400 ms = 4800 ms
                                                             // (17 - 1) * 300 ms = 4800 ms
-#define PERIODIC_COMMUNICATION_LF_SAMPLING_TIME      60000
+//#define PERIODIC_COMMUNICATION_LF_SAMPLING_TIME      60000
 #define PERIODIC_COMMUNICATION_ACTIVATE              0x01
 #define PERIODIC_COMMUNICATION_DEACTIVATE            0x00
 /*********************************************************************
@@ -59,15 +59,15 @@ extern void periodicCommunication_start();
 extern void periodicCommunication_stop();
 extern void periodicCommunication_toggle();
 extern void periodicCommunication_register_hfTimer(motorcontrol_timerManager_t *obj);
-extern void periodicCommunication_register_lfTimer(motorcontrol_timerManager_t *obj);
+//extern void periodicCommunication_register_lfTimer(motorcontrol_timerManager_t *obj);
 extern void periodicCommunication_registerBLE_Gatt(simplePeripheral_bleCBs_t *obj);
 extern void periodicCommunication_hf_communication();
-extern void periodicCommunication_lf_communication();
+//extern void periodicCommunication_lf_communication();
 void periodicCommunication_STM32MCP_getRegisterFrame();
 void periodicCommunication_STM32MCP_getRegisterFrame_rpm();
-extern uint8_t periodicCommunication_getxlf();
+//extern uint8_t periodicCommunication_getxlf();
 extern uint8_t periodicCommunication_getxhf();
-//extern void periodicCommunication_setGatt(uint16_t serviceUUID, uint8_t charteristics, uint8_t payloadLength, uint8_t* payload)
+//extern void periodicCommunication_setGatt(uint16_t serviceUUID, uint8_t characteristics, uint8_t payloadLength, uint8_t* payload)
 
 /*********************************************************************
 *********************************************************************/

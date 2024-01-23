@@ -12,7 +12,6 @@
  * INCLUDES
  */
 #include "powerOnTime.h"
-//#include "lightControl.h"
 #include "Dashboard.h"
 #include "motorControl.h"
 
@@ -24,7 +23,6 @@
  * LOCAL VARIABLES
  */
 uint8_t     powerOnTimeMinute_t = 0;                    // power on time in minutes
-//uint16_t powerOnTimeMinute = 0;
 
 /*********************************************************************
  * LOCAL FUNCTIONS
@@ -66,14 +64,10 @@ void powerOnTime_init()
  *
  * @return  None
  *********************************************************************/
-//uint8_t     powerOnTimeMinute_t = 0;                    // power on time in minutes
-
 void powerOnTime_cal( uint32_t powerOnTime_ms )
 {
-    // ********************   Power On Time (in minutes)   *************************************
-    // *****************************************************************************************
-    //powerOnTimeMS += utimeInterval;
-
+    /********************************   Power On Time (in minutes)   *************************************/
+    /*****************************************************************************************************/
     if (( powerOnTime_ms / POWERONTIME_MINUTE_TIME ) > powerOnTimeMinute_t )
     {
         powerOnTimeMinute_t++;

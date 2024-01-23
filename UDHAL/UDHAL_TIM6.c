@@ -105,6 +105,42 @@ static void UDHAL_TIM6_stop()
 {
     Clock_stop(ClockHandle);
 }
+
+/*********************************************************************
+ * @fn      UDHAL_TIM6_changeReadStatus
+ *
+ * @brief
+ *
+ * @param   none
+ *
+ * @return  none
+ */
+uint8_t readBrakeAndThrottle = 0;
+void UDHAL_TIM6_changeReadStatus(uint8_t write)
+{
+    readBrakeAndThrottle = write;
+}
+/*********************************************************************
+ * @fn      UDHAL_TIM6_status
+ *
+ * @brief
+ *
+ * @param   none
+ *
+ * @return  bool
+ */
+uint8_t UDHAL_TIM6_status()
+{
+    if(readBrakeAndThrottle == 0)
+    {
+        return 0;
+    }
+    else if (readBrakeAndThrottle == 1)
+    {
+        return 1;
+    }
+    return 0;
+}
 /*********************************************************************
  * @fn      UDHAL_TIM6_OVClockFxn
  *
@@ -115,7 +151,20 @@ static void UDHAL_TIM6_stop()
  *
  * @return  none
  */
+uint8_t shit = 0xFF;
+uint8_t OV = 0;
 static void UDHAL_TIM6_OVClockFxn()
 {
+#ifdef CC2640R2_GENEV_5X5_ID
     brakeAndThrottle_ADC_conversion();
+#endif
+
+#ifdef CC2640R2_LAUNCHXL
+     shit =  readBrakeAndThrottle;
+     if(readBrakeAndThrottle == 0)
+     {
+         readBrakeAndThrottle = 1;
+     }
+     OV++;
+#endif
 }

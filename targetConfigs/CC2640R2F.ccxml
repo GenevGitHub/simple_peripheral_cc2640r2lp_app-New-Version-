@@ -6,24 +6,46 @@
             <instance XML_version="1.2" href="drivers/tixds510icepick_c.xml" id="drivers" xml="tixds510icepick_c.xml" xmlpath="drivers"/>
             <instance XML_version="1.2" href="drivers/tixds510cs_dap.xml" id="drivers" xml="tixds510cs_dap.xml" xmlpath="drivers"/>
             <instance XML_version="1.2" href="drivers/tixds510cortexM.xml" id="drivers" xml="tixds510cortexM.xml" xmlpath="drivers"/>
-            <property Type="choicelist" Value="1" id="Power Selection">
+            <property Type="choicelist" Value="0" id="Power Selection">
                 <choice Name="Probe supplied power" value="1">
-                    <property Type="stringfield" Value="3.3" id="Voltage Level"/>
+                    <property Type="stringfield" Value="1.8" id="Voltage Level"/>
+                <property Type="choicelist" Value="1" id="Power Isolation"/>
+                </choice>
+            <choice Name="Target supplied power" value="0">
+                    <property Type="choicelist" Value="1" id="Voltage Selection">
+                        <choice Name="User specified value" value="1">
+                            <property Type="stringfield" Value="3.3" id="Voltage Level"/>
+                        </choice>
+                    </property>
                 </choice>
             </property>
-            <property Type="choicelist" Value="0" id="JTAG Signal Isolation"/>
-            <property Type="choicelist" Value="3" id="SWD Mode Settings">
+            <property Type="choicelist" Value="1" id="JTAG Signal Isolation"/>
+            <property Type="choicelist" Value="4" id="SWD Mode Settings">
                 <choice Name="cJTAG (1149.7) 2-pin advanced modes" value="enable">
                     <property Type="choicelist" Value="1" id="XDS110 Aux Port"/>
+                <property Type="choicelist" Value="0" id="Target Scan Format"/>
                 </choice>
             </property>
             <property Type="choicelist" Value="0" id="The JTAG TCLK Frequency (MHz)">
                 <choice Name="Fixed with user specified value" value="SPECIFIC">
-                    <property Type="stringfield" Value="50KHz" id="-- Enter a value from 100.0kHz to 2.5MHz"/>
+                    <property Type="stringfield" Value="500kHz" id="-- Enter a value from 100.0kHz to 2.5MHz"/>
+                </choice>
+            <choice Name="Fixed with user selected faster value" value="SPECIFIC">
+                    <property Type="choicelist" Value="4" id="Select TCK Setting"/>
                 </choice>
             </property>
             <platform XML_version="1.2" id="platform_0">
                 <instance XML_version="1.2" desc="CC2640R2F" href="devices/cc2640r2f.xml" id="CC2640R2F" xml="cc2640r2f.xml" xmlpath="devices"/>
+            <device HW_revision="1" XML_version="1.2" description="SimpleLink(TM) Bluetooth(R) low energy CC2640R2F wireless MCU" id="CC2640R2F" partnum="CC2640R2F" simulation="no">
+                    <router HW_revision="1.0" XML_version="1.2" description="ICEPick_C Router" id="IcePick_C_0" isa="ICEPICK_C">
+                        <subpath id="subpath_0">
+                            <router HW_revision="1.0" XML_version="1.2" desc="CS_DAP_0" description="CS_DAP Router" id="CS_DAP_0" isa="CS_DAP">
+                                <property Type="choicelist" Value="0" id="bypass"/>
+                            <property Type="choicelist" Value="0" id="Device Management"/>
+                            </router>
+                        </subpath>
+                    </router>
+                </device>
             </platform>
         </connection>
     </configuration>

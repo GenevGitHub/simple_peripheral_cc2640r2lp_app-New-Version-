@@ -55,8 +55,8 @@ void UDHAL_TIM4_init()
     Error_init(&eb);
     clockTicks = PERIODIC_COMMUNICATION_HF_SAMPLING_TIME * (1000 / Clock_tickPeriod) - 1; // -1 to ensure overflow occurs at PERIODIC_COMMUNICATION_HF_SAMPLING_TIME - not at 1 tick after PERIODIC_COMMUNICATION_HF_SAMPLING_TIME
     ClockHandle = Clock_create(UDHAL_TIM4_OVClockFxn, clockTicks, &clkParams, &eb);
+    /* can we replace Clock_create with Task_construct(&Task, taskFxn, &taskParams, NULL) in the main()     */
     periodicCommunication_register_hfTimer(&timer4);
-
 }
 /*********************************************************************
  *
@@ -126,6 +126,25 @@ static void UDHAL_TIM4_stop()
 {
     Clock_stop(ClockHandle);
 }
+
+uint8_t readController = 0;
+void UDHAL_TIM4_changeUARTStatus(uint8_t write)
+{
+    readController = write;
+}
+
+uint8_t UDHAL_TIM4_status()
+{
+    if(readController == 0)
+    {
+        return 0;
+    }
+    else if (readController == 1)
+    {
+        return 1;
+    }
+    return 0;
+}
 /*********************************************************************
  * @fn      UDHAL_TIM4_OVClockFxn
  *
@@ -138,6 +157,12 @@ static void UDHAL_TIM4_stop()
  */
 static void UDHAL_TIM4_OVClockFxn()
 {
+#ifdef CC2640R2_LAUNCHXL
+    if(readController == 0)
+    {
+        readController = 1;
+    }
+#endif
     periodicCommunication_hf_communication();
     // next step -> go to dataAnalysis.c
 }

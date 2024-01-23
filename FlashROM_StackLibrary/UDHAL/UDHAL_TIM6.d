@@ -137,6 +137,27 @@ UDHAL/UDHAL_TIM6.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestac
 UDHAL/UDHAL_TIM6.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/I2C.h
 UDHAL/UDHAL_TIM6.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/NVS.h
 UDHAL/UDHAL_TIM6.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/GPIO.h
+UDHAL/UDHAL_TIM6.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/kernel/tirtos/packages/ti/sysbios/knl/Task.h
+UDHAL/UDHAL_TIM6.obj: C:/ti/xdctools_3_51_03_28_core/packages/xdc/runtime/Types.h
+UDHAL/UDHAL_TIM6.obj: C:/ti/xdctools_3_51_03_28_core/packages/xdc/runtime/IInstance.h
+UDHAL/UDHAL_TIM6.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/kernel/tirtos/packages/ti/sysbios/knl/Task__prologue.h
+UDHAL/UDHAL_TIM6.obj: C:/ti/xdctools_3_51_03_28_core/packages/xdc/runtime/Error.h
+UDHAL/UDHAL_TIM6.obj: C:/ti/xdctools_3_51_03_28_core/packages/xdc/runtime/Assert.h
+UDHAL/UDHAL_TIM6.obj: C:/ti/xdctools_3_51_03_28_core/packages/xdc/runtime/Diags.h
+UDHAL/UDHAL_TIM6.obj: C:/ti/xdctools_3_51_03_28_core/packages/xdc/runtime/Log.h
+UDHAL/UDHAL_TIM6.obj: C:/ti/xdctools_3_51_03_28_core/packages/xdc/runtime/IHeap.h
+UDHAL/UDHAL_TIM6.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/kernel/tirtos/packages/ti/sysbios/knl/Queue.h
+UDHAL/UDHAL_TIM6.obj: C:/ti/xdctools_3_51_03_28_core/packages/xdc/runtime/IModule.h
+UDHAL/UDHAL_TIM6.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/kernel/tirtos/packages/ti/sysbios/interfaces/ITaskSupport.h
+UDHAL/UDHAL_TIM6.obj: C:/ti/xdctools_3_51_03_28_core/packages/xdc/runtime/Types.h
+UDHAL/UDHAL_TIM6.obj: C:/ti/xdctools_3_51_03_28_core/packages/xdc/runtime/Error.h
+UDHAL/UDHAL_TIM6.obj: C:/ti/xdctools_3_51_03_28_core/packages/xdc/runtime/IModule.h
+UDHAL/UDHAL_TIM6.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/kernel/tirtos/packages/ti/sysbios/knl/Clock.h
+UDHAL/UDHAL_TIM6.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/kernel/tirtos/packages/ti/sysbios/knl/package/Task_SupportProxy.h
+UDHAL/UDHAL_TIM6.obj: C:/ti/xdctools_3_51_03_28_core/packages/xdc/runtime/Types.h
+UDHAL/UDHAL_TIM6.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/kernel/tirtos/packages/ti/sysbios/interfaces/ITaskSupport.h
+UDHAL/UDHAL_TIM6.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/kernel/tirtos/packages/ti/sysbios/knl/Task__epilogue.h
+UDHAL/UDHAL_TIM6.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/kernel/tirtos/packages/ti/sysbios/knl/package/Task_SupportProxy.h
 
 ../UDHAL/UDHAL_TIM6.c:
 
@@ -411,4 +432,46 @@ C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/I2C.h:
 C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/NVS.h:
 
 C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/GPIO.h:
+
+C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/kernel/tirtos/packages/ti/sysbios/knl/Task.h:
+
+C:/ti/xdctools_3_51_03_28_core/packages/xdc/runtime/Types.h:
+
+C:/ti/xdctools_3_51_03_28_core/packages/xdc/runtime/IInstance.h:
+
+C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/kernel/tirtos/packages/ti/sysbios/knl/Task__prologue.h:
+
+C:/ti/xdctools_3_51_03_28_core/packages/xdc/runtime/Error.h:
+
+C:/ti/xdctools_3_51_03_28_core/packages/xdc/runtime/Assert.h:
+
+C:/ti/xdctools_3_51_03_28_core/packages/xdc/runtime/Diags.h:
+
+C:/ti/xdctools_3_51_03_28_core/packages/xdc/runtime/Log.h:
+
+C:/ti/xdctools_3_51_03_28_core/packages/xdc/runtime/IHeap.h:
+
+C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/kernel/tirtos/packages/ti/sysbios/knl/Queue.h:
+
+C:/ti/xdctools_3_51_03_28_core/packages/xdc/runtime/IModule.h:
+
+C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/kernel/tirtos/packages/ti/sysbios/interfaces/ITaskSupport.h:
+
+C:/ti/xdctools_3_51_03_28_core/packages/xdc/runtime/Types.h:
+
+C:/ti/xdctools_3_51_03_28_core/packages/xdc/runtime/Error.h:
+
+C:/ti/xdctools_3_51_03_28_core/packages/xdc/runtime/IModule.h:
+
+C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/kernel/tirtos/packages/ti/sysbios/knl/Clock.h:
+
+C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/kernel/tirtos/packages/ti/sysbios/knl/package/Task_SupportProxy.h:
+
+C:/ti/xdctools_3_51_03_28_core/packages/xdc/runtime/Types.h:
+
+C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/kernel/tirtos/packages/ti/sysbios/interfaces/ITaskSupport.h:
+
+C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/kernel/tirtos/packages/ti/sysbios/knl/Task__epilogue.h:
+
+C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/kernel/tirtos/packages/ti/sysbios/knl/package/Task_SupportProxy.h:
 

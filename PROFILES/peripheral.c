@@ -112,9 +112,9 @@
 #ifndef GAPROLE_TASK_STACK_SIZE
 
 #if defined __TI_COMPILER_VERSION__
-#define GAPROLE_TASK_STACK_SIZE       440 // multiples of 8 only (480)
+#define GAPROLE_TASK_STACK_SIZE       528 // multiples of 8 only (480)
 #else  // IAR Compiler Used
-#define GAPROLE_TASK_STACK_SIZE       440 // multiples of 8 only
+#define GAPROLE_TASK_STACK_SIZE       528 // multiples of 8 only
 #endif // defined __TI_COMPILER_VERSION__
 
 #endif // GAPROLE_TASK_STACK_SIZE

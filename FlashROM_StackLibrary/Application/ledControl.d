@@ -176,6 +176,21 @@ Application/ledControl.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/b
 Application/ledControl.obj: C:/Users/Public/Documents/TI-workspace/simple_peripheral_cc2640r2lp_app/PROFILES/Dashboard.h
 Application/ledControl.obj: C:/Users/Public/Documents/TI-workspace/simple_peripheral_cc2640r2lp_app/PROFILES/Battery.h
 Application/ledControl.obj: C:/Users/Public/Documents/TI-workspace/simple_peripheral_cc2640r2lp_app/PROFILES/peripheral.h
+Application/ledControl.obj: ../Application/dataAnalysis.h
+Application/ledControl.obj: C:/ti/ti-cgt-arm_18.12.5.LTS/include/stdlib.h
+Application/ledControl.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/kernel/tirtos/packages/ti/sysbios/knl/Clock.h
+Application/ledControl.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/kernel/tirtos/packages/ti/sysbios/knl/Task.h
+Application/ledControl.obj: ../Application/motorControl.h
+Application/ledControl.obj: ../Application/simple_peripheral.h
+Application/ledControl.obj: C:/ti/ti-cgt-arm_18.12.5.LTS/include/string.h
+Application/ledControl.obj: C:/ti/ti-cgt-arm_18.12.5.LTS/include/stdlib.h
+Application/ledControl.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/icall/src/inc/icall.h
+Application/ledControl.obj: C:/ti/ti-cgt-arm_18.12.5.LTS/include/stdlib.h
+Application/ledControl.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/hal/src/inc/hal_assert.h
+Application/ledControl.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/hal/src/target/_common/hal_types.h
+Application/ledControl.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/NVS.h
+Application/ledControl.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/GPIO.h
+Application/ledControl.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/kernel/tirtos/packages/ti/sysbios/knl/Task.h
 
 ../Application/ledControl.c:
 
@@ -528,4 +543,34 @@ C:/Users/Public/Documents/TI-workspace/simple_peripheral_cc2640r2lp_app/PROFILES
 C:/Users/Public/Documents/TI-workspace/simple_peripheral_cc2640r2lp_app/PROFILES/Battery.h:
 
 C:/Users/Public/Documents/TI-workspace/simple_peripheral_cc2640r2lp_app/PROFILES/peripheral.h:
+
+../Application/dataAnalysis.h:
+
+C:/ti/ti-cgt-arm_18.12.5.LTS/include/stdlib.h:
+
+C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/kernel/tirtos/packages/ti/sysbios/knl/Clock.h:
+
+C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/kernel/tirtos/packages/ti/sysbios/knl/Task.h:
+
+../Application/motorControl.h:
+
+../Application/simple_peripheral.h:
+
+C:/ti/ti-cgt-arm_18.12.5.LTS/include/string.h:
+
+C:/ti/ti-cgt-arm_18.12.5.LTS/include/stdlib.h:
+
+C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/icall/src/inc/icall.h:
+
+C:/ti/ti-cgt-arm_18.12.5.LTS/include/stdlib.h:
+
+C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/hal/src/inc/hal_assert.h:
+
+C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/hal/src/target/_common/hal_types.h:
+
+C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/NVS.h:
+
+C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/GPIO.h:
+
+C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/kernel/tirtos/packages/ti/sysbios/knl/Task.h:
 

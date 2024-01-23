@@ -13,7 +13,6 @@
 #include <ti/drivers/I2C.h>
 #include <ti/drivers/NVS.h>
 #include <ti/drivers/GPIO.h>
-
 #include "UDHAL/UDHAL.h"
 #include "STM32MCP/STM32MCP.h"
 #include "Controller.h"
@@ -32,6 +31,24 @@
 #include "singleButton/singleButton.h"
 #include "peripheral.h"
 #include "TSL2561/TSL2561.h"
+#include <Board.h>
+
+#include "generalPurposeTimer.h"
+
+/*Hardware Driver*/
+#include <ti/devices/DeviceFamily.h>
+#include DeviceFamily_constructPath(inc/hw_prcm.h)
+#include DeviceFamily_constructPath(driverlib/sys_ctrl.h)
+#include <ti/devices/cc26x0r2/driverlib/cpu.h>
+
+#include <ti/drivers/Power.h>
+#include <ti/drivers/power/PowerCC26XX.h>
+
+#include <ti/drivers/PIN.h>
+#include <ti/drivers/pin/PINCC26XX.h>
+
+#include <ti/sysbios/knl/Semaphore.h>
+#include <ti/sysbios/BIOS.h>
 /*********************************************************************
  * CONSTANTS
  */
@@ -44,7 +61,13 @@
 static uint8_t motorcontrol_i2cOpenStatus = 0;
 static simplePeripheral_bleCBs_t *motorcontrol_bleCBs;
 static uint8_t motorControl_getGAPRole_taskCreate_flag = 0;
-uint8_t powerOn = 1;            // How does power on and power off work? powerOn Should be 1
+bool powerOn = 1;            // How does power on and power off work? powerOn Should be 1
+MCUD_t MCUDArray = {LEVEL45, 3000, 0, 20, 20, 0};     // MCUD_t MCUDArray {voltage, current, rpm, hsttemp, motortemp, hf_count} initial values are zeros.  Non zero values are dummy initial values for debugging
+MCUD_t *ptrMCUDArray = &MCUDArray;
+uint16_t brakeAndThrottle_rpm;
+uint16_t *ptrbrakeAndThrottle_rpm = &brakeAndThrottle_rpm;
+//uint16_t throttle_Percent;
+
 /**********************************************************************
  *  Local functions
  */
@@ -60,15 +83,7 @@ static void motorcontrol_dashboardCB(uint8_t paramID);
 static void motorcontrol_singleButtonCB(uint8_t messageID);
 static void motorcontrol_getGAPROLE(void);
 
-MCUD_t MCUDArray = {30000, 3000, 380, 20, 20, 0};
-MCUD_t *ptrMCUDArray = &MCUDArray;
-
-uint16_t brakeAndThrottle_rpm;
-uint16_t *ptrbrakeAndThrottle_rpm = &brakeAndThrottle_rpm;
-
-//uint16_t throttle_Percent;
-
-//extern void motorcontrol_setGatt(uint16_t serviceUUID, uint8_t charteristics, uint8_t payloadLength, uint8_t* payload);
+//extern void motorcontrol_setGatt(uint16_t serviceUUID, uint8_t characteristics, uint8_t payloadLength, uint8_t* payload);
 /*********************************************************************
  * TYPEDEFS
  */
@@ -99,6 +114,7 @@ static brakeAndThrottle_CBs_t brakeAndThrottle_CBs =
      motorcontrol_brakeAndThrottleCB                    // brake and throttle callback -> what happens when brake & throttle interrupts
 };
 
+
 //static lightControl_CBs_t lightControl_CBs =
 //{
 //     motorcontrol_lightControlCB
@@ -109,6 +125,52 @@ static brakeAndThrottle_CBs_t brakeAndThrottle_CBs =
 //     motorcontrol_buzzerControlCB
 //};
 
+uint8_t fail = 0;
+uint32_t resetSource = 0xFFFF;
+uint8_t bootStatus = 0xFF;
+uint8_t bootSuccess = 0x00;
+
+uint8_t buttonPress = 0xFF;
+uint8_t bootProcess = 0xFF;
+uint8_t wkUpPin = 0xFF;
+
+/*
+PIN_Config WakeUp[] = {
+      CC2640R2_GENEV_5X5_ID_DIO5 | PIN_INPUT_EN | PIN_PULLUP | PINCC26XX_WAKEUP_NEGEDGE,
+      PIN_TERMINATE
+};
+*/
+
+uint8_t Boot()
+{
+    /*Boot Process*/
+    resetSource = SysCtrlResetSourceGet();
+    if (resetSource == RSTSRC_WAKEUP_FROM_SHUTDOWN)
+    {
+         bootStatus = 0x01;
+
+    }
+    else if (resetSource == RSTSRC_PWR_ON)
+    {
+         bootStatus = 0x02;
+    }
+    else if (resetSource == RSTSRC_SYSRESET)
+    {
+        bootStatus = 0x03;
+    }
+    else if (resetSource == RSTSRC_PIN_RESET)
+    {
+        bootStatus = 0x04;
+        while(bootSuccess == 0x00)
+        {
+            if(bootSuccess == 0x01)
+            {
+                break;
+            }
+        }
+    }
+    return bootStatus;
+}
 /*********************************************************************
  * @fn      MC_init
  *
@@ -118,14 +180,17 @@ static brakeAndThrottle_CBs_t brakeAndThrottle_CBs =
  *
  * @return  none
  */
-uint8_t mccheck = 0;        // FOR DEBUGGING ONLY
+//uint8_t mccheck = 0;        // FOR DEBUGGING ONLY
+uint8_t bootFlag = 0xFF;
 void motorcontrol_init(void)
 {
 // Activate NVS_internal to Recall the last set of saved data in memory
 //    NVS_init();
-
+    //Obtain System Reset Source !!!
+    //uint8_t event_List = PowerCC26XX_ENTERING_SHUTDOWN | PowerCC26XX_ENTERING_STANDBY | PowerCC26XX_AWAKE_STANDBY | PowerCC26XX_AWAKE_STANDBY_LATE;
+    //Power_registerNotify(&powerNotifyObj, event_List, powerTransitionNotifyFxn, NULL);
     UDHAL_init();
-    mccheck = 1;        // FOR DEBUGGING ONLY
+//    mccheck = 1;        // FOR DEBUGGING ONLY
 
     Controller_RegisterAppCBs(&ControllerCBs);
 
@@ -133,14 +198,14 @@ void motorcontrol_init(void)
 
     STM32MCP_init();
     STM32MCP_registerCBs(&STM32MCP_CBs);
-    STM32MCP_startCommunication();    // Not activated
+    STM32MCP_startCommunication();    //ACTIVATE OR DEACTIVATE
 
     periodicCommunication_STM32MCP_getRegisterFrame();
     dataAnalysis_motorControl(ptrMCUDArray);            // passes ptrMCUDArray to dataAnalysis.c
     brakeAndThrottle_motorControl_rpm(ptrbrakeAndThrottle_rpm);    // passes ptrbrakeAndThrottle_rpm to brakeAndThrottle.c
     periodicCommunication_start();
 
-//    dataAnalysis_init();                // Initiate data analytics
+    dataAnalysis_init();                // Initiate data analytics
 
     brakeAndThrottle_init();
     brakeAndThrottle_registerCBs(&brakeAndThrottle_CBs);
@@ -152,25 +217,23 @@ void motorcontrol_init(void)
     buzzerControl_init();               // Initiate buzzer on dashboard
 
     motorcontrol_i2cOpenStatus = UDHAL_getI2CStatus();
-
-// ************* when i2c open successfully, motorcontrol_i2cOpenStatus = 1,
-// ************* when i2c opens unsuccessfully, motorcontrol_i2cOpenStatus = 0 -> TSL2561 light sensor and Led Display are not initiated or activated
+    // ************* when i2c open successfully, motorcontrol_i2cOpenStatus = 1,
+    // ************* when i2c opens unsuccessfully, motorcontrol_i2cOpenStatus = 0 -> TSL2561 light sensor and Led Display are not initiated or activated
     if (motorcontrol_i2cOpenStatus == 1)
     {
-        TSL2561_init();
-        ledControl_init();
+         //TSL25403_init();
+         TSL2561_init();
+         ledControl_init();
     }
 
     lightControl_init( motorcontrol_i2cOpenStatus );                            // UDHAL_I2C must be initiated before lightControl_init();
 
-    dataAnalysis_init();                // Initiate data analytics
-
     powerOnTime_init();           // merged with lightControl 20230705
 
-// If GAPRole_createTask initiated and called successfully, gapRole_getGAPRole_taskCreate_flag() returns 1
+    // If GAPRole_createTask initiated and called successfully, gapRole_getGAPRole_taskCreate_flag() returns 1
     motorControl_getGAPRole_taskCreate_flag = gapRole_getGAPRole_taskCreate_flag();
 
-    mccheck = 3;        // FOR DEBUGGING ONLY
+//    mccheck = 3;        // FOR DEBUGGING ONLY
 
 }
 
@@ -351,7 +414,6 @@ static void motorcontrol_exMsgCb(uint8_t exceptionCode)
         case STM32MCP_QUEUE_OVERLOAD:
             break;
         case STM32MCP_EXCEED_MAXIMUM_RETRANSMISSION_ALLOWANCE:
-            powerOn = 0;
             break;
         default:
             break;
@@ -496,7 +558,6 @@ static void motorcontrol_dashboardCB(uint8_t paramID)
         break;
     }
 }
-
 /*********************************************************************
  * @fn      motorcontrol_singleButtonCB
  * @brief   Set the gatt due to singleButton Callback
@@ -510,6 +571,8 @@ static void motorcontrol_dashboardCB(uint8_t paramID)
 //uint8_t advertEnable = FALSE;
 uint8_t messageid;              // for debugging only
 /*Might be we have to create a state machine to monitor the power status! */
+uint8_t peripheral_deactive = 0;
+uint8_t CLS = 0x01;
 static void motorcontrol_singleButtonCB(uint8_t messageID)
 {
     messageid = messageID;  // for debugging only
@@ -536,10 +599,16 @@ static void motorcontrol_singleButtonCB(uint8_t messageID)
                 // STM32MCP_setSystemControlConfigFrame(STM32MCP_POWER_OFF);
                 // pinConfig = PINCC26XX_setWakeup(ExternalWakeUpPin);
                 // Power_shutdown(0,0);
+                /* Configure DIO for wake up from shutdown */
+                //ACTIVATE();
+                //if(CLS == 0x02)
+                //{
+                PWR_CTL(0x00);
+                //}
+                //bootSuccess = 0x01;
             }
             // if Powering Off -> switch to Power On
-            else if(powerOn == 0){
-                powerOn = 1;
+            if(powerOn == 0){
                 //  system reset (Program Counter resets)
                 //  wait for 1.5 seconds to power on
                 //  call nvs read to read NVS memory - will take a few milliseconds to complete
@@ -551,6 +620,8 @@ static void motorcontrol_singleButtonCB(uint8_t messageID)
                 //  turn ON tasks
                 //  checks UART connection
                 //  send power on command to motor controller
+                //  System Reset
+                powerOn = 1;
             }
         // ICallPlatform_pwrNotify(unsigned int eventType, uintptr_t eventArg, uintptr_t clientArg)
             break;
@@ -578,13 +649,13 @@ static void motorcontrol_singleButtonCB(uint8_t messageID)
 
             }
 
-
             break;
         }
     case SINGLE_BUTTON_DOUBLE_SHORT_PRESS_MSG:      // case = 0x04 - toggle speed modes
         {
             uint8_t speedMode_temp = brakeAndThrottle_toggleSpeedMode(); // update speed mode displayed on dash board
-            ledControl_setSpeedMode(speedMode_temp);  // update speed mode displayed on dash board
+            /* update speed mode displayed on dash board */
+            ledControl_setSpeedMode(speedMode_temp);
 
             break;
         }
@@ -597,10 +668,9 @@ static void motorcontrol_singleButtonCB(uint8_t messageID)
             else if (UnitSelectDash == SI_UNIT) {
                 UnitSelectDash = IMP_UNIT;
             }
-
+            /* send UnitSelectDash to dataAnalysis.c */
             dataAnalysis_changeUnitSelectDash(UnitSelectDash);
-
-            // send UnitSelectDash to ledControl.c
+            /* send UnitSelectDash to ledControl.c */
             ledControl_setUnitSelectDash(UnitSelectDash);
             break;
         }
@@ -614,7 +684,7 @@ static void motorcontrol_singleButtonCB(uint8_t messageID)
             else if (currentControlLaw == BRAKE_AND_THROTTLE_DIRECTLAW){
                 currentControlLaw = BRAKE_AND_THROTTLE_NORMALLAW;
             }
-            // send currentControlLaw to brakeAndThrotte.c
+            /* send currentControlLaw to brakeAndThrotte.c */
             brakeAndThrottle_setControlLaw(currentControlLaw);
             break;
         }
@@ -633,7 +703,6 @@ static void motorcontrol_singleButtonCB(uint8_t messageID)
  *
  * @return  TRUE or FALSE <--- Nil (void)???
  */
-//static void motorcontrol_setGatt(uint16_t serviceUUID, uint8_t characteristics, uint8_t payloadLength, uint8_t* payload)
 void motorcontrol_setGatt(uint16_t serviceUUID, uint8_t charteristics, uint8_t payloadLength, uint8_t* payload)
 {
     uint8_t *theMessage = ICall_malloc(sizeof(uint8_t)*(payloadLength + 4));

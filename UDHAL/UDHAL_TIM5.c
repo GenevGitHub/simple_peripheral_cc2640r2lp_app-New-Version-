@@ -16,7 +16,7 @@
 #include <stdint.h>
 #include <ti/sysbios/knl/Clock.h>
 #include <xdc/runtime/Error.h>
-#include "UDHAL/UDHAL_TIM5.h"
+//#include "UDHAL/UDHAL_TIM5.h"
 #include "periodicCommunication.h"
 /*********************************************************************
  * LOCAL VARIABLES
@@ -59,7 +59,7 @@ void UDHAL_TIM5_init()
     periodicCommunicationLFSamplingTime = PERIODIC_COMMUNICATION_HF_SAMPLING_TIME * (DATA_ANALYSIS_POINTS - 1);
     clockTicks = periodicCommunicationLFSamplingTime * (1000 / Clock_tickPeriod) - 1; // -1 to ensure overflow occurs at PERIODIC_COMMUNICATION_LF_SAMPLING_TIME - not at 1 tick after PERIODIC_COMMUNICATION_LF_SAMPLING_TIME
     ClockHandle = Clock_create(UDHAL_TIM5_OVClockFxn, clockTicks, &clkParams, &eb);
-    periodicCommunication_register_lfTimer(&timer5);
+//    periodicCommunication_register_lfTimer(&timer5);
 
 }
 /*********************************************************************

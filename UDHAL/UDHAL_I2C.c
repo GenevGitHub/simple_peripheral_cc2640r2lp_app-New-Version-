@@ -8,7 +8,7 @@
  * INCLUDES
  */
 #include "UDHAL/UDHAL_I2C.h"
-#include "Board.h"
+#include <Board.h>
 #include "Application/lightControl.h"
 #include "TSL2561/TSL2561.h"
 #include "Application/ledControl.h"
@@ -66,7 +66,6 @@ extern void UDHAL_I2C_init()
     TSL2561_registerALS(&ALS_I2C);                      // ALS Light Sensor
     ledControl_registerLedDisplay(&ledDisplay_I2C);     // LED Display
 }
-
 /* ********************************************************************
  * @fn:     (*I2C_CallbackFxn)
  *
@@ -76,24 +75,22 @@ extern void UDHAL_I2C_init()
  *
  * Return:      None
  ******************************************************************** */
-extern void UDHAL_I2C_CallbackFxn(I2C_Handle i2c_Handle, I2C_Transaction *i2c_Transaction, bool i2c_TransferStatus)
-{
-
-    if (i2c_TransferStatus == false) {
-        //transaction failed
-    }
-    else
-    {
-        // Check for a semaphore handle
-//        if (msg->arg != NULL) {
-
-            // Perform a semaphore post
-//            sem_post((sem_t *) (msg->arg));
-//        }
-
-    }
-
-}
+//extern void UDHAL_I2C_CallbackFxn(I2C_Handle i2c_Handle, I2C_Transaction *i2c_Transaction, bool i2c_TransferStatus)
+//{
+//
+//    if (i2c_TransferStatus == false) {
+//        //transaction failed
+//    }
+//    else
+//    {
+//        // Check for a semaphore handle
+////        if (msg->arg != NULL) {
+//
+//            // Perform a semaphore post
+////            sem_post((sem_t *) (msg->arg));
+////        }
+//    }
+//}
 /*********************************************************************
  * @fn      UDHAL_I2C_params_init
  *
@@ -108,9 +105,10 @@ extern void UDHAL_I2C_params_init()
     I2C_Params_init(&i2cParams);
 //    i2cParams.transferMode = I2C_MODE_CALLBACK;
 //    i2cParams.transferCallbackFxn = &UDHAL_I2C_CallbackFxn;
-    i2cParams.bitRate = I2C_400kHz;
+    i2cParams.bitRate = I2C_100kHz;
     if (i2cOpenStatus == 0) // if i2c is not opened, open i2c. i2c can only be opened once.
     {
+        i2cHandle = I2C_open(Board_I2C0, &i2cParams);   // i2c configuration
         UDHAL_I2C_open();
     }
 }
@@ -126,13 +124,9 @@ extern void UDHAL_I2C_params_init()
 *********************************************************************/
 static void UDHAL_I2C_open()
 {
-    i2cHandle = I2C_open(Board_I2C0, &i2cParams);
-
     if (!i2cHandle) //if (i2cHandle == NULL)
     {
         i2cOpenStatus = 0;      // i2c not opened
-        //  add error protocol here
-        //  Action:  when i2c open fails, need to disable LED display and Light auto mode function
     }
     else {
         i2cOpenStatus = 1;      //i2c opened
@@ -178,25 +172,34 @@ static void UDHAL_I2C_close()
  *
  * Return:      None
 *********************************************************************/
-uint8_t          i2cTransferStatus;         // for debugging
+//uint8_t          i2cTransferStatus;         // place outside for debugging
 static uint8_t UDHAL_I2C_transfer(uint_least8_t slave_address, void *writeBuffer, size_t writeSize, void *readBuffer, size_t readSize)
 {
-    //uint8_t          i2cTransferStatus;
-    if (i2cOpenStatus == 1)
+    uint8_t          i2cTransferStatus;
+    if (!i2cHandle){
+        ledControl_ErrorPriority(I2C_OPEN_NULL);  //  error protocol here
+        //  Action:  when i2c open fails, need to disable LED display and Light auto mode function
+        /* error handling */
+        /* i2c failure is critical & dangerous to the basic operation as it signifies micro-controller failure
+         * It is likely a hardware failure.
+         * Error Protocol ->
+         * 1: display error code on led display,
+         * 2: safety protocol and action
+         * 3: single button shall allow user to Power Off and On to reset the system
+         * */
+    }
+    else
     {
         i2cTransaction.slaveAddress = slave_address;
         i2cTransaction.writeBuf   = writeBuffer;
         i2cTransaction.writeCount = writeSize;
         i2cTransaction.readBuf    = readBuffer;
         i2cTransaction.readCount  = readSize;
-
         i2cTransferStatus = I2C_transfer(i2cHandle, &i2cTransaction);
         // I2C_transfer returns true (1) or false (0)
-        // when i2cTransferStatus = 1, transfer was successful
-        // when i2cTransferStatus = 0, transfer was not successful
         if (!i2cTransferStatus)
         {
-            // error handling if necessary
+            /* error handling if necessary */
         }
     }
     return i2cTransferStatus;

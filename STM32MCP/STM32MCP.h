@@ -37,7 +37,7 @@ extern "C"
 #define STM32MCP_NUMBER_OF_MOTORS                                                            0x01
 
 //The maximum number of node that the buffer can hold
-#define STM32MCP_MAXIMUM_NUMBER_OF_NODE                                                      0x05
+#define STM32MCP_MAXIMUM_NUMBER_OF_NODE                                                      0x0F
 
 //The maximum number of retransmission is allowed
 #define STM32MCP_MAXIMUM_RETRANSMISSION_ALLOWANCE                                            0x0A
@@ -46,7 +46,7 @@ extern "C"
 #define STM32MCP_RX_MSG_BUFF_LENGTH                                                          0x0A
 
 //Heart beat period (in ms)
-#define STM32MCP_HEARTBEAT_PERIOD                                                            1000
+#define STM32MCP_HEARTBEAT_PERIOD                                                            600
 
 //Communication State
 #define STM32MCP_COMMUNICATION_ACTIVE                                                        0x00
@@ -427,6 +427,8 @@ extern void STM32MCP_setEscooterControlDebugFrame(uint8_t debugID);
 /*==========================================================E-SCOOTER Control Functions ==============================================================*/
 extern void STM32MCP_setSpeedModeConfiguration(int32_t torqueIQ, int32_t allowableSpeed, uint16_t rampRate);
 extern void STM32MCP_setDynamicCurrent(int16_t allowableSpeed, int16_t IQValue);
+/*==========================================================E-SCOOTER Shutdown Functions ==============================================================*/
+extern void STM32MCP_EscooterShutdown(uint8_t sysCmdId);
 /*=================================================Functions to set the internal registers============================================*/
 extern void STM32MCP_setRegisterAttribute(uint8_t motorID, uint8_t regID, uint8_t payloadLength, uint8_t *payload);
 extern STM32MCP_regAttribute_t *STM32MCP_getRegisterAttribute(uint8_t motorID, uint8_t regID);

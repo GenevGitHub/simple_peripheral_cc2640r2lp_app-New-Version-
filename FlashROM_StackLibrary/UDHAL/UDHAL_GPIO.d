@@ -19,16 +19,17 @@ UDHAL/UDHAL_GPIO.obj: C:/Users/Public/Documents/TI-workspace/simple_peripheral_c
 UDHAL/UDHAL_GPIO.obj: C:/ti/ti-cgt-arm_18.12.5.LTS/include/stddef.h
 UDHAL/UDHAL_GPIO.obj: C:/ti/ti-cgt-arm_18.12.5.LTS/include/stdlib.h
 UDHAL/UDHAL_GPIO.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/target/Board.h
-UDHAL/UDHAL_GPIO.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/target/cc2640r2lp/cc2640r2lp_board.h
-UDHAL/UDHAL_GPIO.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/boards/CC2640R2_LAUNCHXL/Board.h
+UDHAL/UDHAL_GPIO.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/target/cc2640r2em/cc2640r2em_board.h
+UDHAL/UDHAL_GPIO.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/boards/CC2640R2_GENEV_5X5_ID/Board.h
 UDHAL/UDHAL_GPIO.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/ADC.h
 UDHAL/UDHAL_GPIO.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/ADCBuf.h
 UDHAL/UDHAL_GPIO.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/PWM.h
 UDHAL/UDHAL_GPIO.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/SPI.h
 UDHAL/UDHAL_GPIO.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/UART.h
+UDHAL/UDHAL_GPIO.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/I2C.h
 UDHAL/UDHAL_GPIO.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/Watchdog.h
 UDHAL/UDHAL_GPIO.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/Board.h
-UDHAL/UDHAL_GPIO.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/boards/CC2640R2_LAUNCHXL/CC2640R2_LAUNCHXL.h
+UDHAL/UDHAL_GPIO.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/boards/CC2640R2_GENEV_5X5_ID/CC2640R2_GENEV_5X5_ID.h
 UDHAL/UDHAL_GPIO.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/PIN.h
 UDHAL/UDHAL_GPIO.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/devices/cc26x0r2/driverlib/ioc.h
 UDHAL/UDHAL_GPIO.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/devices/cc26x0r2/inc/hw_types.h
@@ -44,6 +45,9 @@ UDHAL/UDHAL_GPIO.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/devices
 UDHAL/UDHAL_GPIO.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/devices/cc26x0r2/driverlib/rom.h
 UDHAL/UDHAL_GPIO.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/devices/cc26x0r2/driverlib/gpio.h
 UDHAL/UDHAL_GPIO.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/devices/cc26x0r2/inc/hw_gpio.h
+UDHAL/UDHAL_GPIO.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/pin/PINCC26XX.h
+UDHAL/UDHAL_GPIO.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/dpl/HwiP.h
+UDHAL/UDHAL_GPIO.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/devices/DeviceFamily.h
 
 ../UDHAL/UDHAL_GPIO.c:
 
@@ -83,9 +87,9 @@ C:/ti/ti-cgt-arm_18.12.5.LTS/include/stdlib.h:
 
 C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/target/Board.h:
 
-C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/target/cc2640r2lp/cc2640r2lp_board.h:
+C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/target/cc2640r2em/cc2640r2em_board.h:
 
-C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/boards/CC2640R2_LAUNCHXL/Board.h:
+C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/boards/CC2640R2_GENEV_5X5_ID/Board.h:
 
 C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/ADC.h:
 
@@ -97,11 +101,13 @@ C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/SPI.h:
 
 C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/UART.h:
 
+C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/I2C.h:
+
 C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/Watchdog.h:
 
 C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/Board.h:
 
-C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/boards/CC2640R2_LAUNCHXL/CC2640R2_LAUNCHXL.h:
+C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/boards/CC2640R2_GENEV_5X5_ID/CC2640R2_GENEV_5X5_ID.h:
 
 C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/PIN.h:
 
@@ -132,4 +138,10 @@ C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/devices/cc26x0r2/driverlib/ro
 C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/devices/cc26x0r2/driverlib/gpio.h:
 
 C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/devices/cc26x0r2/inc/hw_gpio.h:
+
+C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/pin/PINCC26XX.h:
+
+C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/dpl/HwiP.h:
+
+C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/devices/DeviceFamily.h:
 

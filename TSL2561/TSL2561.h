@@ -216,7 +216,6 @@ extern void TSL2561_initTimingReg( void );
 extern void TSL2561_setTimingRegister( void );
 extern void TSL2561_readChannel(uint8_t readChannel);
 extern uint32_t TSL2561_lux( void );
-
 #ifdef _cplusplus
 }
 #endif

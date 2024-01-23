@@ -2,8 +2,8 @@
 
 Application/lightControl.obj: ../Application/lightControl.c
 Application/lightControl.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/target/Board.h
-Application/lightControl.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/target/cc2640r2lp/cc2640r2lp_board.h
-Application/lightControl.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/boards/CC2640R2_LAUNCHXL/Board.h
+Application/lightControl.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/target/cc2640r2em/cc2640r2em_board.h
+Application/lightControl.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/boards/CC2640R2_GENEV_5X5_ID/Board.h
 Application/lightControl.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/ADC.h
 Application/lightControl.obj: C:/ti/ti-cgt-arm_18.12.5.LTS/include/stdbool.h
 Application/lightControl.obj: C:/ti/ti-cgt-arm_18.12.5.LTS/include/stdint.h
@@ -21,9 +21,10 @@ Application/lightControl.obj: C:/ti/ti-cgt-arm_18.12.5.LTS/include/stddef.h
 Application/lightControl.obj: C:/ti/ti-cgt-arm_18.12.5.LTS/include/_ti_config.h
 Application/lightControl.obj: C:/ti/ti-cgt-arm_18.12.5.LTS/include/linkage.h
 Application/lightControl.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/UART.h
+Application/lightControl.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/I2C.h
 Application/lightControl.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/Watchdog.h
 Application/lightControl.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/Board.h
-Application/lightControl.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/boards/CC2640R2_LAUNCHXL/CC2640R2_LAUNCHXL.h
+Application/lightControl.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/boards/CC2640R2_GENEV_5X5_ID/CC2640R2_GENEV_5X5_ID.h
 Application/lightControl.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/PIN.h
 Application/lightControl.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/devices/cc26x0r2/driverlib/ioc.h
 Application/lightControl.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/devices/cc26x0r2/inc/hw_types.h
@@ -39,10 +40,11 @@ Application/lightControl.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti
 Application/lightControl.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/devices/cc26x0r2/driverlib/rom.h
 Application/lightControl.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/devices/cc26x0r2/driverlib/gpio.h
 Application/lightControl.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/devices/cc26x0r2/inc/hw_gpio.h
+Application/lightControl.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/GPIO.h
+Application/lightControl.obj: C:/Users/Public/Documents/TI-workspace/simple_peripheral_cc2640r2lp_app/UDHAL/UDHAL_PWM.h
 Application/lightControl.obj: ../Application/lightControl.h
 Application/lightControl.obj: C:/ti/ti-cgt-arm_18.12.5.LTS/include/stdio.h
 Application/lightControl.obj: C:/ti/ti-cgt-arm_18.12.5.LTS/include/stdarg.h
-Application/lightControl.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/GPIO.h
 Application/lightControl.obj: C:/ti/ti-cgt-arm_18.12.5.LTS/include/string.h
 Application/lightControl.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/kernel/tirtos/packages/ti/sysbios/knl/Clock.h
 Application/lightControl.obj: C:/ti/xdctools_3_51_03_28_core/packages/xdc/std.h
@@ -182,8 +184,8 @@ Application/lightControl.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti
 Application/lightControl.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/hal/src/target/_common/hal_types.h
 Application/lightControl.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/hal/src/target/_common/cc26xx/_hal_types.h
 Application/lightControl.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/hal/src/inc/hal_defs.h
-Application/lightControl.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/I2C.h
 Application/lightControl.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/NVS.h
+Application/lightControl.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/kernel/tirtos/packages/ti/sysbios/knl/Task.h
 Application/lightControl.obj: C:/Users/Public/Documents/TI-workspace/simple_peripheral_cc2640r2lp_app/PROFILES/Dashboard.h
 Application/lightControl.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/inc/bcomdef.h
 Application/lightControl.obj: C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/osal/src/inc/comdef.h
@@ -196,9 +198,9 @@ Application/lightControl.obj: C:/ti/ti-cgt-arm_18.12.5.LTS/include/stdlib.h
 
 C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/target/Board.h:
 
-C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/target/cc2640r2lp/cc2640r2lp_board.h:
+C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/target/cc2640r2em/cc2640r2em_board.h:
 
-C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/boards/CC2640R2_LAUNCHXL/Board.h:
+C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/boards/CC2640R2_GENEV_5X5_ID/Board.h:
 
 C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/ADC.h:
 
@@ -234,11 +236,13 @@ C:/ti/ti-cgt-arm_18.12.5.LTS/include/linkage.h:
 
 C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/UART.h:
 
+C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/I2C.h:
+
 C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/Watchdog.h:
 
 C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/Board.h:
 
-C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/boards/CC2640R2_LAUNCHXL/CC2640R2_LAUNCHXL.h:
+C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/boards/CC2640R2_GENEV_5X5_ID/CC2640R2_GENEV_5X5_ID.h:
 
 C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/PIN.h:
 
@@ -270,13 +274,15 @@ C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/devices/cc26x0r2/driverlib/gp
 
 C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/devices/cc26x0r2/inc/hw_gpio.h:
 
+C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/GPIO.h:
+
+C:/Users/Public/Documents/TI-workspace/simple_peripheral_cc2640r2lp_app/UDHAL/UDHAL_PWM.h:
+
 ../Application/lightControl.h:
 
 C:/ti/ti-cgt-arm_18.12.5.LTS/include/stdio.h:
 
 C:/ti/ti-cgt-arm_18.12.5.LTS/include/stdarg.h:
-
-C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/GPIO.h:
 
 C:/ti/ti-cgt-arm_18.12.5.LTS/include/string.h:
 
@@ -556,9 +562,9 @@ C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/hal/src/target/_comm
 
 C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/blestack/hal/src/inc/hal_defs.h:
 
-C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/I2C.h:
-
 C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/source/ti/drivers/NVS.h:
+
+C:/ti/simplelink_cc2640r2_sdk_5_10_00_02/kernel/tirtos/packages/ti/sysbios/knl/Task.h:
 
 C:/Users/Public/Documents/TI-workspace/simple_peripheral_cc2640r2lp_app/PROFILES/Dashboard.h:
 

@@ -13,8 +13,13 @@
 /*********************************************************************
  * INCLUDES
  */
+/* Example/Board Header files */
 #include <Board.h>
 #include <stdint.h>
+/* Driver Header files */
+#include <ti/drivers/PWM.h>
+#include <ti/drivers/GPIO.h>
+#include <UDHAL/UDHAL_PWM.h>
 
 #include "lightControl.h"
 #include "powerOnTime.h"
@@ -23,7 +28,6 @@
 #include "Dashboard.h"
 #include "UDHAL/UDHAL_I2C.h"
 #include "TSL2561/TSL2561.h"
-
 /*********************************************************************
  * LOCAL POINTERS
  */
@@ -34,11 +38,10 @@ static void (*lightModeArray[3])(void) = {light_MODE_OFF, light_MODE_ON, light_M
  */
 
 static uint8_t                      bitluxIndex;
-static uint8_t                      light_mode;                             // declare as static when not debugging
+static uint8_t                      light_mode;
 static uint8_t                      light_mode_Index;
-static uint8_t                      light_status = LIGHT_STATUS_INITIAL;    // declare as static when not debugging
+static uint8_t                      light_status = LIGHT_STATUS_INITIAL;
 static uint8_t                      lightStatusNew = LIGHT_STATUS_INITIAL;
-//static uint8_t                      lightcontrol_I2CStatus = 0;
 
 /*********************************************************************
  * LOCAL FUNCTIONS
@@ -107,15 +110,15 @@ void light_MODE_AUTO()
 **********************************************************************/
 extern void lightControl_taskFxn()
 {
-    // ********************  light sensor control (in minutes)  *******************************
-    // *****************************************************************************************
+    /* ********************  light sensor control (in minutes)  *******************************
+     *****************************************************************************************/
     if (light_mode == 2)
     {
-    // ************   Calls I2C to measure ADC and calculates calibrated lux  ****************
+    /*************   Calls I2C to measure ADC and calculates calibrated lux  ****************/
         lightControl_measureLux();
-    // ************   Convert ALS_Data to luxIndex and compute sumluxIndex  ******************
+    /************   Convert ALS_Data to luxIndex and compute sumluxIndex  ******************/
         lightControl_ALS_Controller();
-    // ****************************   Light Control                      *********************
+    /****************************   Light Control                      *********************/
         light_MODE_AUTO();
     }
 
@@ -130,15 +133,19 @@ extern void lightControl_taskFxn()
  *
  * @return  None
  *********************************************************************/
+uint16_t   lightControl_pwmPeriod = 1000;
+uint16_t   lightControl_pwmDuty = 500;
+PWM_Handle lightControl_pwmHandle = NULL;
+PWM_Params lightControl_params;
+uint8_t lightControl_pwmOpenStatus = 0;
 
 void lightControl_init( uint8_t i2cOpenStatus )
 {
     //powerOnTime_trigger_flag = POWERONTIME_MINUTE_TIME / ALS_SAMPLING_TIME;
 
-    //** I2C must be initiated before lightControl
-    //** At every POWER ON (SYSTEM START-UP), "IF I2C communication is SUCCESSFUL", the light control is in auto mode (LIGHT_MODE_INITIAL), light is off (LIGHT_STATUS_INITIAL).
-    //** "IF I2C communication is NOT successful, we have to disable auto mode.
-    //lightcontrol_I2CStatus =  i2cOpenStatus; //UDHAL_I2C_getOpenStatus();
+    /** I2C must be initiated before lightControl */
+    /** At every POWER ON (SYSTEM START-UP), "IF I2C communication is SUCCESSFUL", the light control is in auto mode (LIGHT_MODE_INITIAL), light is off (LIGHT_STATUS_INITIAL).
+    ** "IF I2C communication is NOT successful, we have to disable auto mode. */
     if (i2cOpenStatus == 1)
     {
         light_mode = LIGHT_MODE_AUTO;       // if i2c started successfully, light mode default is AUTO
@@ -155,6 +162,7 @@ void lightControl_init( uint8_t i2cOpenStatus )
 
     ledControl_setLightMode( light_mode );
     ledControl_setLightStatus( light_status );
+
 }
 
 /*********************************************************************************
@@ -226,31 +234,41 @@ void light_MODE_ON()
  *********************************************************************/
 void lightControl_motorControl_lightStatusChg(void)
 {
-    // switch LED display brightness depending on light status
-    uint8_t Board_GPIO_LED_state;   // for Launchpad only
+    /* switch LED display brightness depending on light status */
+    uint16_t light_PWMDuty;
     uint8_t ledPower;
     switch(light_status)
     {
     case LIGHT_STATUS_ON:
             {
-                Board_GPIO_LED_state = Board_GPIO_LED_ON;   // for Launchpad only
                 ledPower = LED_POWER_LIGHT_ON;
+
+#ifdef CC2640R2_LAUNCHXL
+                light_PWMDuty = LIGHT_PWM_DUTY;
+#endif
+
                 break;
             }
     case LIGHT_STATUS_OFF:
             {
-                Board_GPIO_LED_state = Board_GPIO_LED_OFF;  // for Launchpad only
                 ledPower = LED_POWER_LIGHT_OFF;
+
+#ifdef CC2640R2_LAUNCHXL
+                light_PWMDuty = 0;
+#endif
                 break;
             }
     default:
         break;
     }
-    GPIO_write(Board_GPIO_LED0, Board_GPIO_LED_state);  // for Launchpad only
+
+#ifdef CC2640R2_LAUNCHXL
+    UDHAL_PWM2_setDutyAndPeriod(light_PWMDuty, LIGHT_PWM_PERIOD);
+#endif
+
     motorcontrol_setGatt(DASHBOARD_SERV_UUID, DASHBOARD_LIGHT_STATUS, DASHBOARD_LIGHT_STATUS_LEN, (uint8_t *) &light_status);
     ledControl_setLEDPower(ledPower);
     ledControl_setLightStatus(light_status);
-
 }
 
 /*********************************************************************
@@ -269,6 +287,7 @@ uint8_t lightControl_lightModeChange()
     if(light_mode > light_mode_Index)
     {
         light_mode = 0;
+        bitluxIndex = ALS_NUMSAMPLES;      // this sets the light icon on when light mode is switched from On to Auto mode
     }
 
     motorcontrol_setGatt(DASHBOARD_SERV_UUID, DASHBOARD_LIGHT_MODE, DASHBOARD_LIGHT_MODE_LEN, (uint8_t *) &light_mode);
@@ -291,11 +310,11 @@ static uint8_t  luxBit[ALS_NUMSAMPLES] = {0};
 
 void lightControl_ALS_Controller( void )
 {
-    // ************* convert ALS_Data to luxIndex  ***************************
+    /************* convert ALS_Data to luxIndex  ***************************/
     uint8_t ii;
     bitluxIndex = 0;        // Resets bitluxIndex to 0
 
-    // If the measured lux value is less than the LUX Threshold, luxBit = 1 (ON), else luxBit = 0 (OFF)
+    /* If the measured lux value is less than the LUX Threshold, luxBit = 1 (ON), else luxBit = 0 (OFF) */
     luxBit[luxIndex] = (luxValue < LUX_THRESHOLD);
     /********  Sum 3 consecutive luxBit values (= bitluxIndex)
      * *****   if sum = 3 ---> AUTO light ON
@@ -307,14 +326,22 @@ void lightControl_ALS_Controller( void )
     }
 
     luxIndex++;
-    // reset LuxIndex to 0 if LuxIndex is greater than ALS_NUMSAMPLES
+    /* reset LuxIndex to 0 if LuxIndex is greater than ALS_NUMSAMPLES */
     if (luxIndex > ALS_NUMSAMPLES){
         luxIndex = 0;
     }
 
 }
 
-
+/*********************************************************************
+ * @fn      lightControl_gapRoleChg
+ *
+ * @brief   Call this function to change light mode icon on LED display
+ *
+ * @param   None
+ *
+ * @return  None
+ *********************************************************************/
 
 void lightControl_gapRoleChg()
 {
